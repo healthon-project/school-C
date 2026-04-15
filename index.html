@@ -270,29 +270,26 @@
   <!-- 메인 메뉴 -->
   <div id="main-menu">
 
-    <!-- 행 1: 신청서 (작게) + 오늘의 미션 (크게 강조) -->
-    <div class="menu-row-top">
+    <!-- ★ 행 1: 신청서 + 오늘의 미션 강조 2버튼 -->
+    <div class="menu-hero-row">
 
-      <!-- 신청서: 작은 가로형 카드 -->
-      <div class="menu-card menu-card-sm" onclick="openPanel('panel-apply')">
-        <div class="mc-icon-sm">📋</div>
-        <div class="mc-body-sm">
-          <div class="mc-title-sm">신청서/동의서/사전 설문지</div>
-          <div class="mc-link mc-badge-sm">📝 Google Forms</div>
-        </div>
+      <!-- 신청서/동의서 -->
+      <div class="menu-hero-btn menu-hero-btn-apply" onclick="openPanel('panel-apply')">
+        <div class="mhb-icon">📋</div>
+        <div class="mhb-title">신청서 / 동의서</div>
+        <div class="mhb-sub">Google Forms →</div>
       </div>
 
-      <!-- 오늘의 미션: 크고 강조된 히어로 카드 -->
-      <div class="menu-card menu-card-hero menu-card-hero-sm" onclick="openPanel('panel-mission')">
-        <div class="hero-icon">🍀</div>
-        <div class="hero-title">오늘의 미션</div>
-        <div class="hero-desc">매일 저녁,<br>운동미션을 인증하세요!</div>
-        <div class="hero-badge">+5~10포인트</div>
-        <div class="hero-cta">지금 바로 인증하기 →</div>
+      <!-- 오늘의 미션 -->
+      <div class="menu-hero-btn menu-hero-btn-mission" onclick="openPanel('panel-mission')">
+        <div class="mhb-icon">🍀</div>
+        <div class="mhb-title">오늘의 미션</div>
+        <div class="mhb-sub">+5~10P 인증하기 →</div>
       </div>
+
     </div>
 
-    <!-- 행 2: 도전 & 챌린지 섹션 라벨 -->
+    <!-- ★ 행 2: 도전 & 챌린지 -->
     <div class="menu-section-label">⚽ 도전 및 챌린지</div>
     <div class="menu-row-3col">
       <div class="menu-card menu-card-md" onclick="openPanel('panel-quiz')">
@@ -312,7 +309,7 @@
       </div>
     </div>
 
-    <!-- 행 3: 신난다 재미난다 섹션 라벨 -->
+    <!-- ★ 행 3: 신난다 재미난다 -->
     <div class="menu-section-label">🎉 신난다 재미난다</div>
     <div class="menu-row-2col">
       <div class="menu-card menu-card-half" onclick="openPanel('panel-tips')">

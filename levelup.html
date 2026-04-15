@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>튼튼탐험대 레벨 안내</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+    html,body{font-family:'Noto Sans KR',sans-serif;background:#04061A;overflow-x:hidden;}
+
+    .page{min-height:100vh;position:relative;background:linear-gradient(170deg,#04061A 0%,#0B0E2A 40%,#0E1535 70%,#0A1628 100%);}
+    #star-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+    .space-deco{position:fixed;top:0;left:0;right:0;bottom:0;z-index:1;pointer-events:none;overflow:hidden;}
+
+    .shoot{position:absolute;width:100px;height:1.5px;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,0.85));border-radius:2px;left:-110px;}
+    .sh1{top:8%;animation:sh 6s linear 2s infinite;}
+    .sh2{top:20%;animation:sh 9s linear 6s infinite;}
+    .sh3{top:5%;animation:sh 7s linear 11s infinite;}
+    @keyframes sh{from{transform:translateX(0) rotate(18deg);opacity:1;}to{transform:translateX(120vw) rotate(18deg);opacity:0;}}
+
+    .fp{position:absolute;border-radius:50%;animation:floatP ease-in-out infinite;}
+    .fp1{width:18px;height:18px;background:radial-gradient(circle at 35% 30%,#9A6AEA,#3A1A6A);top:12%;right:8%;animation-duration:5s;}
+    .fp2{width:12px;height:12px;background:radial-gradient(circle at 35% 30%,#5ABAEE,#0A3A6A);top:35%;left:6%;animation-duration:7s;animation-delay:1.5s;}
+    .fp3{width:22px;height:22px;background:radial-gradient(circle at 35% 30%,#EA8A5A,#6A2A1A);top:55%;right:5%;animation-duration:6s;animation-delay:3s;}
+    .fp4{width:10px;height:10px;background:radial-gradient(circle at 35% 30%,#5AEA9A,#0A4A2A);top:75%;left:9%;animation-duration:8s;animation-delay:2s;}
+    @keyframes floatP{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-12px) scale(1.08);}}
+
+    .lv-header{position:relative;z-index:10;padding:36px 24px 26px;text-align:center;}
+    .lv-header-badge{display:inline-block;background:rgba(127,119,221,0.2);color:#ffffff;border:1px solid rgba(127,119,221,0.35);font-family:'Jua',sans-serif;font-size:14px;padding:5px 18px;border-radius:100px;margin-bottom:12px;text-shadow:0 0 10px rgba(175,169,236,0.7);}
+    .lv-header h1{font-family:'Jua',sans-serif;font-size:clamp(24px,6vw,32px);color:#fff;line-height:1.3;text-shadow:0 0 24px rgba(220,230,255,0.8),0 0 50px rgba(127,119,221,0.45);animation:glowPulse 3s ease-in-out infinite;}
+    @keyframes glowPulse{0%,100%{text-shadow:0 0 20px rgba(220,230,255,0.7),0 0 40px rgba(127,119,221,0.35);}50%{text-shadow:0 0 35px rgba(255,255,255,0.9),0 0 65px rgba(127,119,221,0.6),0 0 90px rgba(93,202,165,0.2);}}
+    .lv-header p{margin-top:8px;font-size:15px;color:rgba(210,225,255,0.85);line-height:1.6;}
+
+    .trail-wrap{position:relative;z-index:10;padding:0 20px 4px;display:flex;align-items:center;justify-content:center;}
+    .trail-node{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;max-width:80px;}
+    .trail-dot{width:13px;height:13px;border-radius:50%;border:2.5px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);}
+    .trail-dot.done{background:var(--c,#1D9E75);border-color:var(--c,#1D9E75);box-shadow:0 0 8px var(--c,#1D9E75);}
+    .trail-label{font-size:10px;color:rgba(200,216,255,0.6);font-family:'Jua',sans-serif;text-align:center;}
+    .trail-line{flex:1;height:2px;background:rgba(255,255,255,0.1);border-radius:2px;margin-bottom:18px;}
+
+    .lv-content{position:relative;z-index:10;padding:16px 16px 110px;max-width:480px;margin:0 auto;}
+
+    .lv-card{border-radius:24px;overflow:hidden;margin-bottom:18px;animation:cardIn 0.5s ease both;border:1px solid rgba(255,255,255,0.08);}
+    .lv-card:nth-child(1){animation-delay:0.05s;}
+    .lv-card:nth-child(3){animation-delay:0.15s;}
+    .lv-card:nth-child(5){animation-delay:0.25s;}
+    .lv-card:nth-child(7){animation-delay:0.35s;}
+    @keyframes cardIn{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
+
+    .lv-card-header{padding:18px 20px 14px;display:flex;align-items:center;gap:12px;}
+    .lv-title{font-family:'Jua',sans-serif;font-size:23px;line-height:1.1;}
+    .lv-num{font-family:'Jua',sans-serif;font-size:12px;opacity:0.7;margin-bottom:2px;}
+    .lv-pts-tag{margin-left:auto;font-family:'Jua',sans-serif;font-size:12px;padding:5px 12px;border-radius:100px;white-space:nowrap;flex-shrink:0;}
+    .lv-illus{display:block;width:100%;}
+    .lv-body{padding:16px 22px 20px;background:rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;}
+    .pts-display{text-align:center;}
+    .pts-range{font-family:'Jua',sans-serif;font-size:34px;line-height:1.1;letter-spacing:1px;color:#ffffff;text-shadow:0 0 20px rgba(255,255,255,0.8),0 0 40px rgba(255,255,255,0.4);animation:ptsPulse 2.5s ease-in-out infinite;}
+    @keyframes ptsPulse{0%,100%{opacity:1;}50%{opacity:0.8;transform:scale(1.03);}}
+    .pts-unit{font-family:'Jua',sans-serif;font-size:15px;opacity:0.75;margin-top:3px;}
+
+    .card-green .pts-range{color:#ffffff;text-shadow:0 0 20px rgba(127,232,192,0.5);}
+    .card-green .pts-unit{color:rgba(255,255,255,0.7);}
+    .card-blue  .pts-range{color:#ffffff;text-shadow:0 0 20px rgba(157,208,255,0.5);}
+    .card-blue  .pts-unit{color:rgba(255,255,255,0.7);}
+    .card-amber .pts-range{color:#ffffff;text-shadow:0 0 20px rgba(255,215,100,0.5);}
+    .card-amber .pts-unit{color:rgba(255,255,255,0.7);}
+    .card-hero  .pts-range{color:#ffffff;text-shadow:0 0 20px rgba(255,184,153,0.5);}
+    .card-hero  .pts-unit{color:rgba(255,255,255,0.7);}
+
+    .card-green .lv-card-header{background:linear-gradient(135deg,rgba(29,158,117,0.3),rgba(8,80,65,0.4));}
+    .card-green{border-color:rgba(93,202,165,0.25);}
+    .card-green .lv-title{color:#ffffff;}
+    .card-green .lv-num{color:rgba(255,255,255,0.7);}
+    .card-green .lv-pts-tag{background:rgba(29,158,117,0.35);color:#ffffff;border:1px solid rgba(93,202,165,0.3);}
+    .card-green .pts-range{color:#ffffff;}
+    .card-green .pts-unit{color:rgba(255,255,255,0.7);}
+
+    .card-blue .lv-card-header{background:linear-gradient(135deg,rgba(55,138,221,0.3),rgba(12,68,124,0.4));}
+    .card-blue{border-color:rgba(133,183,235,0.25);}
+    .card-blue .lv-title{color:#ffffff;}
+    .card-blue .lv-num{color:rgba(255,255,255,0.7);}
+    .card-blue .lv-pts-tag{background:rgba(55,138,221,0.3);color:#ffffff;border:1px solid rgba(55,138,221,0.3);}
+    .card-blue .pts-range{color:#ffffff;}
+    .card-blue .pts-unit{color:rgba(255,255,255,0.7);}
+
+    .card-amber .lv-card-header{background:linear-gradient(135deg,rgba(239,159,39,0.3),rgba(99,56,6,0.4));}
+    .card-amber{border-color:rgba(239,159,39,0.25);}
+    .card-amber .lv-title{color:#ffffff;}
+    .card-amber .lv-num{color:rgba(255,255,255,0.7);}
+    .card-amber .lv-pts-tag{background:rgba(239,159,39,0.3);color:#ffffff;border:1px solid rgba(239,159,39,0.3);}
+    .card-amber .pts-range{color:#ffffff;}
+    .card-amber .pts-unit{color:rgba(255,255,255,0.7);}
+
+    .card-hero .lv-card-header{background:linear-gradient(135deg,rgba(216,90,48,0.3),rgba(74,27,12,0.4));}
+    .card-hero{border-color:rgba(216,90,48,0.25);}
+    .card-hero .lv-title{color:#ffffff;}
+    .card-hero .lv-num{color:rgba(255,255,255,0.7);}
+    .card-hero .lv-pts-tag{background:rgba(216,90,48,0.3);color:#ffffff;border:1px solid rgba(216,90,48,0.3);}
+    .card-hero .pts-range{color:#ffffff;}
+    .card-hero .pts-unit{color:rgba(255,255,255,0.7);}
+
+    .lv-arrow{text-align:center;font-size:20px;margin:-4px 0 2px;color:rgba(200,216,255,0.4);animation:ab 1.2s ease-in-out infinite;}
+    @keyframes ab{0%,100%{transform:translateY(0);}50%{transform:translateY(5px);}}
+
+    .gift-block{background:rgba(239,159,39,0.08);border-radius:22px;padding:22px 20px;text-align:center;border:1.5px dashed rgba(239,159,39,0.35);margin-bottom:24px;animation:cardIn 0.5s ease 0.45s both;}
+    .gift-icon{font-size:44px;animation:wiggle 2s ease-in-out infinite;display:inline-block;}
+    @keyframes wiggle{0%,100%{transform:rotate(-6deg);}50%{transform:rotate(6deg);}}
+    .gift-block h3{font-family:'Jua',sans-serif;font-size:21px;color:#ffffff;margin:10px 0 6px;text-shadow:0 0 16px rgba(255,215,100,0.8);}
+    .gift-block p{font-family:'Jua',sans-serif;font-size:15px;color:rgba(255,255,255,0.85);line-height:1.6;}
+
+    .cta-wrap{position:fixed;bottom:0;left:0;right:0;padding:14px 20px 26px;background:linear-gradient(to top,#04061A 65%,transparent);z-index:100;}
+    .cta-btn{width:100%;max-width:480px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:10px;padding:16px;background:linear-gradient(135deg,#1D9E75,#0F6E56);color:#fff;border:none;border-radius:18px;font-family:'Jua',sans-serif;font-size:20px;cursor:pointer;box-shadow:0 6px 28px rgba(29,158,117,0.45);position:relative;overflow:hidden;}
+    .cta-btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.18),transparent);animation:shimmer 2.5s ease infinite;}
+    @keyframes shimmer{from{left:-100%;}to{left:200%;}}
+    .cta-btn:active{transform:scale(0.97);}
+    .cta-arrow{animation:ab 1s ease-in-out infinite;}
+    .page-out{animation:pageOut 0.45s ease forwards!important;}
+    @keyframes pageOut{to{opacity:0;transform:translateY(-20px);}}
+  </style>
+</head>
+<body>
+<div class="page">
+  <canvas id="star-canvas"></canvas>
+  <div class="space-deco">
+    <div class="fp fp1"></div><div class="fp fp2"></div>
+    <div class="fp fp3"></div><div class="fp fp4"></div>
+    <div class="shoot sh1"></div><div class="shoot sh2"></div><div class="shoot sh3"></div>
+  </div>
+
+  <div class="lv-header">
+    <div class="lv-header-badge">⭐ 레벨 시스템 안내</div>
+    <h1>포인트를 모아<br>단계를 올려봐요!</h1>
+    <p>미션을 완료할수록 포인트가 쌓이고<br>새로운 단계로 올라갈 수 있어요 🚀</p>
+  </div>
+
+  <div class="trail-wrap">
+    <div class="trail-node"><div class="trail-dot done" style="--c:#1D9E75"></div><div class="trail-label">1단계</div></div>
+    <div class="trail-line"></div>
+    <div class="trail-node"><div class="trail-dot"></div><div class="trail-label">2단계</div></div>
+    <div class="trail-line"></div>
+    <div class="trail-node"><div class="trail-dot"></div><div class="trail-label">3단계</div></div>
+    <div class="trail-line"></div>
+    <div class="trail-node"><div class="trail-dot"></div><div class="trail-label">4단계</div></div>
+  </div>
+
+  <div class="lv-content">
+
+    <!-- LEVEL 1 -->
+    <div class="lv-card card-green">
+      <div class="lv-card-header">
+        <div><div class="lv-num">1단계</div><div class="lv-title">🌱 건강새내기</div></div>
+      </div>
+      <svg class="lv-illus" viewBox="0 0 480 170" xmlns="http://www.w3.org/2000/svg">
+        <rect width="480" height="170" fill="#071A12"/>
+        <ellipse cx="240" cy="85" rx="200" ry="80" fill="rgba(29,158,117,0.09)"/>
+        <circle cx="30" cy="20" r="1.2" fill="white" opacity="0.7"/>
+        <circle cx="90" cy="12" r="0.8" fill="white" opacity="0.6"/>
+        <circle cx="160" cy="25" r="1" fill="white" opacity="0.5"/>
+        <circle cx="210" cy="10" r="1.2" fill="white" opacity="0.8"/>
+        <circle cx="320" cy="18" r="0.8" fill="white" opacity="0.6"/>
+        <circle cx="400" cy="8" r="1" fill="white" opacity="0.7"/>
+        <circle cx="450" cy="30" r="1.2" fill="white" opacity="0.5"/>
+        <circle cx="55" cy="140" r="1" fill="white" opacity="0.4"/>
+        <circle cx="420" cy="150" r="1.2" fill="white" opacity="0.5"/>
+        <!-- planet left -->
+        <circle cx="52" cy="58" r="22" fill="#041A0C"/>
+        <circle cx="52" cy="58" r="22" fill="url(#p1l)"/>
+        <ellipse cx="52" cy="52" rx="14" ry="4" fill="rgba(93,202,165,0.28)" transform="rotate(-12,52,52)"/>
+        <ellipse cx="44" cy="48" rx="6" ry="3" fill="rgba(127,232,192,0.18)"/>
+        <!-- planet right -->
+        <circle cx="432" cy="52" r="16" fill="#041A0C"/>
+        <circle cx="432" cy="52" r="16" fill="url(#p1r)"/>
+        <ellipse cx="432" cy="47" rx="10" ry="3" fill="rgba(93,202,165,0.25)"/>
+        <!-- glow under -->
+        <ellipse cx="240" cy="158" rx="75" ry="11" fill="rgba(29,158,117,0.18)"/>
+        <!-- body -->
+        <circle cx="240" cy="122" r="32" fill="#1D9E75"/>
+        <ellipse cx="240" cy="128" rx="18" ry="13" fill="rgba(127,232,192,0.22)"/>
+        <!-- arms -->
+        <path d="M210,116 Q195,107 188,96" fill="none" stroke="#0F6E56" stroke-width="10" stroke-linecap="round"/>
+        <path d="M270,116 Q285,107 292,96" fill="none" stroke="#0F6E56" stroke-width="10" stroke-linecap="round"/>
+        <circle cx="186" cy="93" r="9" fill="#5DCAA5"/>
+        <circle cx="294" cy="93" r="9" fill="#5DCAA5"/>
+        <!-- legs -->
+        <path d="M228,150 Q223,160 219,167" fill="none" stroke="#0F6E56" stroke-width="9" stroke-linecap="round"/>
+        <path d="M252,150 Q257,160 261,167" fill="none" stroke="#0F6E56" stroke-width="9" stroke-linecap="round"/>
+        <ellipse cx="218" cy="168" rx="11" ry="5" fill="#085041"/>
+        <ellipse cx="262" cy="168" rx="11" ry="5" fill="#085041"/>
+        <!-- head -->
+        <circle cx="240" cy="90" r="31" fill="#5DCAA5"/>
+        <!-- eyes -->
+        <ellipse cx="230" cy="88" rx="5.5" ry="6.5" fill="#04342C"/>
+        <ellipse cx="250" cy="88" rx="5.5" ry="6.5" fill="#04342C"/>
+        <ellipse cx="231" cy="86" rx="2.2" ry="2.8" fill="rgba(255,255,255,0.75)"/>
+        <ellipse cx="251" cy="86" rx="2.2" ry="2.8" fill="rgba(255,255,255,0.75)"/>
+        <!-- smile -->
+        <path d="M231,101 Q240,110 249,101" fill="none" stroke="#04342C" stroke-width="2.8" stroke-linecap="round"/>
+        <!-- cheeks -->
+        <ellipse cx="221" cy="97" rx="7" ry="4.5" fill="rgba(93,202,165,0.5)"/>
+        <ellipse cx="259" cy="97" rx="7" ry="4.5" fill="rgba(93,202,165,0.5)"/>
+        <!-- sprout hat -->
+        <ellipse cx="240" cy="61" rx="22" ry="8" fill="#0F6E56"/>
+        <path d="M232,61 Q228,40 223,31 Q231,36 235,52 Q237,42 240,33 Q243,42 245,52 Q249,36 257,31 Q252,40 248,61Z" fill="#1D9E75"/>
+        <ellipse cx="240" cy="61" rx="8" ry="4" fill="#085041" opacity="0.5"/>
+        <text x="152" y="54" font-size="14" fill="#7FE8C0" opacity="0.8">✦</text>
+        <text x="318" y="46" font-size="11" fill="#7FE8C0" opacity="0.7">✦</text>
+        <text x="185" y="36" font-size="9" fill="white" opacity="0.5">✦</text>
+        <defs>
+          <radialGradient id="p1l" cx="35%" cy="30%" r="70%"><stop offset="0%" stop-color="#3DB87A" stop-opacity="0.6"/><stop offset="100%" stop-color="#041A0C" stop-opacity="0.85"/></radialGradient>
+          <radialGradient id="p1r" cx="35%" cy="30%" r="70%"><stop offset="0%" stop-color="#2DA060" stop-opacity="0.5"/><stop offset="100%" stop-color="#041A0C" stop-opacity="0.85"/></radialGradient>
+        </defs>
+      </svg>
+      <div class="lv-body">
+        <div class="pts-display">
+          <div class="pts-range">0 ~ 200P</div>
+          <div class="pts-unit">달성 포인트</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lv-arrow">⬇</div>
+
+    <!-- LEVEL 2 -->
+    <div class="lv-card card-blue">
+      <div class="lv-card-header">
+        <div><div class="lv-num">2단계</div><div class="lv-title">🧭 튼튼탐험가</div></div>
+      </div>
+      <svg class="lv-illus" viewBox="0 0 480 170" xmlns="http://www.w3.org/2000/svg">
+        <rect width="480" height="170" fill="#060E1C"/>
+        <ellipse cx="240" cy="85" rx="200" ry="80" fill="rgba(55,138,221,0.09)"/>
+        <circle cx="25" cy="18" r="1.2" fill="white" opacity="0.7"/>
+        <circle cx="110" cy="10" r="0.8" fill="white" opacity="0.6"/>
+        <circle cx="180" cy="22" r="1" fill="white" opacity="0.5"/>
+        <circle cx="280" cy="12" r="1.2" fill="white" opacity="0.8"/>
+        <circle cx="370" cy="20" r="0.8" fill="white" opacity="0.6"/>
+        <circle cx="455" cy="8" r="1" fill="white" opacity="0.7"/>
+        <!-- ringed planet left -->
+        <ellipse cx="55" cy="72" rx="50" ry="10" fill="none" stroke="#1A3A70" stroke-width="6" opacity="0.5"/>
+        <circle cx="55" cy="60" r="24" fill="#040C28"/>
+        <circle cx="55" cy="60" r="24" fill="url(#p2l)"/>
+        <ellipse cx="55" cy="54" rx="16" ry="4" fill="rgba(80,150,230,0.28)" transform="rotate(-10,55,54)"/>
+        <ellipse cx="47" cy="50" rx="7" ry="3" fill="rgba(140,200,255,0.2)"/>
+        <ellipse cx="55" cy="72" rx="50" ry="10" fill="none" stroke="#2A5AB0" stroke-width="3" opacity="0.7"/>
+        <!-- small planet right -->
+        <circle cx="434" cy="52" r="18" fill="#040C28"/>
+        <circle cx="434" cy="52" r="18" fill="url(#p2r)"/>
+        <ellipse cx="434" cy="47" rx="11" ry="3.5" fill="rgba(80,150,230,0.25)"/>
+        <ellipse cx="240" cy="158" rx="75" ry="11" fill="rgba(55,138,221,0.15)"/>
+        <!-- backpack -->
+        <rect x="262" y="105" width="19" height="23" rx="7" fill="#0C447C"/>
+        <rect x="265" y="113" width="13" height="10" rx="3" fill="#185FA5"/>
+        <!-- body -->
+        <circle cx="240" cy="122" r="30" fill="#378ADD"/>
+        <ellipse cx="240" cy="128" rx="17" ry="12" fill="rgba(157,208,255,0.2)"/>
+        <!-- arms -->
+        <path d="M212,114 Q196,105 187,93" fill="none" stroke="#185FA5" stroke-width="10" stroke-linecap="round"/>
+        <path d="M268,114 Q284,105 293,93" fill="none" stroke="#185FA5" stroke-width="10" stroke-linecap="round"/>
+        <!-- compass -->
+        <circle cx="185" cy="91" r="9" fill="#9DD0FF"/>
+        <circle cx="174" cy="80" r="14" fill="#fff" stroke="#378ADD" stroke-width="2"/>
+        <circle cx="174" cy="80" r="10" fill="#E6F1FB"/>
+        <line x1="174" y1="71" x2="174" y2="78" stroke="#E24B4A" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="174" y1="82" x2="174" y2="89" stroke="#666" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="174" cy="80" r="2.5" fill="#0C447C"/>
+        <circle cx="295" cy="91" r="9" fill="#9DD0FF"/>
+        <!-- legs -->
+        <path d="M228,148 Q223,158 219,165" fill="none" stroke="#185FA5" stroke-width="9" stroke-linecap="round"/>
+        <path d="M252,148 Q257,158 261,165" fill="none" stroke="#185FA5" stroke-width="9" stroke-linecap="round"/>
+        <ellipse cx="218" cy="166" rx="11" ry="5" fill="#0C447C"/>
+        <ellipse cx="262" cy="166" rx="11" ry="5" fill="#0C447C"/>
+        <!-- head -->
+        <circle cx="240" cy="90" r="30" fill="#9DD0FF"/>
+        <!-- hat -->
+        <rect x="213" y="66" width="54" height="11" rx="5" fill="#993C1D"/>
+        <rect x="219" y="55" width="42" height="15" rx="6" fill="#D85A30"/>
+        <rect x="228" y="53" width="24" height="7" rx="3" fill="#993C1D"/>
+        <!-- eyes -->
+        <ellipse cx="230" cy="88" rx="5.5" ry="6.5" fill="#0C447C"/>
+        <ellipse cx="250" cy="88" rx="5.5" ry="6.5" fill="#0C447C"/>
+        <ellipse cx="231" cy="86" rx="2.2" ry="2.8" fill="rgba(255,255,255,0.75)"/>
+        <ellipse cx="251" cy="86" rx="2.2" ry="2.8" fill="rgba(255,255,255,0.75)"/>
+        <path d="M226,81 Q230,79 234,81" fill="none" stroke="#0C447C" stroke-width="2" stroke-linecap="round"/>
+        <path d="M246,81 Q250,79 254,81" fill="none" stroke="#0C447C" stroke-width="2" stroke-linecap="round"/>
+        <path d="M230,101 Q240,110 250,101" fill="none" stroke="#0C447C" stroke-width="2.8" stroke-linecap="round"/>
+        <ellipse cx="222" cy="97" rx="7" ry="4.5" fill="rgba(100,180,255,0.45)"/>
+        <ellipse cx="258" cy="97" rx="7" ry="4.5" fill="rgba(100,180,255,0.45)"/>
+        <text x="148" y="50" font-size="14" fill="#9DD0FF" opacity="0.8">✦</text>
+        <text x="322" y="43" font-size="11" fill="#9DD0FF" opacity="0.7">✦</text>
+        <defs>
+          <radialGradient id="p2l" cx="35%" cy="30%" r="70%"><stop offset="0%" stop-color="#4090E0" stop-opacity="0.65"/><stop offset="100%" stop-color="#040C28" stop-opacity="0.85"/></radialGradient>
+          <radialGradient id="p2r" cx="35%" cy="30%" r="70%"><stop offset="0%" stop-color="#3070C0" stop-opacity="0.55"/><stop offset="100%" stop-color="#040C28" stop-opacity="0.85"/></radialGradient>
+        </defs>
+      </svg>
+      <div class="lv-body">
+        <div class="pts-display">
+          <div class="pts-range">201 ~ 600P</div>
+          <div class="pts-unit">달성 포인트</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lv-arrow">⬇</div>
+
+    <!-- LEVEL 3 -->
+    <div class="lv-card card-amber">
+      <div class="lv-card-header">
+        <div><div class="lv-num">3단계</div><div class="lv-title">🏅 건강챔피언</div></div>
+      </div>
+      <svg class="lv-illus" viewBox="0 0 480 170" xmlns="http://www.w3.org/2000/svg">
+        <rect width="480" height="170" fill="#100800"/>
+        <ellipse cx="240" cy="85" rx="200" ry="80" fill="rgba(239,159,39,0.09)"/>
+        <circle cx="30" cy="15" r="1.2" fill="white" opacity="0.7"/>
+        <circle cx="130" cy="8" r="0.8" fill="white" opacity="0.6"/>
+        <circle cx="210" cy="20" r="1" fill="white" opacity="0.5"/>
+        <circle cx="310" cy="10" r="1.2" fill="white" opacity="0.8"/>
+        <circle cx="410" cy="18" r="0.8" fill="white" opacity="0.6"/>
+        <circle cx="460" cy="6" r="1" fill="white" opacity="0.7"/>
+        <!-- golden planet left -->
+        <circle cx="55" cy="58" r="25" fill="#160A00"/>
+        <circle cx="55" cy="58" r="25" fill="url(#p3l)"/>
+        <ellipse cx="55" cy="51" rx="16" ry="4.5" fill="rgba(255,200,80,0.28)" transform="rotate(-12,55,51)"/>
+        <ellipse cx="46" cy="47" rx="7" ry="3" fill="rgba(255,220,120,0.2)"/>
+        <circle cx="432" cy="52" r="19" fill="#160A00"/>
+        <circle cx="432" cy="52" r="19" fill="url(#p3r)"/>
+        <ellipse cx="432" cy="47" rx="12" ry="3.5" fill="rgba(255,200,80,0.25)"/>
+        <!-- confetti -->
+        <rect x="140" y="26" width="7" height="7" rx="2" fill="#E24B4A" opacity="0.7" transform="rotate(20,143,29)"/>
+        <rect x="305" y="20" width="7" height="7" rx="2" fill="#7F77DD" opacity="0.7" transform="rotate(-15,308,23)"/>
+        <rect x="172" y="16" width="5" height="5" rx="1" fill="#378ADD" opacity="0.7" transform="rotate(30,174,18)"/>
+        <circle cx="162" cy="40" r="3.5" fill="#FFD766" opacity="0.8"/>
+        <circle cx="332" cy="36" r="3.5" fill="#FFD766" opacity="0.8"/>
+        <ellipse cx="240" cy="158" rx="80" ry="11" fill="rgba(239,159,39,0.15)"/>
+        <!-- cape -->
+        <path d="M258,108 Q290,120 308,152 Q292,155 278,144 Q265,133 259,118Z" fill="#EF9F27"/>
+        <!-- body -->
+        <circle cx="240" cy="122" r="30" fill="#EF9F27"/>
+        <ellipse cx="240" cy="128" rx="17" ry="12" fill="rgba(255,215,100,0.22)"/>
+        <!-- star on chest -->
+        <polygon points="240,112 243,120 252,120 246,125 248,133 240,128 232,133 234,125 228,120 237,120" fill="#FFD766"/>
+        <!-- arms victory -->
+        <path d="M212,112 Q195,99 188,85" fill="none" stroke="#BA7517" stroke-width="10" stroke-linecap="round"/>
+        <path d="M268,112 Q285,99 292,85" fill="none" stroke="#BA7517" stroke-width="10" stroke-linecap="round"/>
+        <circle cx="186" cy="82" r="10" fill="#FFD766"/>
+        <circle cx="294" cy="82" r="10" fill="#FFD766"/>
+        <!-- legs -->
+        <path d="M228,149 Q223,159 219,166" fill="none" stroke="#BA7517" stroke-width="9" stroke-linecap="round"/>
+        <path d="M252,149 Q257,159 261,166" fill="none" stroke="#BA7517" stroke-width="9" stroke-linecap="round"/>
+        <ellipse cx="218" cy="167" rx="11" ry="5" fill="#854F0B"/>
+        <ellipse cx="262" cy="167" rx="11" ry="5" fill="#854F0B"/>
+        <!-- head -->
+        <circle cx="240" cy="90" r="30" fill="#FFD5A0"/>
+        <!-- crown -->
+        <polygon points="215,72 221,55 230,68 240,51 250,68 259,55 265,72" fill="#FFD766" stroke="#BA7517" stroke-width="1.5"/>
+        <circle cx="240" cy="53" r="5" fill="#E24B4A"/>
+        <circle cx="221" cy="56" r="3.5" fill="#7F77DD"/>
+        <circle cx="259" cy="56" r="3.5" fill="#1D9E75"/>
+        <!-- eyes big happy -->
+        <ellipse cx="230" cy="89" rx="5.5" ry="6.5" fill="#633806"/>
+        <ellipse cx="250" cy="89" rx="5.5" ry="6.5" fill="#633806"/>
+        <ellipse cx="231" cy="87" rx="2.2" ry="2.8" fill="rgba(255,255,255,0.75)"/>
+        <ellipse cx="251" cy="87" rx="2.2" ry="2.8" fill="rgba(255,255,255,0.75)"/>
+        <path d="M230,101 Q240,111 250,101" fill="none" stroke="#633806" stroke-width="2.8" stroke-linecap="round"/>
+        <ellipse cx="222" cy="97" rx="7" ry="4.5" fill="rgba(255,160,100,0.5)"/>
+        <ellipse cx="258" cy="97" rx="7" ry="4.5" fill="rgba(255,160,100,0.5)"/>
+        <text x="150" y="50" font-size="14" fill="#FFD766" opacity="0.9">✦</text>
+        <text x="325" y="43" font-size="11" fill="#FFD766" opacity="0.8">✦</text>
+        <defs>
+          <radialGradient id="p3l" cx="35%" cy="30%" r="70%"><stop offset="0%" stop-color="#C08020" stop-opacity="0.7"/><stop offset="100%" stop-color="#160A00" stop-opacity="0.85"/></radialGradient>
+          <radialGradient id="p3r" cx="35%" cy="30%" r="70%"><stop offset="0%" stop-color="#A06010" stop-opacity="0.6"/><stop offset="100%" stop-color="#160A00" stop-opacity="0.85"/></radialGradient>
+        </defs>
+      </svg>
+      <div class="lv-body">
+        <div class="pts-display">
+          <div class="pts-range">601 ~ 1200P</div>
+          <div class="pts-unit">달성 포인트</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lv-arrow">⬇</div>
+
+    <!-- LEVEL 4 -->
+    <div class="lv-card card-hero">
+      <div class="lv-card-header">
+        <div><div class="lv-num">4단계 ✨ 최고!</div><div class="lv-title">🦸 슈퍼히어로</div></div>
+      </div>
+      <svg class="lv-illus" viewBox="0 0 480 180" xmlns="http://www.w3.org/2000/svg">
+        <rect width="480" height="180" fill="#120400"/>
+        <ellipse cx="240" cy="90" rx="220" ry="90" fill="rgba(216,90,48,0.09)"/>
+        <circle cx="28" cy="16" r="1.5" fill="white" opacity="0.8"/>
+        <circle cx="95" cy="9" r="1" fill="white" opacity="0.6"/>
+        <circle cx="175" cy="20" r="1.2" fill="white" opacity="0.7"/>
+        <circle cx="255" cy="8" r="0.9" fill="white" opacity="0.5"/>
+        <circle cx="345" cy="16" r="1.2" fill="white" opacity="0.8"/>
+        <circle cx="425" cy="6" r="1" fill="white" opacity="0.6"/>
+        <circle cx="462" cy="24" r="0.8" fill="white" opacity="0.7"/>
+        <!-- big red saturn left -->
+        <ellipse cx="60" cy="82" rx="66" ry="12" fill="none" stroke="#5A1208" stroke-width="7" opacity="0.5"/>
+        <circle cx="60" cy="70" r="33" fill="#200400"/>
+        <circle cx="60" cy="70" r="33" fill="url(#p4l)"/>
+        <ellipse cx="60" cy="63" rx="21" ry="5" fill="rgba(220,100,60,0.3)" transform="rotate(-10,60,63)"/>
+        <ellipse cx="50" cy="57" rx="9" ry="4" fill="rgba(255,160,100,0.2)"/>
+        <ellipse cx="60" cy="82" rx="66" ry="12" fill="none" stroke="#C04020" stroke-width="4" opacity="0.65"/>
+        <ellipse cx="60" cy="82" rx="50" ry="8" fill="none" stroke="#902E10" stroke-width="2.5" opacity="0.55"/>
+        <!-- planet right -->
+        <circle cx="436" cy="64" r="23" fill="#200400"/>
+        <circle cx="436" cy="64" r="23" fill="url(#p4r)"/>
+        <ellipse cx="436" cy="58" rx="14" ry="4" fill="rgba(220,100,60,0.28)"/>
+        <!-- rainbow arc -->
+        <path d="M118,174 Q240,62 362,174" fill="none" stroke="rgba(255,200,100,0.15)" stroke-width="5"/>
+        <!-- speed lines -->
+        <line x1="136" y1="100" x2="170" y2="102" stroke="#D85A30" stroke-width="2" opacity="0.45" stroke-linecap="round"/>
+        <line x1="130" y1="114" x2="168" y2="114" stroke="#D85A30" stroke-width="2.5" opacity="0.5" stroke-linecap="round"/>
+        <line x1="134" y1="128" x2="169" y2="124" stroke="#D85A30" stroke-width="2" opacity="0.4" stroke-linecap="round"/>
+        <ellipse cx="240" cy="168" rx="88" ry="11" fill="rgba(216,90,48,0.15)"/>
+        <!-- cape -->
+        <path d="M262,112 Q298,126 318,160 Q300,164 284,152 Q270,140 263,122Z" fill="#D85A30"/>
+        <path d="M262,112 Q298,126 318,160 Q300,164 284,152 Q270,140 263,122Z" fill="#993C1D" opacity="0.3"/>
+        <!-- body -->
+        <circle cx="240" cy="126" r="30" fill="#D85A30"/>
+        <ellipse cx="240" cy="132" rx="17" ry="12" fill="rgba(255,180,140,0.2)"/>
+        <!-- hero star emblem -->
+        <polygon points="240,116 243,124 252,124 246,130 248,138 240,133 232,138 234,130 228,124 237,124" fill="#FFD766"/>
+        <!-- arms flying -->
+        <path d="M212,118 Q194,106 184,91" fill="none" stroke="#993C1D" stroke-width="10" stroke-linecap="round"/>
+        <path d="M268,118 Q286,106 296,91" fill="none" stroke="#993C1D" stroke-width="10" stroke-linecap="round"/>
+        <circle cx="182" cy="88" r="10" fill="#FFB899"/>
+        <circle cx="298" cy="88" r="10" fill="#FFB899"/>
+        <!-- legs flying -->
+        <path d="M228,153 Q218,163 212,172" fill="none" stroke="#993C1D" stroke-width="9" stroke-linecap="round"/>
+        <path d="M252,153 Q260,163 264,172" fill="none" stroke="#993C1D" stroke-width="9" stroke-linecap="round"/>
+        <ellipse cx="210" cy="173" rx="11" ry="5" fill="#712B13"/>
+        <ellipse cx="266" cy="173" rx="11" ry="5" fill="#712B13"/>
+        <!-- head -->
+        <circle cx="240" cy="96" r="30" fill="#FFD5A0"/>
+        <!-- mask -->
+        <path d="M212,91 Q218,80 232,83 L232,92 Q222,95 212,91Z" fill="#D85A30"/>
+        <path d="M268,91 Q262,80 248,83 L248,92 Q258,95 268,91Z" fill="#D85A30"/>
+        <!-- hair -->
+        <ellipse cx="240" cy="68" rx="19" ry="7" fill="#1A1A1A"/>
+        <path d="M228,68 Q240,55 252,68" fill="#1A1A1A"/>
+        <!-- eyes -->
+        <ellipse cx="230" cy="92" rx="5.5" ry="6" fill="#4A1B0C"/>
+        <ellipse cx="250" cy="92" rx="5.5" ry="6" fill="#4A1B0C"/>
+        <ellipse cx="231" cy="90" rx="2.2" ry="2.5" fill="rgba(255,255,255,0.75)"/>
+        <ellipse cx="251" cy="90" rx="2.2" ry="2.5" fill="rgba(255,255,255,0.75)"/>
+        <path d="M230,104 Q240,113 250,104" fill="none" stroke="#4A1B0C" stroke-width="2.8" stroke-linecap="round"/>
+        <ellipse cx="222" cy="100" rx="7" ry="4.5" fill="rgba(255,160,120,0.5)"/>
+        <ellipse cx="258" cy="100" rx="7" ry="4.5" fill="rgba(255,160,120,0.5)"/>
+        <text x="150" y="56" font-size="18" fill="#FFD766" opacity="0.9">✦</text>
+        <text x="332" y="48" font-size="16" fill="#FFD766" opacity="0.8">✦</text>
+        <text x="192" y="40" font-size="11" fill="white" opacity="0.6">✦</text>
+        <text x="358" y="72" font-size="10" fill="white" opacity="0.5">✦</text>
+        <defs>
+          <radialGradient id="p4l" cx="35%" cy="30%" r="70%"><stop offset="0%" stop-color="#C04020" stop-opacity="0.72"/><stop offset="100%" stop-color="#1A0400" stop-opacity="0.85"/></radialGradient>
+          <radialGradient id="p4r" cx="35%" cy="30%" r="70%"><stop offset="0%" stop-color="#A03010" stop-opacity="0.62"/><stop offset="100%" stop-color="#1A0400" stop-opacity="0.85"/></radialGradient>
+        </defs>
+      </svg>
+      <div class="lv-body">
+        <div class="pts-display">
+          <div class="pts-range">1201P ~</div>
+          <div class="pts-unit">달성 포인트</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GIFT -->
+    <div class="gift-block">
+      <div class="gift-icon">🎁</div>
+      <h3>슈퍼히어로 달성 시 깜짝 선물!</h3>
+      <p>4단계를 달성하면 선생님이 준비한<br>특별한 선물이 기다리고 있어요 🎉<br>과연 어떤 선물일까요? 도전해봐요!</p>
+    </div>
+
+  </div>
+
+  <div class="cta-wrap">
+    <button class="cta-btn" onclick="goApply()">지금 신청하기! <span class="cta-arrow">→</span></button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var c=document.getElementById('star-canvas'),ctx=c.getContext('2d');
+  function resize(){c.width=window.innerWidth;c.height=Math.max(window.innerHeight,document.body.scrollHeight||700);draw();}
+  function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+    for(var i=0;i<220;i++){
+      var x=Math.random()*c.width,y=Math.random()*c.height,r=Math.random()*1.6+0.2,a=Math.random()*0.75+0.2;
+      ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,'+a+')';ctx.fill();
+    }
+  }
+  window.addEventListener('resize',resize);resize();
+})();
+function goApply(){document.body.classList.add('page-out');setTimeout(function(){window.location.href='index.html';},440);}
+var lt=0;document.addEventListener('touchend',function(e){var n=Date.now();if(n-lt<300)e.preventDefault();lt=n;},{passive:false});
+</script>
+</body>
+</html>
