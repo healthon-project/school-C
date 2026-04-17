@@ -6,6 +6,7 @@
   <title>튼튼탐험대 출발!</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
   <style>
     /* 교보손글씨체 */
     @font-face {
@@ -438,6 +439,58 @@
     .nav-btn:active { transform: scale(0.95); }
     .nav-btn.prev { background: rgba(255,255,255,0.06); opacity: 0.4; pointer-events: none; }
     .nav-btn.next { background: rgba(29,158,117,0.3); border-color: rgba(93,202,165,0.35); }
+    /* ── 관리자 버튼 ── */
+    .admin-float-btn{position:fixed;top:14px;right:14px;z-index:50;background:rgba(40,40,40,0.85);backdrop-filter:blur(8px);color:rgba(200,210,220,0.9);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:6px 14px;font-family:var(--main-font);font-size:12px;cursor:pointer;transition:background 0.15s;}
+    .admin-float-btn:active{transform:scale(0.95);}
+    .admin-modal-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1000;align-items:center;justify-content:center;}
+    .admin-modal-wrap.open{display:flex;}
+    .admin-modal-box{background:#fff;border-radius:20px;padding:28px 24px 22px;width:280px;text-align:center;}
+    .admin-modal-icon{font-size:36px;margin-bottom:8px;}
+    .admin-modal-title{font-size:17px;font-weight:700;color:#1a1a1a;margin-bottom:4px;font-family:var(--main-font);}
+    .admin-modal-sub{font-size:12px;color:#888;margin-bottom:14px;font-family:var(--main-font);}
+    .admin-modal-input{width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:16px;text-align:center;color:#1a1a1a;margin-bottom:6px;outline:none;}
+    .admin-modal-input:focus{border-color:#1D9E75;}
+    .admin-modal-err{font-size:12px;color:#E24B4A;min-height:18px;margin-bottom:10px;font-family:var(--main-font);}
+    .admin-modal-btns{display:flex;gap:8px;}
+    .admin-modal-cancel{flex:1;padding:10px;border:1.5px solid #e0e0e0;border-radius:10px;background:#f5f5f5;color:#666;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--main-font);}
+    .admin-modal-confirm{flex:1;padding:10px;border:none;border-radius:10px;background:#1D9E75;color:white;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--main-font);}
+    .dash-panel{display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,0.5);align-items:flex-end;justify-content:center;}
+    .dash-panel.open{display:flex;}
+    .dash-inner{width:100%;max-width:430px;max-height:90vh;background:#fff;border-radius:24px 24px 0 0;overflow-y:auto;padding:20px 18px 40px;}
+    .dash-handle{width:36px;height:4px;background:#e0e0e0;border-radius:2px;margin:0 auto 16px;}
+    .dash-title{font-family:var(--main-font);font-size:18px;font-weight:700;color:#1a1a1a;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+    .dash-sec-title{font-family:var(--main-font);font-size:13px;font-weight:700;color:#1a1a1a;margin:16px 0 10px;display:flex;align-items:center;gap:5px;}
+    .dash-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px;}
+    .dash-stat{background:#f9f9f9;border-radius:10px;padding:12px 6px;text-align:center;border:0.5px solid #e8e8e8;}
+    .ds-num{font-size:22px;font-weight:700;color:#1D9E75;font-family:var(--main-font);}
+    .ds-label{font-size:10px;color:#888;margin-top:3px;font-family:var(--main-font);}
+    .bmi-table{width:100%;border-collapse:collapse;font-family:var(--main-font);font-size:12px;}
+    .bmi-table th{background:#f0f0f0;padding:7px 6px;text-align:center;color:#555;font-weight:600;border-bottom:1px solid #e0e0e0;}
+    .bmi-table td{padding:7px 6px;text-align:center;border-bottom:0.5px solid #f0f0f0;color:#333;}
+    .bmi-table tr:last-child td{border-bottom:none;}
+    .dash-grant{display:flex;flex-direction:column;gap:8px;}
+    .dash-input{width:100%;padding:9px 12px;border:0.5px solid #e0e0e0;border-radius:8px;font-size:13px;color:#1a1a1a;background:#fff;font-family:var(--main-font);outline:none;}
+    .dash-grant-row{display:flex;gap:8px;}
+    .dash-grant-btn{padding:9px 16px;background:#1D9E75;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:var(--main-font);}
+    .grant-log{font-size:12px;color:#555;max-height:100px;overflow-y:auto;margin-top:6px;font-family:var(--main-font);}
+    .grant-log-item{padding:5px 0;border-bottom:0.5px solid #f0f0f0;display:flex;justify-content:space-between;}
+    .dash-close-btn{width:100%;padding:12px;background:#2C2C2A;color:#D3D1C7;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--main-font);margin-top:16px;}
+    .dash-tabs{display:flex;gap:4px;margin-bottom:14px;background:#f5f5f5;padding:4px;border-radius:12px;}
+    .dash-tab{flex:1;padding:8px 4px;border:none;background:transparent;border-radius:9px;font-family:var(--main-font);font-size:12px;font-weight:600;color:#888;cursor:pointer;transition:all 0.2s;}
+    .dash-tab.active{background:#fff;color:#1D9E75;box-shadow:0 1px 6px rgba(0,0,0,0.1);}
+    .dash-tab-panel{display:none;}
+    .dash-tab-panel.active{display:block;}
+    .lv-dist-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+    .lv-dist-label{font-family:var(--main-font);font-size:11px;color:#555;width:54px;flex-shrink:0;}
+    .lv-dist-bar-wrap{flex:1;background:#f0f0f0;border-radius:6px;height:14px;overflow:hidden;}
+    .lv-dist-bar{height:100%;border-radius:6px;transition:width 0.5s ease;}
+    .lv-dist-count{font-family:var(--main-font);font-size:11px;color:#888;width:20px;text-align:right;flex-shrink:0;}
+    .dash-memo{width:100%;min-height:80px;padding:10px 12px;border:0.5px solid #e0e0e0;border-radius:8px;font-size:12px;font-family:var(--main-font);color:#333;resize:vertical;outline:none;line-height:1.5;}
+    .dash-memo:focus{border-color:#1D9E75;}
+    .memo-save-btn{padding:7px 14px;background:#1D9E75;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--main-font);}
+    .memo-saved-msg{font-size:11px;color:#1D9E75;font-family:var(--main-font);min-height:16px;}
+    .dash-print-btn{width:100%;padding:10px;background:#378ADD;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--main-font);margin-top:8px;}
+    .dash-notice{background:#FFF9E6;border:1px solid #FFE082;border-radius:8px;padding:10px 12px;font-size:11px;color:#7A5800;font-family:var(--main-font);line-height:1.6;margin-bottom:8px;}
   </style>
 </head>
 <body>
@@ -445,6 +498,95 @@
 
   <!-- Star canvas -->
   <canvas id="star-canvas"></canvas>
+
+  <!-- 관리자 버튼 -->
+  <button class="admin-float-btn" onclick="openAdminLogin()">🔐 교사</button>
+
+  <!-- 비밀번호 모달 -->
+  <div class="admin-modal-wrap" id="admin-modal">
+    <div class="admin-modal-box">
+      <div class="admin-modal-icon">🔐</div>
+      <div class="admin-modal-title">교사 대시보드</div>
+      <div class="admin-modal-sub">비밀번호를 입력해 주세요</div>
+      <input class="admin-modal-input" id="admin-pw" type="password" placeholder="비밀번호" onkeydown="if(event.key==='Enter')checkAdmin()"/>
+      <div class="admin-modal-err" id="admin-err"></div>
+      <div class="admin-modal-btns">
+        <button class="admin-modal-cancel" onclick="closeAdminLogin()">취소</button>
+        <button class="admin-modal-confirm" onclick="checkAdmin()">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 교사 대시보드 패널 -->
+  <div class="dash-panel" id="dash-panel">
+    <div class="dash-inner">
+      <div class="dash-handle"></div>
+      <div class="dash-title">📊 교사 대시보드
+        <span style="margin-left:auto;font-size:11px;color:#aaa;font-family:var(--main-font);font-weight:400;" id="dash-datetime"></span>
+      </div>
+      <div class="dash-tabs">
+        <button class="dash-tab active" onclick="switchTab('tab-stats')">📈 현황</button>
+        <button class="dash-tab" onclick="switchTab('tab-bmi')">⚖️ BMI</button>
+        <button class="dash-tab" onclick="switchTab('tab-grant')">🎁 지급</button>
+        <button class="dash-tab" onclick="switchTab('tab-memo')">📝 메모</button>
+        <button class="dash-tab" onclick="switchTab('tab-settings')">⚙️ 설정</button>
+      </div>
+      <div class="dash-tab-panel active" id="tab-stats">
+        <div class="dash-stats">
+          <div class="dash-stat"><div class="ds-num" id="ds-total">0</div><div class="ds-label">전체 포인트</div></div>
+          <div class="dash-stat"><div class="ds-num" id="ds-records">0</div><div class="ds-label">BMI 기록 수</div></div>
+          <div class="dash-stat"><div class="ds-num" id="ds-level">-</div><div class="ds-label">현재 레벨</div></div>
+        </div>
+        <div class="dash-sec-title" style="margin-top:14px;">🏆 레벨 진행도</div>
+        <div id="dash-lv-dist"></div>
+        <div class="dash-sec-title" style="margin-top:14px;">✅ 미션 완료 현황</div>
+        <div id="dash-mission-stat" style="font-family:var(--main-font);font-size:12px;color:#555;"></div>
+        <button class="dash-print-btn" onclick="printDash()">🖨️ 현황 인쇄 / PDF 저장</button>
+      </div>
+      <div class="dash-tab-panel" id="tab-bmi">
+        <div class="dash-notice">💡 학생의 BMI 기록은 기기에 저장돼요.</div>
+        <table class="bmi-table"><thead><tr><th>월</th><th>키</th><th>몸무게</th><th>BMI</th><th>판정</th></tr></thead><tbody id="dash-bmi-tbody"></tbody></table>
+        <div id="dash-bmi-empty" style="text-align:center;color:#aaa;font-size:12px;padding:14px;font-family:var(--main-font);">아직 기록이 없어요</div>
+        <button class="dash-print-btn" style="background:#EF9F27;margin-top:12px;" onclick="clearBmi()">🗑️ BMI 기록 초기화</button>
+      </div>
+      <div class="dash-tab-panel" id="tab-grant">
+        <div class="dash-sec-title" style="margin-top:0;">🎁 포인트 수동 지급</div>
+        <div class="dash-grant">
+          <input class="dash-input" id="grant-name" placeholder="학생 이름 (기록용)"/>
+          <div class="dash-grant-row">
+            <input class="dash-input" id="grant-reason" placeholder="사유" style="flex:2;"/>
+            <input class="dash-input" id="grant-pt" type="number" value="5" min="1" style="flex:1;text-align:center;"/>
+            <button class="dash-grant-btn" onclick="grantPoint()">지급</button>
+          </div>
+        </div>
+        <div class="dash-sec-title">📋 지급 이력</div>
+        <div class="grant-log" id="grant-log" style="max-height:160px;"></div>
+        <button class="dash-print-btn" style="background:#888;margin-top:8px;" onclick="clearGrantLog()">🗑️ 이력 초기화</button>
+      </div>
+      <div class="dash-tab-panel" id="tab-memo">
+        <div class="dash-sec-title" style="margin-top:0;">📝 수업 메모</div>
+        <textarea class="dash-memo" id="teacher-memo" placeholder="수업 메모, 학생 관찰 내용 등을 적어보세요."></textarea>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+          <button class="memo-save-btn" onclick="saveMemo()">저장</button>
+          <span class="memo-saved-msg" id="memo-msg"></span>
+        </div>
+        <div class="dash-sec-title" style="margin-top:16px;">📅 오늘의 수업 체크리스트</div>
+        <div id="checklist-wrap" style="font-family:var(--main-font);font-size:13px;display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+      <div class="dash-tab-panel" id="tab-settings">
+        <div class="dash-sec-title" style="margin-top:0;">🔑 비밀번호 변경</div>
+        <div style="display:flex;gap:8px;">
+          <input class="dash-input" id="new-pw" type="password" placeholder="새 비밀번호" style="flex:1;"/>
+          <button class="dash-grant-btn" onclick="changePw()" style="background:#378ADD;">변경</button>
+        </div>
+        <div id="pw-msg" style="font-size:12px;color:#1D9E75;margin-top:6px;font-family:var(--main-font);min-height:18px;"></div>
+        <div class="dash-sec-title" style="margin-top:16px;">🗑️ 데이터 관리</div>
+        <button class="dash-print-btn" style="background:#E24B4A;" onclick="resetAll()">⚠️ 전체 데이터 초기화</button>
+        <div style="font-size:10px;color:#aaa;margin-top:6px;font-family:var(--main-font);">포인트·BMI·미션 완료 기록이 모두 삭제돼요.</div>
+      </div>
+      <button class="dash-close-btn" onclick="closeDash()">✕ 닫기</button>
+    </div>
+  </div>
 
   <!-- Space background: planets SVG -->
   <svg class="space-bg" viewBox="0 0 414 900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
@@ -561,7 +703,7 @@
 
     <!-- Mascot -->
     <div class="mascot-wrap">
-      <div class="mascot-circle">🧭</div>
+      <div id="lottie-mascot" style="width:220px;height:220px;"></div>
       <div class="mascot-star ms1">⭐</div>
       <div class="mascot-star ms2">✨</div>
       <div class="mascot-star ms3">🌟</div>
@@ -579,22 +721,13 @@
     <!-- Tagline card -->
     <div class="tagline-card">
       <p>
-        미션을 완료하고, 포인트를 모아서<br>
-        <strong>우주를 누비는 무적의 호랑이</strong>가 되어봐요!<br>
-        매일 꾸준히 도전하면<br>
-        몸도 마음도 튼튼해져요 💪
+        미션을 성공하고 포인트를 모아 보세요.<br>
+        <strong>도전하는 과정에서 몸도 튼튼, 마음도 튼튼</strong> 💪<br>
+        푸짐한 선물이 기다리고 있어요! 🎁
       </p>
     </div>
 
 
-
-    <!-- Gift banner -->
-    <div class="gift-banner">
-      <div class="gift-icon">🎁</div>
-      <div class="gift-text">
-        <strong>최고 레벨인 무적의 호랑이가 되면 어떤 선물이 쏟아질까요? 도전해 봅시다!</strong>
-      </div>
-    </div>
 
     <!-- CTA Button -->
     <div class="cta-wrap">
@@ -631,6 +764,7 @@
         ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
         ctx.fillStyle = 'rgba(255,255,255,' + s.a + ')';
         ctx.fill();
+
       });
     }
     window.addEventListener('resize', resize);
@@ -664,6 +798,41 @@
     if (now - lastTouch < 300) e.preventDefault();
     lastTouch = now;
   }, { passive: false });
+
+  // ── Lottie 마스코트 ──
+  lottie.loadAnimation({
+    container: document.getElementById('lottie-mascot'),
+    renderer: 'svg',
+    loop: true,
+    autoplay: true,
+    path: 'Astronaut_and_spaceship_in_space_scene.json'
+  });
+
+  // ── 관리자 ──
+  var ADMIN_PW_KEY='tuntun_admin_pw';
+  function getAdminPw(){return localStorage.getItem(ADMIN_PW_KEY)||'1234';}
+  function openAdminLogin(){document.getElementById('admin-modal').classList.add('open');document.getElementById('admin-pw').value='';document.getElementById('admin-err').textContent='';setTimeout(function(){document.getElementById('admin-pw').focus();},100);}
+  function closeAdminLogin(){document.getElementById('admin-modal').classList.remove('open');}
+  function checkAdmin(){var pw=document.getElementById('admin-pw').value;if(pw===getAdminPw()){closeAdminLogin();openDash();}else{document.getElementById('admin-err').textContent='❌ 비밀번호가 틀렸어요';document.getElementById('admin-pw').value='';document.getElementById('admin-pw').focus();}}
+  function changePw(){var v=document.getElementById('new-pw').value.trim();if(!v){document.getElementById('pw-msg').textContent='비밀번호를 입력해 주세요';return;}localStorage.setItem(ADMIN_PW_KEY,v);document.getElementById('pw-msg').textContent='✅ 변경 완료!';document.getElementById('new-pw').value='';}
+  function openDash(){document.getElementById('dash-panel').classList.add('open');var now=new Date();document.getElementById('dash-datetime').textContent=now.getFullYear()+'.'+(now.getMonth()+1)+'.'+now.getDate()+' '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');renderDashStats();renderBmiTable();renderMissionStat();renderLvDist();loadMemo();renderChecklist();}
+  function closeDash(){document.getElementById('dash-panel').classList.remove('open');}
+  function switchTab(id){document.querySelectorAll('.dash-tab-panel').forEach(function(p){p.classList.remove('active');});document.querySelectorAll('.dash-tab').forEach(function(t){t.classList.remove('active');});document.getElementById(id).classList.add('active');event.currentTarget.classList.add('active');}
+  function renderDashStats(){var pts=parseInt(localStorage.getItem('tuntun_pts')||'0');var recs={};try{recs=JSON.parse(localStorage.getItem('tuntun_body_records_v2')||'{}');}catch(e){}var recCount=Object.keys(recs).length;var lv=pts<=200?'1단계':pts<=600?'2단계':pts<=1200?'3단계':'4단계';document.getElementById('ds-total').textContent=pts+'P';document.getElementById('ds-records').textContent=recCount+'건';document.getElementById('ds-level').textContent=lv;}
+  function renderLvDist(){var pts=parseInt(localStorage.getItem('tuntun_pts')||'0');var levels=[{name:'1단계 🌱',max:200,color:'#5DCAA5'},{name:'2단계 🧭',max:600,color:'#378ADD'},{name:'3단계 🏅',max:1200,color:'#EF9F27'},{name:'4단계 🦸',max:99999,color:'#D85A30'}];var curLvIdx=pts<=200?0:pts<=600?1:pts<=1200?2:3;var prev=curLvIdx===0?0:levels[curLvIdx-1].max;var next=levels[curLvIdx].max===99999?prev+500:levels[curLvIdx].max;var pct=curLvIdx===3?100:Math.min(100,Math.round((pts-prev)/(next-prev)*100));var html='';levels.forEach(function(lv,i){var barPct=i<curLvIdx?100:i===curLvIdx?pct:0;html+='<div class="lv-dist-row"><span class="lv-dist-label">'+lv.name+'</span><div class="lv-dist-bar-wrap"><div class="lv-dist-bar" style="width:'+barPct+'%;background:'+lv.color+';"></div></div><span class="lv-dist-count">'+(i===curLvIdx?pct+'%':i<curLvIdx?'✓':'-')+'</span></div>';});document.getElementById('dash-lv-dist').innerHTML=html;}
+  function renderMissionStat(){var done=0;try{var md=JSON.parse(localStorage.getItem('tuntun_missions')||'{}');done=Object.keys(md).length;}catch(e){}document.getElementById('dash-mission-stat').innerHTML='<div style="display:flex;gap:8px;align-items:center;"><span style="font-size:22px;font-weight:700;color:#1D9E75;">'+done+'</span><span>개 미션 완료</span></div>';}
+  function getBmiLabel(bmi){if(bmi<18.5)return{label:'저체중',color:'#378ADD'};if(bmi<23)return{label:'정상',color:'#1D9E75'};if(bmi<25)return{label:'과체중',color:'#EF9F27'};if(bmi<30)return{label:'1단계비만',color:'#D85A30'};if(bmi<35)return{label:'2단계비만',color:'#E24B4A'};return{label:'3단계비만',color:'#A32D2D'};}
+  function renderBmiTable(){var recs={};try{recs=JSON.parse(localStorage.getItem('tuntun_body_records_v2')||'{}');}catch(e){}var keys=Object.keys(recs).map(Number).sort(function(a,b){return a-b;});var tbody=document.getElementById('dash-bmi-tbody');var empty=document.getElementById('dash-bmi-empty');if(keys.length===0){tbody.innerHTML='';empty.style.display='block';return;}empty.style.display='none';tbody.innerHTML=keys.map(function(m){var r=recs[m],st=getBmiLabel(r.bmi);return'<tr><td>'+m+'월</td><td>'+r.h+'cm</td><td>'+r.w+'kg</td><td style="font-weight:600">'+r.bmi.toFixed(1)+'</td><td style="color:'+st.color+';font-weight:600">'+st.label+'</td></tr>';}).join('');}
+  function clearBmi(){if(!confirm('BMI 기록을 모두 삭제할까요?'))return;localStorage.removeItem('tuntun_body_records_v2');renderBmiTable();renderDashStats();alert('✅ BMI 기록이 삭제됐어요.');}
+  function grantPoint(){var name=document.getElementById('grant-name').value.trim();var reason=document.getElementById('grant-reason').value.trim();var pt=parseInt(document.getElementById('grant-pt').value)||0;if(!name){alert('학생 이름을 입력해 주세요');return;}if(pt<1){alert('포인트를 입력해 주세요');return;}var now=new Date();var time=now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');var item=document.createElement('div');item.className='grant-log-item';item.innerHTML='<span><strong>'+name+'</strong> · '+(reason||'수동지급')+'</span><span style="color:#1D9E75;font-weight:600">+'+pt+'P · '+time+'</span>';var log=document.getElementById('grant-log');log.insertBefore(item,log.firstChild);var history=[];try{history=JSON.parse(localStorage.getItem('tuntun_grant_log')||'[]');}catch(e){}history.unshift({name:name,reason:reason||'수동지급',pt:pt,time:time});if(history.length>50)history=history.slice(0,50);localStorage.setItem('tuntun_grant_log',JSON.stringify(history));document.getElementById('grant-name').value='';document.getElementById('grant-pt').value='5';alert('✅ '+name+' 에게 '+pt+'P 지급 기록 완료!');}
+  function clearGrantLog(){if(!confirm('지급 이력을 초기화할까요?'))return;localStorage.removeItem('tuntun_grant_log');document.getElementById('grant-log').innerHTML='';}
+  function loadMemo(){var memo=localStorage.getItem('tuntun_teacher_memo')||'';document.getElementById('teacher-memo').value=memo;}
+  function saveMemo(){var v=document.getElementById('teacher-memo').value;localStorage.setItem('tuntun_teacher_memo',v);var msg=document.getElementById('memo-msg');msg.textContent='✅ 저장됐어요!';setTimeout(function(){msg.textContent='';},2000);}
+  var CHECKLIST_ITEMS=['출석 확인','포인트 현황 체크','BMI 기록 안내','미션 안내','수업 마무리 정리'];
+  function renderChecklist(){var saved={};try{saved=JSON.parse(localStorage.getItem('tuntun_checklist')||'{}');}catch(e){}var html='';CHECKLIST_ITEMS.forEach(function(item,i){var checked=saved[i]||false;html+='<label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" '+(checked?'checked':'')+' onchange="toggleCheck('+i+',this.checked)" style="width:16px;height:16px;cursor:pointer;accent-color:#1D9E75;"><span style="color:'+(checked?'#aaa':'#333')+';text-decoration:'+(checked?'line-through':'none')+'">'+item+'</span></label>';});document.getElementById('checklist-wrap').innerHTML=html;}
+  function toggleCheck(idx,val){var saved={};try{saved=JSON.parse(localStorage.getItem('tuntun_checklist')||'{}');}catch(e){}saved[idx]=val;localStorage.setItem('tuntun_checklist',JSON.stringify(saved));renderChecklist();}
+  function printDash(){var pts=localStorage.getItem('tuntun_pts')||'0';var lv=parseInt(pts)<=200?'1단계':parseInt(pts)<=600?'2단계':parseInt(pts)<=1200?'3단계':'4단계';var now=new Date();var dateStr=now.getFullYear()+'년 '+(now.getMonth()+1)+'월 '+now.getDate()+'일';var win=window.open('','_blank');win.document.write('<html><head><title>튼튼탐험대 현황 보고서</title><style>body{font-family:sans-serif;padding:24px;color:#333;}h2{color:#1D9E75;}table{border-collapse:collapse;width:100%;}th,td{border:1px solid #ddd;padding:8px;text-align:center;}th{background:#f0f0f0;}</style></head><body>');win.document.write('<h2>📊 튼튼탐험대 교사 현황 보고서</h2><p>출력일: '+dateStr+'</p><hr>');win.document.write('<p><strong>총 포인트:</strong> '+pts+'P &nbsp; <strong>현재 레벨:</strong> '+lv+'</p>');win.document.write('<h3>⚖️ BMI 기록</h3>');var recs={};try{recs=JSON.parse(localStorage.getItem('tuntun_body_records_v2')||'{}');}catch(e){}var keys=Object.keys(recs).map(Number).sort(function(a,b){return a-b;});if(keys.length){win.document.write('<table><tr><th>월</th><th>키</th><th>몸무게</th><th>BMI</th><th>판정</th></tr>');keys.forEach(function(m){var r=recs[m],st=getBmiLabel(r.bmi);win.document.write('<tr><td>'+m+'월</td><td>'+r.h+'cm</td><td>'+r.w+'kg</td><td>'+r.bmi.toFixed(1)+'</td><td style="color:'+st.color+'">'+st.label+'</td></tr>');});win.document.write('</table>');}else{win.document.write('<p>기록 없음</p>');}var memo=localStorage.getItem('tuntun_teacher_memo')||'';if(memo){win.document.write('<h3>📝 교사 메모</h3><pre style="background:#f9f9f9;padding:12px;border-radius:8px;">'+memo+'</pre>');}win.document.write('</body></html>');win.document.close();win.print();}
+  function resetAll(){if(!confirm('정말로 모든 데이터를 초기화할까요?'))return;['tuntun_pts','tuntun_body_records_v2','tuntun_missions','tuntun_grant_log','tuntun_checklist'].forEach(function(k){localStorage.removeItem(k);});alert('✅ 초기화 완료! 페이지를 새로고침해요.');location.reload();}
 </script>
 </body>
 </html>
