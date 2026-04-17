@@ -258,6 +258,65 @@
 
     .page-out{animation:pageOut 0.4s ease forwards!important;}
     @keyframes pageOut{to{opacity:0;transform:translateY(-14px);}}
+
+    /* ── 관리자 버튼 ── */
+    .admin-float-btn{
+      position:fixed;top:14px;right:14px;z-index:50;
+      background:rgba(40,40,40,0.85);backdrop-filter:blur(8px);
+      color:rgba(200,210,220,0.9);border:1px solid rgba(255,255,255,0.15);
+      border-radius:20px;padding:6px 14px;font-family:var(--main-font);
+      font-size:12px;cursor:pointer;transition:background 0.15s;
+    }
+    .admin-float-btn:active{transform:scale(0.95);}
+
+    /* ── 비밀번호 모달 ── */
+    .admin-modal-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1000;align-items:center;justify-content:center;}
+    .admin-modal-wrap.open{display:flex;}
+    .admin-modal-box{background:#fff;border-radius:20px;padding:28px 24px 22px;width:280px;text-align:center;}
+    .admin-modal-icon{font-size:36px;margin-bottom:8px;}
+    .admin-modal-title{font-size:17px;font-weight:700;color:#1a1a1a;margin-bottom:4px;font-family:var(--main-font);}
+    .admin-modal-sub{font-size:12px;color:#888;margin-bottom:14px;font-family:var(--main-font);}
+    .admin-modal-input{width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:16px;text-align:center;color:#1a1a1a;margin-bottom:6px;outline:none;}
+    .admin-modal-input:focus{border-color:#1D9E75;}
+    .admin-modal-err{font-size:12px;color:#E24B4A;min-height:18px;margin-bottom:10px;font-family:var(--main-font);}
+    .admin-modal-btns{display:flex;gap:8px;}
+    .admin-modal-cancel{flex:1;padding:10px;border:1.5px solid #e0e0e0;border-radius:10px;background:#f5f5f5;color:#666;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--main-font);}
+    .admin-modal-confirm{flex:1;padding:10px;border:none;border-radius:10px;background:#1D9E75;color:white;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--main-font);}
+
+    /* ── 교사 대시보드 패널 ── */
+    .dash-panel{display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,0.5);align-items:flex-end;justify-content:center;}
+    .dash-panel.open{display:flex;}
+    .dash-inner{
+      width:100%;max-width:430px;max-height:90vh;
+      background:#fff;border-radius:24px 24px 0 0;
+      overflow-y:auto;padding:20px 18px 40px;
+    }
+    .dash-handle{width:36px;height:4px;background:#e0e0e0;border-radius:2px;margin:0 auto 16px;}
+    .dash-title{font-family:var(--main-font);font-size:18px;font-weight:700;color:#1a1a1a;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+    .dash-sec-title{font-family:var(--main-font);font-size:13px;font-weight:700;color:#1a1a1a;margin:16px 0 10px;display:flex;align-items:center;gap:5px;}
+
+    /* 통계 카드 */
+    .dash-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px;}
+    .dash-stat{background:#f9f9f9;border-radius:10px;padding:12px 6px;text-align:center;border:0.5px solid #e8e8e8;}
+    .ds-num{font-size:22px;font-weight:700;color:#1D9E75;font-family:var(--main-font);}
+    .ds-label{font-size:10px;color:#888;margin-top:3px;font-family:var(--main-font);}
+
+    /* BMI 기록 테이블 */
+    .bmi-table{width:100%;border-collapse:collapse;font-family:var(--main-font);font-size:12px;}
+    .bmi-table th{background:#f0f0f0;padding:7px 6px;text-align:center;color:#555;font-weight:600;border-bottom:1px solid #e0e0e0;}
+    .bmi-table td{padding:7px 6px;text-align:center;border-bottom:0.5px solid #f0f0f0;color:#333;}
+    .bmi-table tr:last-child td{border-bottom:none;}
+
+    /* 포인트 지급 */
+    .dash-grant{display:flex;flex-direction:column;gap:8px;}
+    .dash-input{width:100%;padding:9px 12px;border:0.5px solid #e0e0e0;border-radius:8px;font-size:13px;color:#1a1a1a;background:#fff;font-family:var(--main-font);outline:none;}
+    .dash-grant-row{display:flex;gap:8px;}
+    .dash-grant-btn{padding:9px 16px;background:#1D9E75;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:var(--main-font);}
+    .grant-log{font-size:12px;color:#555;max-height:100px;overflow-y:auto;margin-top:6px;font-family:var(--main-font);}
+    .grant-log-item{padding:5px 0;border-bottom:0.5px solid #f0f0f0;display:flex;justify-content:space-between;}
+
+    /* 닫기 버튼 */
+    .dash-close-btn{width:100%;padding:12px;background:#2C2C2A;color:#D3D1C7;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--main-font);margin-top:16px;}
   </style>
 </head>
 <body>
@@ -266,6 +325,82 @@
   <canvas id="star-canvas"></canvas>
   <div class="shoot sh1"></div>
   <div class="shoot sh2"></div>
+
+  <!-- 관리자 버튼 -->
+  <button class="admin-float-btn" onclick="openAdminLogin()">🔐 교사</button>
+
+  <!-- 비밀번호 모달 -->
+  <div class="admin-modal-wrap" id="admin-modal">
+    <div class="admin-modal-box">
+      <div class="admin-modal-icon">🔐</div>
+      <div class="admin-modal-title">교사 대시보드</div>
+      <div class="admin-modal-sub">비밀번호를 입력해 주세요</div>
+      <input class="admin-modal-input" id="admin-pw" type="password" placeholder="비밀번호"
+        onkeydown="if(event.key==='Enter')checkAdmin()"/>
+      <div class="admin-modal-err" id="admin-err"></div>
+      <div class="admin-modal-btns">
+        <button class="admin-modal-cancel" onclick="closeAdminLogin()">취소</button>
+        <button class="admin-modal-confirm" onclick="checkAdmin()">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 교사 대시보드 패널 -->
+  <div class="dash-panel" id="dash-panel">
+    <div class="dash-inner">
+      <div class="dash-handle"></div>
+      <div class="dash-title">📊 교사 대시보드</div>
+
+      <!-- 통계 -->
+      <div class="dash-sec-title">📈 현황</div>
+      <div class="dash-stats">
+        <div class="dash-stat">
+          <div class="ds-num" id="ds-total">0</div>
+          <div class="ds-label">전체 포인트</div>
+        </div>
+        <div class="dash-stat">
+          <div class="ds-num" id="ds-records">0</div>
+          <div class="ds-label">BMI 기록 수</div>
+        </div>
+        <div class="dash-stat">
+          <div class="ds-num" id="ds-level">-</div>
+          <div class="ds-label">현재 레벨</div>
+        </div>
+      </div>
+
+      <!-- BMI 누적 기록 -->
+      <div class="dash-sec-title">⚖️ BMI 누적 기록</div>
+      <div id="dash-bmi-wrap">
+        <table class="bmi-table">
+          <thead><tr><th>월</th><th>키</th><th>몸무게</th><th>BMI</th><th>판정</th></tr></thead>
+          <tbody id="dash-bmi-tbody"></tbody>
+        </table>
+        <div id="dash-bmi-empty" style="text-align:center;color:#aaa;font-size:12px;padding:14px;font-family:var(--main-font);">아직 기록이 없어요</div>
+      </div>
+
+      <!-- 포인트 수동 지급 -->
+      <div class="dash-sec-title">🎁 포인트 수동 지급</div>
+      <div class="dash-grant">
+        <input class="dash-input" id="grant-name" placeholder="학생 이름"/>
+        <div class="dash-grant-row">
+          <input class="dash-input" id="grant-reason" placeholder="사유 (예: 미션 추가 완료)" style="flex:2;"/>
+          <input class="dash-input" id="grant-pt" type="number" value="5" style="flex:1;text-align:center;"/>
+          <button class="dash-grant-btn" onclick="grantPoint()">지급</button>
+        </div>
+      </div>
+      <div class="grant-log" id="grant-log"></div>
+
+      <!-- 비밀번호 변경 -->
+      <div class="dash-sec-title">🔑 비밀번호 변경</div>
+      <div style="display:flex;gap:8px;">
+        <input class="dash-input" id="new-pw" type="password" placeholder="새 비밀번호" style="flex:1;"/>
+        <button class="dash-grant-btn" onclick="changePw()" style="background:#378ADD;">변경</button>
+      </div>
+      <div id="pw-msg" style="font-size:12px;color:#1D9E75;margin-top:6px;font-family:var(--main-font);min-height:18px;"></div>
+
+      <button class="dash-close-btn" onclick="closeDash()">✕ 닫기</button>
+    </div>
+  </div>
 
   <!-- 달 표면 (씬에 fixed) -->
   <svg class="moon-surface" viewBox="0 0 800 320" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax meet">
@@ -308,7 +443,7 @@
 
     <!-- Step 배지 -->
     <div style="text-align:center;margin-top:2vh;margin-bottom:1.5vh;">
-      <span style="display:inline-block;font-family:var(--main-font);font-size:13px;color:#FFD700;background:rgba(255,215,0,0.12);border:1px solid rgba(255,215,0,0.35);padding:5px 18px;border-radius:100px;letter-spacing:2px;">✦ Step 1. 신청서 &amp; 레벨 확인 ✦</span>
+      <span style="display:inline-block;font-family:var(--main-font);font-size:13px;color:#fff;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.3);padding:5px 22px;border-radius:100px;letter-spacing:3px;">Step 1</span>
     </div>
 
     <!-- ① 레벨 박스 -->
@@ -426,6 +561,87 @@ renderLevel();
 function goPrev()   {document.querySelector('.scene').classList.add('page-out');setTimeout(function(){window.location.href='levelup.html';},400);}
 function goMission(){document.querySelector('.scene').classList.add('page-out');setTimeout(function(){window.location.href='page4.html'; },400);}
 function goNext()   {document.querySelector('.scene').classList.add('page-out');setTimeout(function(){window.location.href='page4.html'; },400);}
+
+/* ── 관리자 ── */
+var ADMIN_PW_KEY = 'tuntun_admin_pw';
+function getAdminPw(){ return localStorage.getItem(ADMIN_PW_KEY) || '1234'; }
+
+function openAdminLogin(){
+  document.getElementById('admin-modal').classList.add('open');
+  document.getElementById('admin-pw').value='';
+  document.getElementById('admin-err').textContent='';
+  setTimeout(function(){document.getElementById('admin-pw').focus();},100);
+}
+function closeAdminLogin(){ document.getElementById('admin-modal').classList.remove('open'); }
+function checkAdmin(){
+  var pw=document.getElementById('admin-pw').value;
+  if(pw===getAdminPw()){ closeAdminLogin(); openDash(); }
+  else{ document.getElementById('admin-err').textContent='❌ 비밀번호가 틀렸어요'; document.getElementById('admin-pw').value=''; document.getElementById('admin-pw').focus(); }
+}
+function changePw(){
+  var v=document.getElementById('new-pw').value.trim();
+  if(!v){ document.getElementById('pw-msg').textContent='비밀번호를 입력해 주세요'; return; }
+  localStorage.setItem(ADMIN_PW_KEY, v);
+  document.getElementById('pw-msg').textContent='✅ 변경 완료!';
+  document.getElementById('new-pw').value='';
+}
+
+function openDash(){
+  document.getElementById('dash-panel').classList.add('open');
+  renderDashStats();
+  renderBmiTable();
+}
+function closeDash(){ document.getElementById('dash-panel').classList.remove('open'); }
+
+function renderDashStats(){
+  var pts=parseInt(localStorage.getItem('tuntun_pts')||'0');
+  var recs={}; try{ recs=JSON.parse(localStorage.getItem('tuntun_body_records_v2')||'{}'); }catch(e){}
+  var recCount=Object.keys(recs).length;
+  var lv=pts<=200?'1단계':pts<=600?'2단계':pts<=1200?'3단계':'4단계';
+  document.getElementById('ds-total').textContent=pts+'P';
+  document.getElementById('ds-records').textContent=recCount+'건';
+  document.getElementById('ds-level').textContent=lv;
+}
+
+function getBmiLabel(bmi){
+  if(bmi<18.5)return{label:'저체중',color:'#378ADD'};
+  if(bmi<23)  return{label:'정상',  color:'#1D9E75'};
+  if(bmi<25)  return{label:'과체중', color:'#EF9F27'};
+  if(bmi<30)  return{label:'1단계비만',color:'#D85A30'};
+  if(bmi<35)  return{label:'2단계비만',color:'#E24B4A'};
+  return             {label:'3단계비만',color:'#A32D2D'};
+}
+
+function renderBmiTable(){
+  var recs={}; try{ recs=JSON.parse(localStorage.getItem('tuntun_body_records_v2')||'{}'); }catch(e){}
+  var keys=Object.keys(recs).map(Number).sort(function(a,b){return a-b;});
+  var tbody=document.getElementById('dash-bmi-tbody');
+  var empty=document.getElementById('dash-bmi-empty');
+  if(keys.length===0){ tbody.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  tbody.innerHTML=keys.map(function(m){
+    var r=recs[m], st=getBmiLabel(r.bmi);
+    return '<tr><td>'+m+'월</td><td>'+r.h+'cm</td><td>'+r.w+'kg</td><td style="font-weight:600">'+r.bmi.toFixed(1)+'</td><td style="color:'+st.color+';font-weight:600">'+st.label+'</td></tr>';
+  }).join('');
+}
+
+function grantPoint(){
+  var name=document.getElementById('grant-name').value.trim();
+  var reason=document.getElementById('grant-reason').value.trim();
+  var pt=parseInt(document.getElementById('grant-pt').value)||0;
+  if(!name){alert('학생 이름을 입력해 주세요');return;}
+  if(pt<1){alert('포인트를 입력해 주세요');return;}
+  var now=new Date();
+  var time=now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
+  var item=document.createElement('div');
+  item.className='grant-log-item';
+  item.innerHTML='<span><strong>'+name+'</strong> · '+(reason||'수동지급')+'</span><span style="color:#1D9E75;font-weight:600">+'+pt+'P · '+time+'</span>';
+  var log=document.getElementById('grant-log');
+  log.insertBefore(item,log.firstChild);
+  document.getElementById('grant-name').value='';
+  document.getElementById('grant-pt').value='5';
+  alert('✅ '+name+' 에게 '+pt+'P 지급 기록 완료!');
+}
 
 var lt=0;
 document.addEventListener('touchend',function(e){var n=Date.now();if(n-lt<300)e.preventDefault();lt=n;},{passive:false});
