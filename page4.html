@@ -333,20 +333,54 @@
     <div class="page-header">
       <div class="header-badge" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.3);color:#fff;letter-spacing:3px;">Step 2</div>
       <div class="page-title">오늘의 미션 🚀</div>
-      <div class="page-sub">미션을 완료하면 탐험 포인트가 쌓여요!</div>
     </div>
 
     <!-- 포인트 안내 -->
     <div class="point-banner">
       <div class="point-banner-icon">⭐</div>
       <div class="point-banner-text">
-        미션 완료할수록 포인트가 쌓여요!<br>
+        운동 인증샷 올린 사람만 포인트 모을 수 있어요!<br>
         <strong>포인트 = 레벨업 = 깜짝 선물 🎁</strong>
       </div>
     </div>
 
+    <!-- 오늘 획득 포인트 + 패들렛 인증 (맨 위) -->
+    <div class="total-pts" style="margin-top:2vh;">
+      <div class="total-pts-label">⭐ 오늘 획득 포인트</div>
+      <span class="total-pts-num" id="today-pts">0</span><span class="total-pts-p">P</span>
+    </div>
+
+    <div class="padlet-card">
+      <div class="padlet-card-top">
+        <div class="padlet-icon">🍀</div>
+        <div class="padlet-info">
+          <div class="padlet-title">운동 미션 인증</div>
+          <div class="padlet-sub">매일 저녁 운동 후 Padlet에 인증해요!</div>
+        </div>
+      </div>
+      <a class="padlet-btn"
+         href="https://padlet.com/a01067752602/padlet-il6qwpw58h6dyssw"
+         target="_blank">
+        📌 운동 인증하러 가기 →
+      </a>
+    </div>
+
     <!-- 미션 목록 -->
     <div class="mission-list">
+
+      <div class="mission-item" id="m3">
+        <div class="mi-icon">🚶</div>
+        <div class="mi-text">
+          <div class="mi-title">30분 이상의 운동</div>
+        </div>
+        <div class="mi-right">
+          <div class="mi-pt">+20P</div>
+          <div class="mi-btn-row">
+            <button class="m-btn" onclick="doMission('m3',20)">완료!</button>
+            <button class="c-btn" id="c-m3" onclick="cancelMission('m3',20)">취소</button>
+          </div>
+        </div>
+      </div>
 
       <div class="mission-item" id="m1">
         <div class="mi-icon">💧</div>
@@ -374,21 +408,6 @@
           <div class="mi-btn-row">
             <button class="m-btn" onclick="doMission('m2',5)">완료!</button>
             <button class="c-btn" id="c-m2" onclick="cancelMission('m2',5)">취소</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="mission-item" id="m3">
-        <div class="mi-icon">🚶</div>
-        <div class="mi-text">
-          <div class="mi-title">30분 이상 걷기 또는 운동</div>
-          <div class="mi-sub">신체 활동 실천</div>
-        </div>
-        <div class="mi-right">
-          <div class="mi-pt">+20P</div>
-          <div class="mi-btn-row">
-            <button class="m-btn" onclick="doMission('m3',20)">완료!</button>
-            <button class="c-btn" id="c-m3" onclick="cancelMission('m3',20)">취소</button>
           </div>
         </div>
       </div>
@@ -424,28 +443,6 @@
       </div>
 
     </div><!-- /.mission-list -->
-
-    <!-- 총 포인트 -->
-    <div class="total-pts">
-      <div class="total-pts-label">⭐ 오늘 획득 포인트</div>
-      <span class="total-pts-num" id="today-pts">0</span><span class="total-pts-p">P</span>
-    </div>
-
-    <!-- Padlet 운동 인증 -->
-    <div class="padlet-card">
-      <div class="padlet-card-top">
-        <div class="padlet-icon">🍀</div>
-        <div class="padlet-info">
-          <div class="padlet-title">운동 미션 인증</div>
-          <div class="padlet-sub">매일 저녁 운동 후 Padlet에 인증해요!</div>
-        </div>
-      </div>
-      <a class="padlet-btn"
-         href="https://padlet.com/a01067752602/padlet-il6qwpw58h6dyssw"
-         target="_blank">
-        📌 운동 인증하러 가기 →
-      </a>
-    </div>
 
   </div><!-- /.content -->
 

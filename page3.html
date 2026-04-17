@@ -55,7 +55,7 @@
 
     /* ── 1. 레벨 박스 ── */
     .level-box {
-      margin-top: 3vh;
+      margin-top: 1vh;
       background: rgba(255,255,255,0.07);
       border: 1px solid rgba(200,220,255,0.22);
       border-radius: 16px; padding: 10px 14px;
@@ -104,11 +104,11 @@
 
     /* ── 위치 (스케치 기준) ── */
     /* 오른쪽 중상단 — 오늘의 미션 */
-    .pos-mission { top:2%;  right:0%; }
+    .pos-mission { top:5%;  right:10%; }
     /* 왼쪽 중단 — 신청서 */
-    .pos-apply   { top:42%; left:2%; }
-    /* 두 행성 사이 — 파란 장식 (신청서보다 아래) */
-    .pos-deco-mid { top:78%; left:50%; transform:translateX(-50%); }
+    .pos-apply   { top:38%; left:10%; }
+    /* 달 위에 떠있는 파란 장식 */
+    .pos-deco-mid { top:82%; left:50%; transform:translateX(-50%); }
 
     /* ── 파스텔 행성 색상 ── */
     /* 미션 — 민트 */
@@ -178,7 +178,7 @@
       left: 50%;
       transform: translateX(-50%);
       width: 160vw;
-      height: 32vh;
+      height: 8vh;
       z-index: 2; pointer-events: none;
     }
 
@@ -186,44 +186,46 @@
     .bottom-zone {
       position: relative;
       width: 100%;
-      height: 32vh;
+      height: 8vh;
       flex-shrink: 0;
     }
 
     /* 대박선물 박스 — 오른쪽 */
     .gift-box {
-      position: absolute;
-      right: 0; top: 10%;
-      background: rgba(255,200,60,0.18);
-      border: 2px solid rgba(255,210,80,0.5);
-      border-radius: 14px;
-      padding: 12px 18px;
+      position: fixed;
+      right: 16px; bottom: 36px;
+      background: linear-gradient(135deg, #FF4FD8 0%, #FF6B35 50%, #FFD700 100%);
+      border: 3px solid rgba(255,255,255,0.5);
+      border-radius: 18px;
+      padding: 16px 22px;
       display: flex; flex-direction: column;
-      align-items: center; gap: 4px;
+      align-items: center; gap: 5px;
       cursor: pointer;
-      transition: transform 0.15s;
-      backdrop-filter: blur(8px);
       z-index: 10;
-      animation: giftPulse 2s ease-in-out infinite;
+      animation: giftBounce 1.4s cubic-bezier(0.36,0.07,0.19,0.97) infinite;
+      box-shadow: 0 0 24px rgba(255,79,216,0.7), 0 0 48px rgba(255,107,53,0.4), 0 6px 20px rgba(0,0,0,0.4);
     }
-    .gift-box:active { transform: scale(0.95); }
-    @keyframes giftPulse{0%,100%{box-shadow:0 0 0 rgba(255,210,80,0);}50%{box-shadow:0 0 16px rgba(255,210,80,0.4);}}
-    .gift-icon-big { font-size:30px; animation:wiggle 2s ease-in-out infinite; display:inline-block; }
-    @keyframes wiggle{0%,100%{transform:rotate(-6deg);}50%{transform:rotate(6deg);}}
+    .gift-box:active { transform: scale(0.93); }
+    @keyframes giftBounce{
+      0%,100%{transform:translateY(0) rotate(-2deg);box-shadow:0 0 24px rgba(255,79,216,0.7),0 0 48px rgba(255,107,53,0.4),0 6px 20px rgba(0,0,0,0.4);}
+      30%{transform:translateY(-12px) rotate(2deg);box-shadow:0 0 40px rgba(255,79,216,0.9),0 0 70px rgba(255,215,0,0.5),0 14px 30px rgba(0,0,0,0.3);}
+      60%{transform:translateY(-6px) rotate(-1deg);}
+    }
+    .gift-icon-big { font-size:40px; display:inline-block; filter:drop-shadow(0 2px 6px rgba(0,0,0,0.3)); }
     .gift-title {
       font-family: var(--title-font);
-      font-size: 16px; color: #1a1a1a;
-      text-shadow: none;
+      font-size: 19px; color: #fff;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.4);
       white-space: nowrap;
     }
     .gift-sub {
       font-family: var(--main-font);
-      font-size: 11px; color: #333;
-      text-shadow: none;
+      font-size: 12px; color: rgba(255,255,255,0.9);
+      text-shadow: 0 1px 4px rgba(0,0,0,0.3);
       white-space: nowrap;
     }
-    .gift-arrow { font-size:16px; animation:bDown 1s ease-in-out infinite; }
-    @keyframes bDown{0%,100%{transform:translateY(0);}50%{transform:translateY(3px);}}
+    .gift-arrow { font-size:20px; animation:bDown 0.8s ease-in-out infinite; }
+    @keyframes bDown{0%,100%{transform:translateY(0);}50%{transform:translateY(4px);}}
 
     /* 달 위 텍스트 */
     .moon-label {
@@ -234,11 +236,12 @@
       z-index: 10;
     }
 
-    /* ── 네비 — 달 안쪽 하단 ── */
+    /* ── 네비 — 하단 고정 ── */
     .nav-row {
-      position: absolute;
+      position: fixed;
       bottom: max(10px, env(safe-area-inset-bottom));
-      left: 0; right: 0;
+      left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 430px;
       display: flex; gap: 12px;
       padding: 0 16px;
       z-index: 15;
@@ -317,6 +320,28 @@
 
     /* 닫기 버튼 */
     .dash-close-btn{width:100%;padding:12px;background:#2C2C2A;color:#D3D1C7;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--main-font);margin-top:16px;}
+
+    /* ── 탭 ── */
+    .dash-tabs{display:flex;gap:4px;margin-bottom:14px;background:#f5f5f5;padding:4px;border-radius:12px;}
+    .dash-tab{flex:1;padding:8px 4px;border:none;background:transparent;border-radius:9px;font-family:var(--main-font);font-size:12px;font-weight:600;color:#888;cursor:pointer;transition:all 0.2s;}
+    .dash-tab.active{background:#fff;color:#1D9E75;box-shadow:0 1px 6px rgba(0,0,0,0.1);}
+    .dash-tab-panel{display:none;}
+    .dash-tab-panel.active{display:block;}
+
+    /* 레벨 분포 바 */
+    .lv-dist-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+    .lv-dist-label{font-family:var(--main-font);font-size:11px;color:#555;width:54px;flex-shrink:0;}
+    .lv-dist-bar-wrap{flex:1;background:#f0f0f0;border-radius:6px;height:14px;overflow:hidden;}
+    .lv-dist-bar{height:100%;border-radius:6px;transition:width 0.5s ease;}
+    .lv-dist-count{font-family:var(--main-font);font-size:11px;color:#888;width:20px;text-align:right;flex-shrink:0;}
+
+    /* 메모 */
+    .dash-memo{width:100%;min-height:80px;padding:10px 12px;border:0.5px solid #e0e0e0;border-radius:8px;font-size:12px;font-family:var(--main-font);color:#333;resize:vertical;outline:none;line-height:1.5;}
+    .dash-memo:focus{border-color:#1D9E75;}
+    .memo-save-btn{padding:7px 14px;background:#1D9E75;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--main-font);}
+    .memo-saved-msg{font-size:11px;color:#1D9E75;font-family:var(--main-font);min-height:16px;}
+    .dash-print-btn{width:100%;padding:10px;background:#378ADD;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--main-font);margin-top:8px;}
+    .dash-notice{background:#FFF9E6;border:1px solid #FFE082;border-radius:8px;padding:10px 12px;font-size:11px;color:#7A5800;font-family:var(--main-font);line-height:1.6;margin-bottom:8px;}
   </style>
 </head>
 <body>
@@ -349,54 +374,99 @@
   <div class="dash-panel" id="dash-panel">
     <div class="dash-inner">
       <div class="dash-handle"></div>
-      <div class="dash-title">📊 교사 대시보드</div>
-
-      <!-- 통계 -->
-      <div class="dash-sec-title">📈 현황</div>
-      <div class="dash-stats">
-        <div class="dash-stat">
-          <div class="ds-num" id="ds-total">0</div>
-          <div class="ds-label">전체 포인트</div>
-        </div>
-        <div class="dash-stat">
-          <div class="ds-num" id="ds-records">0</div>
-          <div class="ds-label">BMI 기록 수</div>
-        </div>
-        <div class="dash-stat">
-          <div class="ds-num" id="ds-level">-</div>
-          <div class="ds-label">현재 레벨</div>
-        </div>
+      <div class="dash-title">📊 교사 대시보드
+        <span style="margin-left:auto;font-size:11px;color:#aaa;font-family:var(--main-font);font-weight:400;" id="dash-datetime"></span>
       </div>
 
-      <!-- BMI 누적 기록 -->
-      <div class="dash-sec-title">⚖️ BMI 누적 기록</div>
-      <div id="dash-bmi-wrap">
+      <!-- 탭 -->
+      <div class="dash-tabs">
+        <button class="dash-tab active" onclick="switchTab('tab-stats')">📈 현황</button>
+        <button class="dash-tab" onclick="switchTab('tab-bmi')">⚖️ BMI</button>
+        <button class="dash-tab" onclick="switchTab('tab-grant')">🎁 지급</button>
+        <button class="dash-tab" onclick="switchTab('tab-memo')">📝 메모</button>
+        <button class="dash-tab" onclick="switchTab('tab-settings')">⚙️ 설정</button>
+      </div>
+
+      <!-- 탭1: 현황 -->
+      <div class="dash-tab-panel active" id="tab-stats">
+        <div class="dash-stats">
+          <div class="dash-stat">
+            <div class="ds-num" id="ds-total">0</div>
+            <div class="ds-label">전체 포인트</div>
+          </div>
+          <div class="dash-stat">
+            <div class="ds-num" id="ds-records">0</div>
+            <div class="ds-label">BMI 기록 수</div>
+          </div>
+          <div class="dash-stat">
+            <div class="ds-num" id="ds-level">-</div>
+            <div class="ds-label">현재 레벨</div>
+          </div>
+        </div>
+
+        <div class="dash-sec-title" style="margin-top:14px;">🏆 레벨 진행도</div>
+        <div id="dash-lv-dist"></div>
+
+        <div class="dash-sec-title" style="margin-top:14px;">✅ 미션 완료 현황</div>
+        <div id="dash-mission-stat" style="font-family:var(--main-font);font-size:12px;color:#555;"></div>
+
+        <button class="dash-print-btn" onclick="printDash()">🖨️ 현황 인쇄 / PDF 저장</button>
+      </div>
+
+      <!-- 탭2: BMI 기록 -->
+      <div class="dash-tab-panel" id="tab-bmi">
+        <div class="dash-notice">💡 학생의 BMI 기록은 기기에 저장돼요. 여러 학생이 같은 기기를 쓸 경우 기록이 섞일 수 있어요.</div>
         <table class="bmi-table">
           <thead><tr><th>월</th><th>키</th><th>몸무게</th><th>BMI</th><th>판정</th></tr></thead>
           <tbody id="dash-bmi-tbody"></tbody>
         </table>
         <div id="dash-bmi-empty" style="text-align:center;color:#aaa;font-size:12px;padding:14px;font-family:var(--main-font);">아직 기록이 없어요</div>
+        <button class="dash-print-btn" style="background:#EF9F27;margin-top:12px;" onclick="clearBmi()">🗑️ BMI 기록 초기화</button>
       </div>
 
-      <!-- 포인트 수동 지급 -->
-      <div class="dash-sec-title">🎁 포인트 수동 지급</div>
-      <div class="dash-grant">
-        <input class="dash-input" id="grant-name" placeholder="학생 이름"/>
-        <div class="dash-grant-row">
-          <input class="dash-input" id="grant-reason" placeholder="사유 (예: 미션 추가 완료)" style="flex:2;"/>
-          <input class="dash-input" id="grant-pt" type="number" value="5" style="flex:1;text-align:center;"/>
-          <button class="dash-grant-btn" onclick="grantPoint()">지급</button>
+      <!-- 탭3: 포인트 지급 -->
+      <div class="dash-tab-panel" id="tab-grant">
+        <div class="dash-sec-title" style="margin-top:0;">🎁 포인트 수동 지급</div>
+        <div class="dash-grant">
+          <input class="dash-input" id="grant-name" placeholder="학생 이름 (기록용)"/>
+          <div class="dash-grant-row">
+            <input class="dash-input" id="grant-reason" placeholder="사유 (예: 미션 추가)" style="flex:2;"/>
+            <input class="dash-input" id="grant-pt" type="number" value="5" min="1" style="flex:1;text-align:center;"/>
+            <button class="dash-grant-btn" onclick="grantPoint()">지급</button>
+          </div>
         </div>
-      </div>
-      <div class="grant-log" id="grant-log"></div>
 
-      <!-- 비밀번호 변경 -->
-      <div class="dash-sec-title">🔑 비밀번호 변경</div>
-      <div style="display:flex;gap:8px;">
-        <input class="dash-input" id="new-pw" type="password" placeholder="새 비밀번호" style="flex:1;"/>
-        <button class="dash-grant-btn" onclick="changePw()" style="background:#378ADD;">변경</button>
+        <div class="dash-sec-title">📋 지급 이력</div>
+        <div class="grant-log" id="grant-log" style="max-height:160px;"></div>
+        <button class="dash-print-btn" style="background:#888;margin-top:8px;" onclick="clearGrantLog()">🗑️ 이력 초기화</button>
       </div>
-      <div id="pw-msg" style="font-size:12px;color:#1D9E75;margin-top:6px;font-family:var(--main-font);min-height:18px;"></div>
+
+      <!-- 탭4: 교사 메모 -->
+      <div class="dash-tab-panel" id="tab-memo">
+        <div class="dash-sec-title" style="margin-top:0;">📝 수업 메모</div>
+        <textarea class="dash-memo" id="teacher-memo" placeholder="수업 메모, 학생 관찰 내용, 특이사항 등을 자유롭게 적어보세요."></textarea>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+          <button class="memo-save-btn" onclick="saveMemo()">저장</button>
+          <span class="memo-saved-msg" id="memo-msg"></span>
+        </div>
+
+        <div class="dash-sec-title" style="margin-top:16px;">📅 오늘의 수업 체크리스트</div>
+        <div id="checklist-wrap" style="font-family:var(--main-font);font-size:13px;display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+
+      <!-- 탭5: 설정 -->
+      <div class="dash-tab-panel" id="tab-settings">
+        <div class="dash-sec-title" style="margin-top:0;">🔑 비밀번호 변경</div>
+        <div style="display:flex;gap:8px;">
+          <input class="dash-input" id="new-pw" type="password" placeholder="새 비밀번호" style="flex:1;"/>
+          <button class="dash-grant-btn" onclick="changePw()" style="background:#378ADD;">변경</button>
+        </div>
+        <div id="pw-msg" style="font-size:12px;color:#1D9E75;margin-top:6px;font-family:var(--main-font);min-height:18px;"></div>
+
+        <div class="dash-sec-title" style="margin-top:16px;">🗑️ 데이터 관리</div>
+        <button class="dash-print-btn" style="background:#E24B4A;" onclick="resetAll()">⚠️ 전체 데이터 초기화</button>
+        <div style="font-size:10px;color:#aaa;margin-top:6px;font-family:var(--main-font);">포인트·BMI·미션 완료 기록이 모두 삭제돼요. 신중하게 눌러주세요.</div>
+      </div>
 
       <button class="dash-close-btn" onclick="closeDash()">✕ 닫기</button>
     </div>
@@ -440,11 +510,6 @@
 
   <!-- 메인 레이아웃 -->
   <div class="layout">
-
-    <!-- Step 배지 -->
-    <div style="text-align:center;margin-top:2vh;margin-bottom:1.5vh;">
-      <span style="display:inline-block;font-family:var(--main-font);font-size:13px;color:#fff;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.3);padding:5px 22px;border-radius:100px;letter-spacing:3px;">Step 1</span>
-    </div>
 
     <!-- ① 레벨 박스 -->
     <div class="level-box">
@@ -588,10 +653,25 @@ function changePw(){
 
 function openDash(){
   document.getElementById('dash-panel').classList.add('open');
+  // 날짜 표시
+  var now=new Date();
+  document.getElementById('dash-datetime').textContent=
+    now.getFullYear()+'.'+(now.getMonth()+1)+'.'+ now.getDate()+' '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
   renderDashStats();
   renderBmiTable();
+  renderMissionStat();
+  renderLvDist();
+  loadMemo();
+  renderChecklist();
 }
 function closeDash(){ document.getElementById('dash-panel').classList.remove('open'); }
+
+function switchTab(id){
+  document.querySelectorAll('.dash-tab-panel').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.dash-tab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById(id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
 
 function renderDashStats(){
   var pts=parseInt(localStorage.getItem('tuntun_pts')||'0');
@@ -601,6 +681,43 @@ function renderDashStats(){
   document.getElementById('ds-total').textContent=pts+'P';
   document.getElementById('ds-records').textContent=recCount+'건';
   document.getElementById('ds-level').textContent=lv;
+}
+
+function renderLvDist(){
+  var pts=parseInt(localStorage.getItem('tuntun_pts')||'0');
+  var levels=[
+    {name:'1단계 🌱',max:200,color:'#5DCAA5'},
+    {name:'2단계 🧭',max:600,color:'#378ADD'},
+    {name:'3단계 🏅',max:1200,color:'#EF9F27'},
+    {name:'4단계 🦸',max:99999,color:'#D85A30'}
+  ];
+  var curLvIdx=pts<=200?0:pts<=600?1:pts<=1200?2:3;
+  var prev=curLvIdx===0?0:levels[curLvIdx-1].max;
+  var next=levels[curLvIdx].max===99999?prev+500:levels[curLvIdx].max;
+  var pct=curLvIdx===3?100:Math.min(100,Math.round((pts-prev)/(next-prev)*100));
+
+  var html='';
+  levels.forEach(function(lv,i){
+    var barPct = i < curLvIdx ? 100 : i === curLvIdx ? pct : 0;
+    html+='<div class="lv-dist-row">'+
+      '<span class="lv-dist-label">'+lv.name+'</span>'+
+      '<div class="lv-dist-bar-wrap"><div class="lv-dist-bar" style="width:'+barPct+'%;background:'+lv.color+';"></div></div>'+
+      '<span class="lv-dist-count">'+(i===curLvIdx?pct+'%':i<curLvIdx?'✓':'-')+'</span>'+
+    '</div>';
+  });
+  document.getElementById('dash-lv-dist').innerHTML=html;
+}
+
+function renderMissionStat(){
+  var done=0;
+  try{
+    var md=JSON.parse(localStorage.getItem('tuntun_missions')||'{}');
+    done=Object.keys(md).length;
+  }catch(e){}
+  document.getElementById('dash-mission-stat').innerHTML=
+    '<div style="display:flex;gap:8px;align-items:center;">'+
+    '<span style="font-size:22px;font-weight:700;color:#1D9E75;">'+done+'</span>'+
+    '<span>개 미션 완료</span></div>';
 }
 
 function getBmiLabel(bmi){
@@ -625,6 +742,14 @@ function renderBmiTable(){
   }).join('');
 }
 
+function clearBmi(){
+  if(!confirm('BMI 기록을 모두 삭제할까요?')) return;
+  localStorage.removeItem('tuntun_body_records_v2');
+  renderBmiTable();
+  renderDashStats();
+  alert('✅ BMI 기록이 삭제됐어요.');
+}
+
 function grantPoint(){
   var name=document.getElementById('grant-name').value.trim();
   var reason=document.getElementById('grant-reason').value.trim();
@@ -638,9 +763,85 @@ function grantPoint(){
   item.innerHTML='<span><strong>'+name+'</strong> · '+(reason||'수동지급')+'</span><span style="color:#1D9E75;font-weight:600">+'+pt+'P · '+time+'</span>';
   var log=document.getElementById('grant-log');
   log.insertBefore(item,log.firstChild);
+  // 이력 저장
+  var history=[];try{history=JSON.parse(localStorage.getItem('tuntun_grant_log')||'[]');}catch(e){}
+  history.unshift({name:name,reason:reason||'수동지급',pt:pt,time:time});
+  if(history.length>50)history=history.slice(0,50);
+  localStorage.setItem('tuntun_grant_log',JSON.stringify(history));
   document.getElementById('grant-name').value='';
   document.getElementById('grant-pt').value='5';
   alert('✅ '+name+' 에게 '+pt+'P 지급 기록 완료!');
+}
+
+function clearGrantLog(){
+  if(!confirm('지급 이력을 초기화할까요?')) return;
+  localStorage.removeItem('tuntun_grant_log');
+  document.getElementById('grant-log').innerHTML='';
+}
+
+function loadMemo(){
+  var memo=localStorage.getItem('tuntun_teacher_memo')||'';
+  document.getElementById('teacher-memo').value=memo;
+}
+
+function saveMemo(){
+  var v=document.getElementById('teacher-memo').value;
+  localStorage.setItem('tuntun_teacher_memo',v);
+  var msg=document.getElementById('memo-msg');
+  msg.textContent='✅ 저장됐어요!';
+  setTimeout(function(){msg.textContent='';},2000);
+}
+
+var CHECKLIST_ITEMS=['출석 확인','포인트 현황 체크','BMI 기록 안내','미션 안내','수업 마무리 정리'];
+function renderChecklist(){
+  var saved={}; try{saved=JSON.parse(localStorage.getItem('tuntun_checklist')||'{}');}catch(e){}
+  var html='';
+  CHECKLIST_ITEMS.forEach(function(item,i){
+    var checked=saved[i]||false;
+    html+='<label style="display:flex;align-items:center;gap:8px;cursor:pointer;">'+
+      '<input type="checkbox" '+(checked?'checked':'')+' onchange="toggleCheck('+i+',this.checked)" style="width:16px;height:16px;cursor:pointer;accent-color:#1D9E75;">'+
+      '<span style="color:'+(checked?'#aaa':'#333')+';text-decoration:'+(checked?'line-through':'none')+'">'+item+'</span>'+
+    '</label>';
+  });
+  document.getElementById('checklist-wrap').innerHTML=html;
+}
+
+function toggleCheck(idx,val){
+  var saved={}; try{saved=JSON.parse(localStorage.getItem('tuntun_checklist')||'{}');}catch(e){}
+  saved[idx]=val;
+  localStorage.setItem('tuntun_checklist',JSON.stringify(saved));
+  renderChecklist();
+}
+
+function printDash(){
+  var pts=localStorage.getItem('tuntun_pts')||'0';
+  var lv=parseInt(pts)<=200?'1단계':parseInt(pts)<=600?'2단계':parseInt(pts)<=1200?'3단계':'4단계';
+  var now=new Date();
+  var dateStr=now.getFullYear()+'년 '+(now.getMonth()+1)+'월 '+now.getDate()+'일';
+  var win=window.open('','_blank');
+  win.document.write('<html><head><title>튼튼탐험대 현황 보고서</title><style>body{font-family:sans-serif;padding:24px;color:#333;}h2{color:#1D9E75;}table{border-collapse:collapse;width:100%;}th,td{border:1px solid #ddd;padding:8px;text-align:center;}th{background:#f0f0f0;}</style></head><body>');
+  win.document.write('<h2>📊 튼튼탐험대 교사 현황 보고서</h2><p>출력일: '+dateStr+'</p><hr>');
+  win.document.write('<p><strong>총 포인트:</strong> '+pts+'P &nbsp; <strong>현재 레벨:</strong> '+lv+'</p>');
+  win.document.write('<h3>⚖️ BMI 기록</h3>');
+  var recs={}; try{recs=JSON.parse(localStorage.getItem('tuntun_body_records_v2')||'{}');}catch(e){}
+  var keys=Object.keys(recs).map(Number).sort(function(a,b){return a-b;});
+  if(keys.length){
+    win.document.write('<table><tr><th>월</th><th>키</th><th>몸무게</th><th>BMI</th><th>판정</th></tr>');
+    keys.forEach(function(m){var r=recs[m],st=getBmiLabel(r.bmi);win.document.write('<tr><td>'+m+'월</td><td>'+r.h+'cm</td><td>'+r.w+'kg</td><td>'+r.bmi.toFixed(1)+'</td><td style="color:'+st.color+'">'+st.label+'</td></tr>');});
+    win.document.write('</table>');
+  } else { win.document.write('<p>기록 없음</p>'); }
+  var memo=localStorage.getItem('tuntun_teacher_memo')||'';
+  if(memo){ win.document.write('<h3>📝 교사 메모</h3><pre style="background:#f9f9f9;padding:12px;border-radius:8px;">'+memo+'</pre>'); }
+  win.document.write('</body></html>');
+  win.document.close();
+  win.print();
+}
+
+function resetAll(){
+  if(!confirm('정말로 모든 데이터를 초기화할까요? 이 작업은 되돌릴 수 없어요!')) return;
+  ['tuntun_pts','tuntun_body_records_v2','tuntun_missions','tuntun_grant_log','tuntun_checklist'].forEach(function(k){localStorage.removeItem(k);});
+  alert('✅ 초기화 완료! 페이지를 새로고침해요.');
+  location.reload();
 }
 
 var lt=0;
