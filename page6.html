@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>튼튼탐험대 — 보물 포인트 모으는 법</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+  <style>
+    @font-face {
+      font-family: 'KyoboHand';
+      src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/KyoboHand.woff') format('woff');
+      font-weight: normal; font-style: normal;
+    }
+    :root { --title-font:'KyoboHand',sans-serif; --main-font:'Jua',sans-serif; }
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+    html,body{width:100%;min-height:100%;font-family:var(--main-font);background:#04061A;overflow-x:hidden;}
+    .scene{min-height:100vh;position:relative;display:flex;flex-direction:column;align-items:center;}
+    #star-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
+    .shoot{position:fixed;width:80px;height:1.5px;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,0.8));border-radius:2px;left:-90px;z-index:1;pointer-events:none;}
+    .sh1{top:4%;animation:sh 7s linear 1s infinite;}
+    .sh2{top:11%;animation:sh 10s linear 5s infinite;}
+    @keyframes sh{from{transform:translateX(0) rotate(18deg);opacity:1;}to{transform:translateX(120vw) rotate(18deg);opacity:0;}}
+
+    .content{position:relative;z-index:10;width:100%;max-width:430px;padding:0 18px 120px;display:flex;flex-direction:column;align-items:center;}
+
+    .step-title-wrap{margin-top:3.5vh;width:100%;text-align:center;animation:fadeDown 0.5s ease both;}
+    @keyframes fadeDown{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+    .step-label{display:block;font-family:var(--main-font);font-size:15px;color:rgba(255,255,255,0.65);margin-bottom:5px;letter-spacing:1px;}
+    .step-main-title{font-family:var(--title-font);font-size:clamp(22px,5.8vw,28px);line-height:1.3;background:linear-gradient(135deg,#FFE066,#FFB347,#FFE066);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 2px 10px rgba(255,200,0,0.35));animation:titleShimmer 3s linear infinite;background-size:200% auto;}
+    @keyframes titleShimmer{0%{background-position:0%}100%{background-position:200%}}
+    @keyframes treasureBounce{0%,100%{transform:translateY(0) rotate(-6deg);}50%{transform:translateY(-6px) rotate(6deg);}}
+
+    .card-wrap{margin-top:3vh;width:100%;display:flex;flex-direction:column;gap:20px;animation:fadeUp 0.5s ease 0.1s both;}
+
+    /* ═══ 퀴즈 카드 ═══ */
+    .card-quiz{width:100%;border-radius:22px;border:2px solid rgba(130,180,255,0.35);background:linear-gradient(135deg,rgba(30,50,110,0.88) 0%,rgba(15,30,80,0.97) 100%);box-shadow:0 0 32px rgba(80,140,255,0.15),inset 0 1px 0 rgba(255,255,255,0.07);overflow:hidden;}
+
+    .quiz-illust{position:relative;width:100%;height:160px;overflow:hidden;background:linear-gradient(160deg,#0A1A4E 0%,#142060 55%,#1A2A80 100%);}
+    .qm{position:absolute;font-family:var(--title-font);font-weight:900;animation:floatQ 3s ease-in-out infinite;}
+    @keyframes floatQ{0%,100%{transform:translateY(0) rotate(-5deg);}50%{transform:translateY(-8px) rotate(5deg);}}
+    .qm1{font-size:70px;color:rgba(255,220,60,0.9);top:12px;left:14px;text-shadow:0 0 20px rgba(255,200,0,0.5);}
+    .qm2{font-size:42px;color:rgba(120,180,255,0.6);top:6px;right:24px;animation-delay:0.7s;}
+    .qm3{font-size:26px;color:rgba(200,130,255,0.55);bottom:18px;left:48%;animation-delay:1.3s;}
+    .sp{position:absolute;border-radius:50%;animation:sparkle 2s ease-in-out infinite;}
+    @keyframes sparkle{0%,100%{opacity:0.25;transform:scale(0.8);}50%{opacity:1;transform:scale(1.3);}}
+    .sp1{width:8px;height:8px;background:#FFE066;top:16px;right:50px;animation-delay:0.2s;}
+    .sp2{width:5px;height:5px;background:#A0CFFF;bottom:28px;left:76px;animation-delay:0.9s;}
+    .sp3{width:6px;height:6px;background:#E0A0FF;top:45%;right:12px;animation-delay:1.6s;}
+    .sp4{width:7px;height:7px;background:#FFD080;bottom:16px;right:85px;animation-delay:0.5s;}
+    .quiz-chars{position:absolute;bottom:0;left:0;right:0;display:flex;align-items:flex-end;padding:0 12px;gap:6px;}
+
+    .quiz-info{padding:12px 18px 6px;display:flex;align-items:center;justify-content:space-between;}
+    .card-tag-quiz{display:inline-block;background:rgba(100,160,255,0.18);border:1px solid rgba(100,160,255,0.35);color:#92C8FF;font-size:11px;padding:3px 10px;border-radius:100px;margin-bottom:6px;}
+    .quiz-title{font-family:var(--title-font);font-size:clamp(17px,4.5vw,20px);color:#fff;line-height:1.2;}
+    .quiz-sub{font-family:var(--main-font);font-size:12px;color:rgba(180,210,255,0.7);margin-top:3px;line-height:1.5;}
+    .quiz-pt-badge{display:flex;flex-direction:column;align-items:center;background:rgba(255,220,60,0.1);border:1.5px solid rgba(255,220,60,0.3);border-radius:14px;padding:8px 12px;min-width:58px;flex-shrink:0;}
+    .quiz-pt-num{font-family:var(--title-font);font-size:22px;color:#FFD700;line-height:1;}
+    .quiz-pt-unit{font-family:var(--main-font);font-size:10px;color:rgba(255,210,80,0.7);margin-top:2px;}
+
+    /* 저/고학년 버튼 */
+    .quiz-grade-wrap{padding:0 18px 10px;display:flex;gap:10px;}
+    .quiz-grade-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 8px;border-radius:16px;cursor:pointer;transition:transform 0.15s;text-decoration:none;border:2px solid;}
+    .quiz-grade-btn:active{transform:scale(0.95);}
+    .quiz-grade-btn.low{background:rgba(255,200,60,0.1);border-color:rgba(255,200,60,0.35);}
+    .quiz-grade-btn.high{background:rgba(100,160,255,0.1);border-color:rgba(100,160,255,0.35);}
+    .grade-emoji{font-size:26px;line-height:1;}
+    .grade-label{font-family:var(--title-font);font-size:14px;}
+    .grade-label.low{color:#FFD060;}
+    .grade-label.high{color:#92C8FF;}
+    .grade-desc{font-family:var(--main-font);font-size:10px;color:rgba(200,220,255,0.6);text-align:center;line-height:1.4;}
+
+    /* 링크 입력칸 */
+    .quiz-link-section{padding:4px 18px 18px;}
+    .link-label{font-family:var(--main-font);font-size:11px;color:rgba(160,190,255,0.6);margin-bottom:5px;margin-top:8px;display:block;}
+    .link-input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(100,140,255,0.22);border-radius:10px;padding:9px 12px;font-family:var(--main-font);font-size:12px;color:rgba(200,220,255,0.85);outline:none;display:block;}
+    .link-input::placeholder{color:rgba(150,180,255,0.32);}
+    .link-input:focus{border-color:rgba(100,160,255,0.5);background:rgba(255,255,255,0.08);}
+
+    /* ═══ 챌린지 카드 ═══ */
+    .card-challenge{width:100%;border-radius:22px;border:2px solid rgba(120,230,160,0.3);background:linear-gradient(135deg,rgba(10,50,30,0.92) 0%,rgba(5,35,20,0.97) 100%);box-shadow:0 0 32px rgba(30,200,100,0.12),inset 0 1px 0 rgba(255,255,255,0.06);overflow:hidden;}
+
+    .ch-illust{position:relative;width:100%;height:180px;overflow:hidden;background:linear-gradient(160deg,#051A0E 0%,#0A2E18 55%,#0F3E22 100%);}
+    .csp{position:absolute;border-radius:50%;animation:cSpk 2.2s ease-in-out infinite;}
+    @keyframes cSpk{0%,100%{opacity:0.15;transform:scale(0.7);}50%{opacity:0.9;transform:scale(1.4);}}
+    .csp1{width:10px;height:10px;background:#4AE090;top:12px;left:55px;animation-delay:0.1s;}
+    .csp2{width:7px;height:7px;background:#FFD060;top:38px;left:18px;animation-delay:0.9s;}
+    .csp3{width:8px;height:8px;background:#FF9060;bottom:22px;left:95px;animation-delay:0.4s;}
+    .csp4{width:6px;height:6px;background:#90E0FF;top:20px;right:18px;animation-delay:1.3s;}
+    .csp5{width:9px;height:9px;background:#FFB0E0;bottom:30px;right:50px;animation-delay:0.6s;}
+    .csp6{width:5px;height:5px;background:#FFE040;top:55%;left:50%;animation-delay:1.8s;}
+    .note{position:absolute;font-size:22px;animation:floatNote 2.5s ease-in-out infinite;opacity:0.7;}
+    @keyframes floatNote{0%,100%{transform:translateY(0) rotate(-8deg);}50%{transform:translateY(-10px) rotate(8deg);}}
+    .note1{top:10px;left:18px;color:#7AFFC0;animation-delay:0s;}
+    .note2{top:8px;right:60px;font-size:16px;color:#90E0FF;animation-delay:0.8s;}
+    .note3{bottom:25px;left:38%;font-size:14px;color:#FFD080;animation-delay:1.5s;}
+    .ch-chars{position:absolute;bottom:0;left:0;right:0;display:flex;align-items:flex-end;justify-content:center;padding:0 6px;gap:2px;}
+
+    .ch-info{padding:12px 18px 6px;display:flex;align-items:center;justify-content:space-between;}
+    .card-tag-ch{display:inline-block;background:rgba(40,220,120,0.14);border:1px solid rgba(40,220,120,0.3);color:#5AE0A0;font-size:11px;padding:3px 10px;border-radius:100px;margin-bottom:6px;}
+    .ch-title{font-family:var(--title-font);font-size:clamp(17px,4.5vw,20px);color:#fff;line-height:1.2;}
+    .ch-sub{font-family:var(--main-font);font-size:12px;color:rgba(160,240,200,0.7);margin-top:3px;line-height:1.5;}
+    .ch-pt-badge{display:flex;flex-direction:column;align-items:center;background:rgba(60,220,120,0.1);border:1.5px solid rgba(60,220,120,0.3);border-radius:14px;padding:8px 12px;min-width:58px;flex-shrink:0;}
+    .ch-pt-num{font-family:var(--title-font);font-size:22px;color:#4AE090;line-height:1;}
+    .ch-pt-unit{font-family:var(--main-font);font-size:10px;color:rgba(60,220,120,0.7);margin-top:2px;}
+
+    /* 패들렛 버튼 */
+    .padlet-wrap{padding:4px 18px 18px;}
+    .padlet-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px 16px;background:linear-gradient(135deg,rgba(40,200,120,0.18),rgba(20,160,90,0.25));border:1.5px solid rgba(60,220,130,0.4);border-radius:14px;text-decoration:none;cursor:pointer;transition:transform 0.15s;animation:padletPulse 2s ease-in-out infinite;}
+    @keyframes padletPulse{0%,100%{box-shadow:0 0 0 0 rgba(60,220,120,0.2);}50%{box-shadow:0 0 0 8px rgba(60,220,120,0);}}
+    .padlet-btn:active{transform:scale(0.96);}
+    .padlet-icon-wrap{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#FF6B9D,#FF9A3C);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+    .padlet-text-wrap{display:flex;flex-direction:column;align-items:flex-start;}
+    .padlet-label{font-family:var(--title-font);font-size:15px;color:#5AE0A0;}
+    .padlet-desc{font-family:var(--main-font);font-size:11px;color:rgba(140,220,180,0.7);}
+    .padlet-arrow{font-size:18px;color:rgba(80,220,140,0.6);margin-left:auto;}
+
+    /* ── 우주인 ── */
+    .divider{margin-top:2.5vh;width:100%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);}
+    .tired-section{margin-top:2.5vh;width:100%;display:flex;flex-direction:column;align-items:center;animation:fadeUp 0.5s ease 0.3s both;}
+    .tired-bubble{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:14px 20px;text-align:center;position:relative;margin-bottom:10px;}
+    .tired-bubble::after{content:'';position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top:10px solid rgba(255,255,255,0.12);}
+    .tired-text{font-family:var(--main-font);font-size:14px;color:rgba(220,230,255,0.9);line-height:1.8;}
+    .tired-text .t-em{color:#A8D8FF;font-weight:bold;}
+    .lottie-wrap{width:260px;height:260px;display:flex;align-items:center;justify-content:center;}
+    .next-arrow-wrap{margin-top:0.5vh;display:flex;flex-direction:column;align-items:center;gap:8px;}
+    .next-arrow-btn{display:flex;align-items:center;gap:6px;background:rgba(100,140,255,0.18);border:1.5px solid rgba(100,140,255,0.35);border-radius:100px;padding:10px 22px;font-family:var(--main-font);font-size:14px;color:#B0D0FF;cursor:pointer;transition:transform 0.15s;animation:arrowPulse 1.8s ease-in-out infinite;}
+    @keyframes arrowPulse{0%,100%{box-shadow:0 0 0 0 rgba(100,140,255,0.3);}50%{box-shadow:0 0 0 8px rgba(100,140,255,0);}}
+    .next-arrow-btn:active{transform:scale(0.95);}
+    .arrow-icon{font-size:18px;animation:bounce 1.2s ease-in-out infinite;display:inline-block;}
+    @keyframes bounce{0%,100%{transform:translateX(0);}50%{transform:translateX(5px);}}
+
+    .nav-bar{position:fixed;bottom:0;left:0;right:0;z-index:40;display:flex;justify-content:center;gap:12px;padding:12px 20px 20px;background:linear-gradient(to top,rgba(4,6,26,0.97) 60%,transparent);}
+    .nav-btn{flex:1;max-width:160px;display:flex;align-items:center;justify-content:center;gap:5px;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.18);border-radius:100px;padding:11px 0;font-family:var(--main-font);font-size:14px;color:#fff;cursor:pointer;transition:transform 0.15s;}
+    .nav-btn:active{transform:scale(0.95);}
+    .nav-btn.prev{background:rgba(255,255,255,0.08);}
+    .nav-btn.next{background:rgba(80,120,220,0.35);border-color:rgba(100,150,255,0.4);}
+    .page-out{animation:pageOut 0.4s ease forwards!important;}
+    @keyframes pageOut{to{opacity:0;transform:translateY(-14px);}}
+  </style>
+</head>
+<body>
+<div class="scene">
+  <canvas id="star-canvas"></canvas>
+  <div class="shoot sh1"></div>
+  <div class="shoot sh2"></div>
+
+  <div class="content">
+
+    <div class="step-title-wrap">
+      <span class="step-label">Step 5.</span>
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
+        <svg width="38" height="38" viewBox="0 0 38 38" fill="none" style="animation:treasureBounce 2s ease-in-out infinite;flex-shrink:0;">
+          <!-- 보물상자 몸통 -->
+          <rect x="4" y="16" width="30" height="18" rx="3" fill="#C47C10"/>
+          <rect x="4" y="16" width="30" height="18" rx="3" fill="none" stroke="#8B5500" stroke-width="1.5"/>
+          <!-- 뚜껑 -->
+          <path d="M4 18 Q4 8 19 8 Q34 8 34 18 Z" fill="#D4900E"/>
+          <path d="M4 18 Q4 8 19 8 Q34 8 34 18 Z" fill="none" stroke="#8B5500" stroke-width="1.5"/>
+          <!-- 황금 테두리 띠 -->
+          <rect x="4" y="20" width="30" height="5" fill="#FFD700"/>
+          <rect x="14" y="8" width="10" height="10" rx="1" fill="#FFD700"/>
+          <!-- 자물쇠 -->
+          <rect x="15" y="21" width="8" height="6" rx="2" fill="#C47C10" stroke="#8B5500" stroke-width="1"/>
+          <circle cx="19" cy="22" r="2.5" fill="none" stroke="#8B5500" stroke-width="1.5"/>
+          <!-- 금화 넘치는 효과 -->
+          <circle cx="12" cy="14" r="3" fill="#FFD700" opacity="0.9"/>
+          <circle cx="19" cy="11" r="3.5" fill="#FFD700" opacity="0.95"/>
+          <circle cx="26" cy="13" r="3" fill="#FFD700" opacity="0.9"/>
+          <circle cx="12" cy="14" r="3" fill="none" stroke="#C8A000" stroke-width="0.8"/>
+          <circle cx="19" cy="11" r="3.5" fill="none" stroke="#C8A000" stroke-width="0.8"/>
+          <circle cx="26" cy="13" r="3" fill="none" stroke="#C8A000" stroke-width="0.8"/>
+          <!-- 반짝임 -->
+          <circle cx="8" cy="10" r="1.5" fill="#FFE566" opacity="0.8"/>
+          <circle cx="30" cy="9" r="1.5" fill="#FFE566" opacity="0.8"/>
+        </svg>
+        <div class="step-main-title">탐험의 재미를 두 배로!<br>보물 포인트 모으는 법</div>
+        <svg width="38" height="38" viewBox="0 0 38 38" fill="none" style="animation:treasureBounce 2s ease-in-out infinite 0.4s;flex-shrink:0;">
+          <rect x="4" y="16" width="30" height="18" rx="3" fill="#C47C10"/>
+          <rect x="4" y="16" width="30" height="18" rx="3" fill="none" stroke="#8B5500" stroke-width="1.5"/>
+          <path d="M4 18 Q4 8 19 8 Q34 8 34 18 Z" fill="#D4900E"/>
+          <path d="M4 18 Q4 8 19 8 Q34 8 34 18 Z" fill="none" stroke="#8B5500" stroke-width="1.5"/>
+          <rect x="4" y="20" width="30" height="5" fill="#FFD700"/>
+          <rect x="14" y="8" width="10" height="10" rx="1" fill="#FFD700"/>
+          <rect x="15" y="21" width="8" height="6" rx="2" fill="#C47C10" stroke="#8B5500" stroke-width="1"/>
+          <circle cx="19" cy="22" r="2.5" fill="none" stroke="#8B5500" stroke-width="1.5"/>
+          <circle cx="12" cy="14" r="3" fill="#FFD700" opacity="0.9"/>
+          <circle cx="19" cy="11" r="3.5" fill="#FFD700" opacity="0.95"/>
+          <circle cx="26" cy="13" r="3" fill="#FFD700" opacity="0.9"/>
+          <circle cx="12" cy="14" r="3" fill="none" stroke="#C8A000" stroke-width="0.8"/>
+          <circle cx="19" cy="11" r="3.5" fill="none" stroke="#C8A000" stroke-width="0.8"/>
+          <circle cx="26" cy="13" r="3" fill="none" stroke="#C8A000" stroke-width="0.8"/>
+          <circle cx="8" cy="10" r="1.5" fill="#FFE566" opacity="0.8"/>
+          <circle cx="30" cy="9" r="1.5" fill="#FFE566" opacity="0.8"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="card-wrap">
+
+      <!-- ① 알쏭달쏭 퀴즈 카드 -->
+      <div class="card-quiz">
+        <div class="quiz-info">
+          <div>
+            <div class="quiz-title">알쏭달쏭 퀴즈 풀기</div>
+            <div class="quiz-sub">내 학년에 맞게 골라봐요!</div>
+          </div>
+          <div class="quiz-pt-badge">
+            <span class="quiz-pt-num">+10</span>
+            <span class="quiz-pt-unit">포인트/문제</span>
+          </div>
+        </div>
+
+        <!-- 저학년 / 고학년 버튼 -->
+        <div class="quiz-grade-wrap">
+          <a id="btn-low" class="quiz-grade-btn low" href="https://wordwall.net/resource/110983028/체육/기억력게임같은-그림-5쌍-고르기" target="_blank">
+            <span class="grade-emoji">🐥</span>
+            <span class="grade-label low">저학년</span>
+            <span class="grade-desc">1·2·3학년<br>쉽고 재미있게!</span>
+          </a>
+          <a id="btn-high" class="quiz-grade-btn high" href="https://wordwall.net/resource/110982835/기억력게임같은-그림-10쌍-고르기" target="_blank">
+            <span class="grade-emoji">🦉</span>
+            <span class="grade-label high">고학년</span>
+            <span class="grade-desc">4·5·6학년<br>도전 퀴즈!</span>
+          </a>
+        </div>
+
+      </div>
+
+      <!-- ② 숏폼 챌린지 카드 -->
+      <div class="card-challenge">
+        <div class="ch-illust">
+          <div class="csp csp1"></div><div class="csp csp2"></div>
+          <div class="csp csp3"></div><div class="csp csp4"></div>
+          <div class="csp csp5"></div><div class="csp csp6"></div>
+          <span class="note note1">♪</span>
+          <span class="note note2">♬</span>
+          <span class="note note3">♩</span>
+
+          <svg style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);" width="130" height="130" viewBox="0 0 130 130" fill="none">
+            <polygon points="65,8 70,34 96,24 82,46 108,58 82,70 96,92 70,82 65,108 60,82 34,92 48,70 22,58 48,46 34,24 60,34" fill="#FFD700" opacity="0.06"/>
+          </svg>
+
+          <!-- 3종 캐릭터: 춤추는 고양이 / 요리하는 판다 / 운동하는 토끼 -->
+          <div class="ch-chars">
+
+            <!-- 춤추는 고양이 -->
+            <svg width="64" height="92" viewBox="0 0 64 92" fill="none">
+              <ellipse cx="32" cy="68" rx="16" ry="18" fill="#E0A0E0" transform="rotate(-5 32 68)"/>
+              <path d="M16 58 Q8 46 12 34" stroke="#E0A0E0" stroke-width="7" stroke-linecap="round" fill="none"/>
+              <circle cx="11" cy="32" r="5" fill="#E0A0E0"/>
+              <path d="M48 60 Q56 54 57 46" stroke="#E0A0E0" stroke-width="7" stroke-linecap="round" fill="none"/>
+              <circle cx="58" cy="44" r="5" fill="#E0A0E0"/>
+              <path d="M22 84 Q18 90 14 88" stroke="#E0A0E0" stroke-width="7" stroke-linecap="round" fill="none"/>
+              <path d="M42 86 Q47 91 51 88" stroke="#E0A0E0" stroke-width="7" stroke-linecap="round" fill="none"/>
+              <path d="M48 72 Q58 64 54 52" stroke="#C878C8" stroke-width="4" stroke-linecap="round" fill="none"/>
+              <circle cx="32" cy="40" r="22" fill="#F0B8F0"/>
+              <polygon points="13,21 9,6 23,17" fill="#F0B8F0"/>
+              <polygon points="51,21 55,6 41,17" fill="#F0B8F0"/>
+              <polygon points="14,20 11,9 22,17" fill="#FFB0D0"/>
+              <polygon points="50,20 53,9 42,17" fill="#FFB0D0"/>
+              <path d="M22 36 Q26 31 30 36" stroke="#8B3A8B" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+              <path d="M34 36 Q38 31 42 36" stroke="#8B3A8B" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+              <ellipse cx="32" cy="41" rx="3" ry="2" fill="#D070D0"/>
+              <path d="M26 46 Q32 52 38 46" stroke="#D070D0" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <ellipse cx="18" cy="44" rx="5" ry="3" fill="#FFB0D0" opacity="0.5"/>
+              <ellipse cx="46" cy="44" rx="5" ry="3" fill="#FFB0D0" opacity="0.5"/>
+              <path d="M23 21 Q32 25 41 21" stroke="#FF60C0" stroke-width="3" stroke-linecap="round" fill="none"/>
+              <circle cx="32" cy="22" r="3" fill="#FF60C0"/>
+            </svg>
+
+            <!-- 가운데: 요리하는 판다 -->
+            <svg width="74" height="92" viewBox="0 0 74 92" fill="none">
+              <ellipse cx="37" cy="68" rx="22" ry="22" fill="white"/>
+              <ellipse cx="37" cy="68" rx="22" ry="22" fill="none" stroke="#DDD" stroke-width="1"/>
+              <path d="M16 64 Q10 58 12 48" stroke="#333" stroke-width="7" stroke-linecap="round" fill="none"/>
+              <path d="M58 64 Q64 58 62 48" stroke="#333" stroke-width="7" stroke-linecap="round" fill="none"/>
+              <rect x="12" y="74" width="50" height="18" rx="5" fill="#606060"/>
+              <rect x="8" y="72" width="58" height="6" rx="3" fill="#808080"/>
+              <rect x="4" y="72" width="8" height="4" rx="2" fill="#505050"/>
+              <rect x="62" y="72" width="8" height="4" rx="2" fill="#505050"/>
+              <ellipse cx="37" cy="72" rx="24" ry="4" fill="#FF8040" opacity="0.75"/>
+              <path d="M26 70 Q28 62 26 56" stroke="rgba(255,255,255,0.45)" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <path d="M37 68 Q39 60 37 54" stroke="rgba(255,255,255,0.45)" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <path d="M48 70 Q46 62 48 56" stroke="rgba(255,255,255,0.45)" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <circle cx="37" cy="36" r="24" fill="white"/>
+              <ellipse cx="26" cy="30" rx="9" ry="8" fill="#1A1A1A"/>
+              <ellipse cx="48" cy="30" rx="9" ry="8" fill="#1A1A1A"/>
+              <circle cx="16" cy="14" r="10" fill="#1A1A1A"/>
+              <circle cx="58" cy="14" r="10" fill="#1A1A1A"/>
+              <circle cx="27" cy="30" r="5" fill="white"/>
+              <circle cx="49" cy="30" r="5" fill="white"/>
+              <circle cx="28" cy="31" r="3" fill="#111"/>
+              <circle cx="50" cy="31" r="3" fill="#111"/>
+              <circle cx="29" cy="30" r="1.2" fill="white"/>
+              <circle cx="51" cy="30" r="1.2" fill="white"/>
+              <ellipse cx="37" cy="40" rx="5" ry="3.5" fill="#1A1A1A"/>
+              <path d="M30 46 Q37 52 44 46" stroke="#555" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <rect x="24" y="12" width="26" height="16" rx="7" fill="white" stroke="#DDD" stroke-width="1"/>
+              <rect x="20" y="24" width="34" height="7" rx="3" fill="white" stroke="#DDD" stroke-width="1"/>
+              <line x1="30" y1="13" x2="30" y2="29" stroke="#EEE" stroke-width="1.5"/>
+              <line x1="37" y1="12" x2="37" y2="29" stroke="#EEE" stroke-width="1.5"/>
+              <line x1="44" y1="13" x2="44" y2="29" stroke="#EEE" stroke-width="1.5"/>
+            </svg>
+
+            <!-- 운동하는 토끼 -->
+            <svg width="64" height="92" viewBox="0 0 64 92" fill="none">
+              <rect x="2" y="44" width="22" height="5" rx="2.5" fill="#888"/>
+              <rect x="2" y="40" width="7" height="13" rx="3" fill="#AAB"/>
+              <rect x="17" y="40" width="7" height="13" rx="3" fill="#AAB"/>
+              <path d="M30 52 Q20 47 12 49" stroke="#F8C8E0" stroke-width="7" stroke-linecap="round" fill="none"/>
+              <path d="M36 50 Q44 40 50 32" stroke="#F8C8E0" stroke-width="7" stroke-linecap="round" fill="none"/>
+              <ellipse cx="32" cy="66" rx="18" ry="20" fill="#F0B8D8"/>
+              <ellipse cx="32" cy="70" rx="11" ry="13" fill="#FFE0F0"/>
+              <path d="M21 84 Q17 91 13 89" stroke="#F0B8D8" stroke-width="7" stroke-linecap="round" fill="none"/>
+              <path d="M43 84 Q47 91 51 89" stroke="#F0B8D8" stroke-width="7" stroke-linecap="round" fill="none"/>
+              <circle cx="32" cy="36" r="21" fill="#F8C8E0"/>
+              <ellipse cx="21" cy="14" rx="7" ry="17" fill="#F8C8E0"/>
+              <ellipse cx="21" cy="14" rx="4" ry="13" fill="#FFB0D0"/>
+              <ellipse cx="45" cy="12" rx="7" ry="17" fill="#F8C8E0"/>
+              <ellipse cx="45" cy="12" rx="4" ry="13" fill="#FFB0D0"/>
+              <path d="M23 32 Q27 28 31 32" stroke="#C03060" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+              <path d="M33 32 Q37 28 41 32" stroke="#C03060" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+              <ellipse cx="32" cy="38" rx="3" ry="2" fill="#FF80B0"/>
+              <path d="M26 43 Q32 41 38 43" stroke="#E060A0" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <ellipse cx="20" cy="39" rx="5" ry="3" fill="#FFB0C0" opacity="0.55"/>
+              <ellipse cx="44" cy="39" rx="5" ry="3" fill="#FFB0C0" opacity="0.55"/>
+              <rect x="13" y="28" width="38" height="6" rx="3" fill="#FF4080" opacity="0.8"/>
+              <path d="M54 22 Q56 16 52 14 Q48 12 50 18 Q51 22 54 22Z" fill="#90D0FF" opacity="0.85"/>
+            </svg>
+
+          </div>
+        </div>
+
+        <div class="ch-info">
+          <div>
+            <div class="ch-title">숏폼 챌린지💃🏻🏆</div>
+            <div class="ch-sub">춤·요리·운동 영상 찍고<br>패들렛에 올리면 포인트!</div>
+          </div>
+          <div class="ch-pt-badge">
+            <span class="ch-pt-num">+30</span>
+            <span class="ch-pt-unit">포인트/건</span>
+          </div>
+        </div>
+
+        <!-- 패들렛 버튼 -->
+        <div class="padlet-wrap">
+          <a id="padlet-link" href="https://padlet.com/a01067752602/padlet-a1s7bft7ayd8chrj" target="_blank" class="padlet-btn">
+            <div class="padlet-icon-wrap">📌</div>
+            <div class="padlet-text-wrap">
+              <span class="padlet-label">패들렛에 올리기</span>
+              <span class="padlet-desc">챌린지 영상·사진 업로드</span>
+            </div>
+            <span class="padlet-arrow">›</span>
+          </a>
+        </div>
+      </div>
+
+    </div><!-- /.card-wrap -->
+
+    <div class="divider"></div>
+
+    <div class="tired-section">
+      <div class="tired-bubble">
+        <div class="tired-text">
+          너무 열심히 했더니 <span class="t-em">힘들어~</span> 😮‍💨<br>
+          <span style="font-size:12px;color:rgba(180,200,255,0.6);">잠깐, 좀 쉬었다 갈까?</span>
+        </div>
+      </div>
+      <div class="lottie-wrap" id="lottie-astronaut"></div>
+      <div class="next-arrow-wrap">
+        <button class="next-arrow-btn" onclick="goNext()">
+          다음으로 <span class="arrow-icon">→</span>
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /.content -->
+
+  <div class="nav-bar">
+    <button class="nav-btn prev" onclick="goPrev()">← 이전</button>
+    <button class="nav-btn next" onclick="goNext()">다음 →</button>
+  </div>
+</div>
+
+<script>
+/* ── 별 ── */
+(function(){
+  var c=document.getElementById('star-canvas'),ctx=c.getContext('2d');
+  function resize(){c.width=window.innerWidth;c.height=window.innerHeight;draw();}
+  function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+    for(var i=0;i<180;i++){
+      var x=Math.random()*c.width,y=Math.random()*c.height;
+      var r=Math.random()*1.5+0.2,a=Math.random()*0.75+0.2;
+      ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
+      ctx.fillStyle='rgba(255,255,255,'+a+')';ctx.fill();
+    }
+  }
+  window.addEventListener('resize',resize);resize();
+})();
+
+/* ── 링크 저장/복원 ── */
+(function(){
+  var lLow  = localStorage.getItem('quiz_link_low')  || '';
+  var lHigh = localStorage.getItem('quiz_link_high') || '';
+  var lPad  = localStorage.getItem('padlet_link')    || '';
+  if(lLow) { document.getElementById('link-low').value  = lLow;  document.getElementById('btn-low').href  = lLow; }
+  if(lHigh){ document.getElementById('link-high').value = lHigh; document.getElementById('btn-high').href = lHigh; }
+  if(lPad) { document.getElementById('padlet-link').href = lPad; }
+})();
+
+function saveLink(grade){
+  var val = document.getElementById('link-'+grade).value.trim();
+  localStorage.setItem('quiz_link_'+grade, val);
+  if(val) document.getElementById('btn-'+grade).href = val;
+}
+function savePadlet(){
+  var el = document.getElementById('link-padlet');
+  if(!el) return;
+  var val = el.value.trim();
+  localStorage.setItem('padlet_link', val);
+  if(val) document.getElementById('padlet-link').href = val;
+}
+function openGrade(grade, e){
+  var val = localStorage.getItem('quiz_link_'+grade) || '';
+  if(!val){ e.preventDefault(); showToast(grade==='low' ? '🐥 저학년 퀴즈 링크를 입력해 주세요!' : '🦉 고학년 퀴즈 링크를 입력해 주세요!'); }
+}
+
+/* ── 로티 우주인 ── */
+(function(){
+  var wrap=document.getElementById('lottie-astronaut'), loaded=false;
+  var URLS = [
+    'https://lottie.host/65ec44b0-ed3c-41ba-9d4d-8f2b4788ec98/animation.json',
+    'https://lottie.host/1bbc5604-79be-4d02-b7ea-6f34d3d2c441/animation.json'
+  ];
+  var idx = 0;
+  function tryNext(){
+    if(idx >= URLS.length){ fb(); return; }
+    var url = URLS[idx++];
+    wrap.innerHTML = '';
+    var anim = lottie.loadAnimation({container:wrap,renderer:'svg',loop:true,autoplay:true,path:url});
+    anim.addEventListener('data_ready',function(){ loaded=true; });
+    anim.addEventListener('data_failed',function(){ tryNext(); });
+  }
+  tryNext();
+  setTimeout(function(){ if(!loaded){ wrap.innerHTML=''; fb(); } }, 5000);
+  function fb(){
+    wrap.innerHTML = '<div style="font-size:120px;text-align:center;line-height:260px;animation:floatA 2.5s ease-in-out infinite;">🧑‍🚀</div>';
+  }
+  var s=document.createElement('style');
+  s.textContent='@keyframes floatA{0%,100%{transform:translateY(0) rotate(-4deg);}50%{transform:translateY(-18px) rotate(4deg);}}';
+  document.head.appendChild(s);
+})();
+
+/* ── 토스트 ── */
+function showToast(msg){
+  var t=document.getElementById('_toast');
+  if(!t){t=document.createElement('div');t.id='_toast';t.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(20,30,70,0.96);border:1px solid rgba(100,140,255,0.4);border-radius:100px;padding:10px 22px;font-family:var(--main-font);font-size:14px;color:#C8D8FF;z-index:200;display:none;white-space:nowrap;';document.body.appendChild(t);}
+  t.textContent=msg;t.style.display='block';
+  setTimeout(function(){t.style.display='none';},2200);
+}
+
+/* ── 네비 ── */
+function goPrev(){document.querySelector('.scene').classList.add('page-out');setTimeout(function(){window.location.href='page5.html';},400);}
+function goNext(){document.querySelector('.scene').classList.add('page-out');setTimeout(function(){window.location.href='page7.html';},400);}
+
+var lt=0;
+document.addEventListener('touchend',function(e){var n=Date.now();if(n-lt<300)e.preventDefault();lt=n;},{passive:false});
+</script>
+</body>
+</html>
