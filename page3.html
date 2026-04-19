@@ -395,6 +395,27 @@
     .memo-saved-msg{font-size:11px;color:#7ADCC8;font-family:var(--main-font);min-height:16px;}
     .dash-print-btn{width:100%;padding:10px;background:rgba(55,138,221,0.75);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--main-font);margin-top:8px;border:1px solid rgba(100,180,255,0.3);}
     .dash-notice{background:rgba(255,240,180,0.08);border:1px solid rgba(255,224,130,0.25);border-radius:8px;padding:10px 12px;font-size:11px;color:rgba(255,235,150,0.75);font-family:var(--main-font);line-height:1.6;margin-bottom:8px;}
+
+    /* ── 구글 시트 전송 버튼 ── */
+    .sheets-btn {
+      width:100%; padding:11px;
+      background:linear-gradient(135deg,#1e7e34,#28a745);
+      color:#fff; border:none; border-radius:10px;
+      font-size:13px; font-weight:600; cursor:pointer;
+      font-family:var(--main-font); margin-top:8px;
+      display:flex; align-items:center; justify-content:center; gap:7px;
+      border:1px solid rgba(100,220,120,0.35);
+      transition:opacity 0.15s;
+    }
+    .sheets-btn:hover{opacity:0.88;}
+    .sheets-btn:active{transform:scale(0.97);}
+    .sheets-btn:disabled{opacity:0.5;cursor:not-allowed;}
+    .sheets-status {
+      margin-top:7px; font-size:11px; text-align:center;
+      font-family:var(--main-font); min-height:16px;
+      color:rgba(120,220,160,0.9);
+    }
+    .sheets-status.err { color:rgba(255,120,120,0.9); }
   </style>
 </head>
 <body>
@@ -461,6 +482,12 @@
         <div id="dash-mission-stat" style="font-family:var(--main-font);font-size:12px;color:#555;"></div>
 
         <button class="dash-print-btn" onclick="printDash()">🖨️ 현황 인쇄 / PDF 저장</button>
+
+        <div class="dash-sec-title" style="margin-top:16px;">📊 Google Sheets 전송</div>
+        <button class="sheets-btn" id="sheets-all-btn" onclick="sendAllToSheets()">
+          <span>📤</span> 전체 기록 시트에 저장
+        </button>
+        <div class="sheets-status" id="sheets-all-status"></div>
       </div>
 
       <!-- 탭2: BMI 기록 -->
@@ -471,7 +498,11 @@
           <tbody id="dash-bmi-tbody"></tbody>
         </table>
         <div id="dash-bmi-empty" style="text-align:center;color:#aaa;font-size:12px;padding:14px;font-family:var(--main-font);">아직 기록이 없어요</div>
-        <button class="dash-print-btn" style="background:#EF9F27;margin-top:12px;" onclick="clearBmi()">🗑️ BMI 기록 초기화</button>
+        <button class="sheets-btn" id="sheets-bmi-btn" onclick="sendBmiToSheets()">
+          <span>📤</span> BMI 기록 시트에 저장
+        </button>
+        <div class="sheets-status" id="sheets-bmi-status"></div>
+        <button class="dash-print-btn" style="background:#EF9F27;margin-top:8px;" onclick="clearBmi()">🗑️ BMI 기록 초기화</button>
       </div>
 
       <!-- 탭3: 포인트 지급 -->
@@ -893,6 +924,171 @@ function resetAll(){
   ['tuntun_pts','tuntun_body_records_v2','tuntun_missions','tuntun_grant_log','tuntun_checklist'].forEach(function(k){localStorage.removeItem(k);});
   alert('✅ 초기화 완료! 페이지를 새로고침해요.');
   location.reload();
+}
+
+/* ══════════════════════════════════
+   Google Sheets 연동
+══════════════════════════════════ */
+var SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzgBrjUH2rf1mUcyFp2GGWGvDaUnmIh0kV0rskcDB5j84Esu1IFbcJFHy4BQ93vUPc2/exec';
+
+function setSheetStatus(elId, msg, isErr) {
+  var el = document.getElementById(elId);
+  if (!el) return;
+  el.textContent = msg;
+  el.className = 'sheets-status' + (isErr ? ' err' : '');
+}
+
+function postToSheets(payload, btnId, statusId, successMsg) {
+  var btn = document.getElementById(btnId);
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ 전송 중...'; }
+  setSheetStatus(statusId, '서버에 연결 중...', false);
+
+  fetch(SHEETS_URL, {
+    method: 'POST',
+    mode: 'no-cors',           // Apps Script는 no-cors로 처리
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(function() {
+    // no-cors 는 response body를 읽을 수 없으므로 전송 성공으로 처리
+    setSheetStatus(statusId, '✅ ' + successMsg, false);
+    if (btn) { btn.disabled = false; btn.innerHTML = '<span>📤</span> ' + btn.dataset.label; }
+  })
+  .catch(function(err) {
+    setSheetStatus(statusId, '❌ 전송 실패: ' + err.message, true);
+    if (btn) { btn.disabled = false; btn.innerHTML = '<span>📤</span> ' + btn.dataset.label; }
+  });
+}
+
+/* BMI 기록 → 시트 */
+function sendBmiToSheets() {
+  var recs = {}; try { recs = JSON.parse(localStorage.getItem('tuntun_body_records_v2') || '{}'); } catch(e) {}
+  var keys = Object.keys(recs).map(Number).sort(function(a,b){return a-b;});
+  if (keys.length === 0) { setSheetStatus('sheets-bmi-status', '⚠️ 전송할 BMI 기록이 없어요', true); return; }
+
+  var btn = document.getElementById('sheets-bmi-btn');
+  if (btn) btn.dataset.label = 'BMI 기록 시트에 저장';
+
+  // 월별 기록 순서대로 전송
+  var idx = 0;
+  setSheetStatus('sheets-bmi-status', '전송 중... (0/' + keys.length + ')', false);
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ 전송 중...'; }
+
+  function sendNext() {
+    if (idx >= keys.length) {
+      setSheetStatus('sheets-bmi-status', '✅ ' + keys.length + '건 시트 저장 완료! (' + new Date().toLocaleTimeString('ko-KR') + ')', false);
+      if (btn) { btn.disabled = false; btn.innerHTML = '<span>📤</span> BMI 기록 시트에 저장'; }
+      return;
+    }
+    var m = keys[idx];
+    var r = recs[m];
+    var st = getBmiLabel(r.bmi);
+    fetch(SHEETS_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'bmi',
+        month: m,
+        height: r.h,
+        weight: r.w,
+        bmi: parseFloat(r.bmi.toFixed(1)),
+        label: st.label
+      })
+    })
+    .then(function() {
+      idx++;
+      setSheetStatus('sheets-bmi-status', '전송 중... (' + idx + '/' + keys.length + ')', false);
+      setTimeout(sendNext, 400); // 연속 요청 간격
+    })
+    .catch(function(err) {
+      setSheetStatus('sheets-bmi-status', '❌ ' + m + '월 전송 실패', true);
+      if (btn) { btn.disabled = false; btn.innerHTML = '<span>📤</span> BMI 기록 시트에 저장'; }
+    });
+  }
+  sendNext();
+}
+
+/* 포인트/레벨 → 시트 */
+function sendPointsToSheets(statusId, btnId) {
+  var pts = parseInt(localStorage.getItem('tuntun_pts') || '0');
+  var lv  = pts <= 200 ? '1단계 🐱' : pts <= 600 ? '2단계 🐵' : pts <= 1200 ? '3단계 🐶' : '4단계 🐯';
+  var done = 0;
+  try { var md = JSON.parse(localStorage.getItem('tuntun_missions') || '{}'); done = Object.keys(md).length; } catch(e) {}
+
+  postToSheets(
+    { type: 'points', points: pts, level: lv, missions: done },
+    btnId, statusId,
+    '포인트/레벨 시트 저장 완료! (' + new Date().toLocaleTimeString('ko-KR') + ')'
+  );
+}
+
+/* 전체(BMI + 포인트) 일괄 전송 */
+function sendAllToSheets() {
+  var btn = document.getElementById('sheets-all-btn');
+  if (btn) { btn.dataset.label = '전체 기록 시트에 저장'; btn.disabled = true; btn.textContent = '⏳ 전송 중...'; }
+  setSheetStatus('sheets-all-status', 'BMI 기록 전송 중...', false);
+
+  var recs = {}; try { recs = JSON.parse(localStorage.getItem('tuntun_body_records_v2') || '{}'); } catch(e) {}
+  var keys = Object.keys(recs).map(Number).sort(function(a,b){return a-b;});
+  var idx = 0;
+
+  function sendBmiNext() {
+    if (idx >= keys.length) {
+      // BMI 완료 → 포인트 전송
+      setSheetStatus('sheets-all-status', 'BMI 완료! 포인트 기록 전송 중...', false);
+      var pts  = parseInt(localStorage.getItem('tuntun_pts') || '0');
+      var lv   = pts <= 200 ? '1단계 🐱' : pts <= 600 ? '2단계 🐵' : pts <= 1200 ? '3단계 🐶' : '4단계 🐯';
+      var done = 0;
+      try { var md = JSON.parse(localStorage.getItem('tuntun_missions') || '{}'); done = Object.keys(md).length; } catch(e) {}
+      fetch(SHEETS_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'points', points: pts, level: lv, missions: done })
+      })
+      .then(function() {
+        setSheetStatus('sheets-all-status',
+          '✅ 전체 전송 완료! (BMI ' + keys.length + '건 + 포인트) ' + new Date().toLocaleTimeString('ko-KR'), false);
+        if (btn) { btn.disabled = false; btn.innerHTML = '<span>📤</span> 전체 기록 시트에 저장'; }
+      })
+      .catch(function() {
+        setSheetStatus('sheets-all-status', '⚠️ BMI 완료, 포인트 전송 실패', true);
+        if (btn) { btn.disabled = false; btn.innerHTML = '<span>📤</span> 전체 기록 시트에 저장'; }
+      });
+      return;
+    }
+    var m = keys[idx]; var r = recs[m]; var st = getBmiLabel(r.bmi);
+    fetch(SHEETS_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type:'bmi', month:m, height:r.h, weight:r.w, bmi:parseFloat(r.bmi.toFixed(1)), label:st.label })
+    })
+    .then(function() { idx++; setSheetStatus('sheets-all-status', 'BMI 전송 중... (' + idx + '/' + keys.length + ')', false); setTimeout(sendBmiNext, 400); })
+    .catch(function() { setSheetStatus('sheets-all-status', '❌ ' + m + '월 BMI 전송 실패', true); if(btn){btn.disabled=false;btn.innerHTML='<span>📤</span> 전체 기록 시트에 저장';} });
+  }
+
+  if (keys.length === 0) {
+    // BMI 없으면 포인트만
+    setSheetStatus('sheets-all-status', 'BMI 없음, 포인트만 전송...', false);
+    var pts  = parseInt(localStorage.getItem('tuntun_pts') || '0');
+    var lv   = pts <= 200 ? '1단계 🐱' : pts <= 600 ? '2단계 🐵' : pts <= 1200 ? '3단계 🐶' : '4단계 🐯';
+    var done = 0;
+    try { var md = JSON.parse(localStorage.getItem('tuntun_missions') || '{}'); done = Object.keys(md).length; } catch(e) {}
+    fetch(SHEETS_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'points', points: pts, level: lv, missions: done })
+    })
+    .then(function() {
+      setSheetStatus('sheets-all-status', '✅ 포인트/레벨 시트 저장 완료! ' + new Date().toLocaleTimeString('ko-KR'), false);
+      if (btn) { btn.disabled = false; btn.innerHTML = '<span>📤</span> 전체 기록 시트에 저장'; }
+    })
+    .catch(function() {
+      setSheetStatus('sheets-all-status', '❌ 전송 실패', true);
+      if (btn) { btn.disabled = false; btn.innerHTML = '<span>📤</span> 전체 기록 시트에 저장'; }
+    });
+  } else {
+    sendBmiNext();
+  }
 }
 
 var lt=0;
