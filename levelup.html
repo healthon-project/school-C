@@ -413,20 +413,28 @@ function passId(){
   document.getElementById('id-overlay').classList.remove('open');
 }
 
-// Enter 키 지원
-document.addEventListener('DOMContentLoaded', function(){
+// 팝업 즉시 실행 (DOMContentLoaded 대신)
+function initStudentIdPopup(){
   var input=document.getElementById('id-input');
   if(input){
     input.addEventListener('keydown',function(e){ if(e.key==='Enter') confirmId(); });
   }
-  checkStudentId();
-  // 이미 저장된 경우 배지 표시
   var saved=localStorage.getItem('tuntun_student_id');
-  if(saved){
-    document.getElementById('my-id-badge').style.display='flex';
-    document.getElementById('my-id-text').textContent='내 번호: '+saved;
+  if(!saved){
+    showIdPopup();
+  } else {
+    var badge=document.getElementById('my-id-badge');
+    var text=document.getElementById('my-id-text');
+    if(badge) badge.style.display='flex';
+    if(text) text.textContent= saved==='GUEST' ? '👩‍🏫 교사/학부모 모드' : '내 번호: '+saved;
   }
-});
+}
+// DOM 준비 여부와 무관하게 실행
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded', initStudentIdPopup);
+} else {
+  initStudentIdPopup();
+}
 </script>
 
 <script src="lottie_data.js"></script>
@@ -444,6 +452,9 @@ initLottie('lottie-cat',    LOTTIE_CAT_ROCKET);
 initLottie('lottie-monkey', LOTTIE_MONKEY_UFO);
 initLottie('lottie-dog',    LOTTIE_BULLDOG_ROCKET);
 initLottie('lottie-tiger',  LOTTIE_TIGER_MISSILE);
+
+/* 팝업 최종 보장 실행 */
+initStudentIdPopup();
 </script>
 </body>
 </html>
