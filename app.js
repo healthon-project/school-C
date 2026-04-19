@@ -3,7 +3,7 @@
    =========================== */
 
 /* ── 전역 상태 ── */
-var points      = parseInt(localStorage.getItem('tuntun_pts') || '20'); // ✅ 저장된 포인트 불러오기
+var points      = 20;
 var missionDone = {};
 var curMonth    = 6;
 var STORAGE_KEY = 'tuntun_body_records_v2';
@@ -52,7 +52,9 @@ function updateUI() {
   document.getElementById('prog-fill').style.width   = pct + '%';
   document.getElementById('prog-max').textContent    = (i < 3 ? next : '최고') + '포인트';
 
-
+  for (var j = 0; j < 4; j++) {
+    document.getElementById('lv' + j).className = 'lv-card' + (j === i ? ' active' : '');
+  }
 }
 
 /* ── 토스트 ── */
@@ -67,7 +69,6 @@ function showToast(msg) {
 function addPoints(n) {
   var before = getLvIdx(points);
   points += n;
-  localStorage.setItem('tuntun_pts', points); // ✅ 포인트 저장
   var after = getLvIdx(points);
   updateUI();
   if (after > before) {
@@ -444,12 +445,21 @@ function checkAdmin() {
   var pw = document.getElementById('admin-pw').value;
   if (pw === ADMIN_PW) {
     closeAdminLogin();
-    openPanel('panel-admin');
+    openDashboard();
   } else {
     document.getElementById('admin-err').textContent = '❌ 비밀번호가 틀렸어요';
     document.getElementById('admin-pw').value = '';
     document.getElementById('admin-pw').focus();
   }
+}
+
+function openDashboard() {
+  document.getElementById('dashboard-overlay').classList.add('open');
+}
+
+function closeDashboard() {
+  document.getElementById('dashboard-overlay').classList.remove('open');
+  showToast('관리자 화면을 닫았어요');
 }
 
 /* ── 포인트 수동 지급 ── */
