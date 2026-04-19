@@ -1,0 +1,2620 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>튼튼탐험대 출발!</title>
+  <style>
+/* ===========================
+   튼튼탐험대 — style.css
+   =========================== */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── 귀여운 웹폰트 ── */
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gaegu:wght@400;700&display=swap');
+
+/* ── 애니메이션 ── */
+@keyframes bounce    { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+@keyframes pulse     { 0%,100%{transform:scale(1)} 50%{transform:scale(1.18)} }
+@keyframes sparkle   { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.15)} }
+@keyframes float     { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+@keyframes spin      { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+@keyframes slideIn   { 0%{opacity:0;transform:translateY(16px)} 100%{opacity:1;transform:translateY(0)} }
+@keyframes glow      { 0%,100%{box-shadow:0 0 0 0 rgba(29,158,117,0)} 50%{box-shadow:0 0 0 6px rgba(29,158,117,0.15)} }
+@keyframes pop       { 0%{transform:scale(1)} 30%{transform:scale(1.22)} 60%{transform:scale(0.95)} 100%{transform:scale(1)} }
+@keyframes barPulse  { 0%,100%{opacity:1} 50%{opacity:0.7} }
+@keyframes wiggle    { 0%,100%{transform:rotate(0deg)} 33%{transform:rotate(-10deg)} 66%{transform:rotate(10deg)} }
+@keyframes fadeInUp  { 0%{opacity:0;transform:translateY(20px)} 100%{opacity:1;transform:translateY(0)} }
+@keyframes bellRing  { 0%,100%{transform:rotate(0deg)} 20%{transform:rotate(15deg)} 40%{transform:rotate(-15deg)} 60%{transform:rotate(10deg)} 80%{transform:rotate(-10deg)} }
+@keyframes tvBlink   { 0%,90%,100%{opacity:1} 95%{opacity:0.7} }
+
+/* ── 기본 레이아웃 ── */
+body {
+  font-family: 'Gaegu', 'Nanum Pen Script', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  background: #f5f5f5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app {
+  max-width: 430px;
+  margin: 0 auto;
+  padding: 12px;
+  background: #fff;
+  min-height: 100vh;
+  position: relative;
+  z-index: 0;
+  font-family: 'Gaegu', 'Nanum Pen Script', sans-serif;
+}
+
+/* ── 헤더 ── */
+.header { text-align: center; padding: 20px 0 14px; }
+.header-logo { font-size: 36px; display: inline-block; margin-bottom: 6px; animation: none; }
+.header-title { font-size: 22px; font-weight: 600; color: #1a1a1a; letter-spacing: -0.3px; }
+.header-title span { color: #1D9E75; display: inline-block; animation: none; }
+.header-sub { font-size: 12px; color: #888; margin-top: 4px; }
+
+/* ── 레벨 바 ── */
+.level-bar {
+  background: #fff;
+  border-radius: 14px;
+  border: 0.5px solid #e0e0e0;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  animation: none;
+}
+.level-row { display: flex; align-items: center; gap: 10px; }
+.level-icon { font-size: 32px; display: inline-block; animation: none; }
+.level-info { flex: 1; }
+.level-name { font-size: 15px; font-weight: 600; color: #1a1a1a; }
+.level-sub { font-size: 12px; color: #888; margin-top: 2px; }
+.coin-box {
+  background: #FAEEDA;
+  border-radius: 8px;
+  padding: 8px 14px;
+  text-align: center;
+  border: 0.5px solid #EF9F27;
+  animation: none;
+}
+.coin-num { font-size: 20px; font-weight: 600; color: #BA7517; }
+.coin-lbl { font-size: 10px; color: #854F0B; margin-top: 1px; }
+.prog-wrap { margin-top: 10px; }
+.prog-track { background: #f0f0f0; border-radius: 999px; height: 9px; overflow: hidden; }
+.prog-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: #5DCAA5;
+  transition: width 0.7s cubic-bezier(.4,0,.2,1);
+  animation: none;
+}
+.prog-labels { display: flex; justify-content: space-between; font-size: 11px; color: #999; margin-top: 4px; }
+
+/* ── 레벨 단계 카드 ── */
+.levels-row { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 6px; margin-bottom: 12px; }
+.lv-card {
+  border-radius: 8px;
+  padding: 10px 4px;
+  text-align: center;
+  border: 0.5px solid #e0e0e0;
+  background: #f9f9f9;
+  opacity: 0.45;
+}
+.lv-card.active { opacity: 1; border: 2px solid #5DCAA5; background: #E1F5EE; }
+.lv-card .li { font-size: 22px; display: inline-block; }
+.lv-card:nth-child(1) .li { animation: none; }
+.lv-card:nth-child(2) .li { animation: none; }
+.lv-card:nth-child(3) .li { animation: none; }
+.lv-card:nth-child(4) .li { animation: none; }
+.lv-card .ln { font-size: 10px; color: #888; margin-top: 3px; line-height: 1.3; }
+.lv-card.active .ln { color: #085041; font-weight: 600; }
+.lv-card .lc { font-size: 10px; color: #BA7517; margin-top: 2px; }
+
+/* ── 토스트 ── */
+.toast-wrap { min-height: 44px; display: flex; justify-content: center; align-items: center; margin-bottom: 8px; }
+.toast {
+  background: #1D9E75;
+  color: #E1F5EE;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 8px;
+  display: none;
+  text-align: center;
+}
+
+/* ── 메뉴 그리드 ── */
+.menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.menu-card {
+  background: #fff;
+  border-radius: 14px;
+  border: 0.5px solid #e0e0e0;
+  padding: 16px 14px;
+  cursor: pointer;
+  transition: transform 0.12s;
+}
+.menu-card:hover { transform: scale(1.02); border-color: #ccc; }
+.menu-card:active { transform: scale(0.97); }
+.mc-icon { font-size: 26px; margin-bottom: 8px; display: inline-block; }
+.menu-card:nth-child(1) .mc-icon { animation: none; }
+.menu-card:nth-child(2) .mc-icon { animation: none; }
+.menu-card:nth-child(3) .mc-icon { animation: none; }
+.menu-card:nth-child(4) .mc-icon { animation: none; }
+.menu-card:nth-child(5) .mc-icon { animation: none; }
+.menu-card:nth-child(6) .mc-icon { animation: none; }
+.mc-title { font-size: 13px; font-weight: 600; color: #1a1a1a; }
+.mc-desc { font-size: 11px; color: #888; margin-top: 3px; line-height: 1.4; }
+
+/* 메뉴 뱃지 */
+.mc-pt        { display: inline-block; margin-top: 7px; background: #FAEEDA; color: #854F0B; font-size: 10px; border-radius: 999px; padding: 2px 8px; animation: none; }
+.mc-link      { display: inline-block; margin-top: 7px; background: #E1F5EE; color: #0F6E56; font-size: 10px; border-radius: 999px; padding: 2px 8px; border: 0.5px solid #5DCAA5; }
+.mc-link-teal { display: inline-block; margin-top: 7px; background: #E1F5EE; color: #0F6E56; font-size: 10px; border-radius: 999px; padding: 2px 8px; border: 0.5px solid #5DCAA5; animation: none; }
+.mc-link-amber { display: inline-block; margin-top: 7px; background: #FAEEDA; color: #854F0B; font-size: 10px; border-radius: 999px; padding: 2px 8px; border: 0.5px solid #EF9F27; }
+.mc-link-purple { display: inline-block; margin-top: 7px; background: #EEEDFE; color: #534AB7; font-size: 10px; border-radius: 999px; padding: 2px 8px; border: 0.5px solid #AFA9EC; }
+.mc-link-gold { display: inline-block; margin-top: 7px; background: #FAEEDA; color: #633806; font-size: 10px; border-radius: 999px; padding: 2px 8px; border: 0.5px solid #EF9F27; animation: none; }
+.mc-link-body { display: inline-block; margin-top: 7px; background: #FBEAF0; color: #72243E; font-size: 10px; border-radius: 999px; padding: 2px 8px; border: 0.5px solid #ED93B1; animation: none; }
+
+/* ── 패널 공통 ── */
+.panel {
+  display: none;
+  background: #fff;
+  border-radius: 14px;
+  border: 0.5px solid #e0e0e0;
+  padding: 16px;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
+}
+.panel.open { display: block; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { 0%{opacity:0} 100%{opacity:1} }
+.ph { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+.ph-icon { font-size: 20px; display: inline-block; animation: none; }
+.ph h2 { font-size: 15px; font-weight: 600; color: #1a1a1a; flex: 1; line-height: 1.3; }
+.close-btn {
+  padding: 6px 16px;
+  border: none;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #E24B4A;
+  color: white;
+  white-space: nowrap;
+  animation: none;
+  letter-spacing: 0.3px;
+}
+.close-btn:hover { background: #A32D2D; transform: scale(1.08); }
+@keyframes closePulse {
+  0%,100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(226,75,74,0); }
+  50%      { transform: scale(1.07); box-shadow: 0 0 0 5px rgba(226,75,74,0.25); }
+}
+.panel-desc { font-size: 12px; color: #888; margin-bottom: 12px; }
+.section-label { font-size: 13px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; }
+.divider { height: 0.5px; background: #e8e8e8; margin: 14px 0; }
+
+/* ── 공통 버튼/링크 ── */
+.submit-btn {
+  width: 100%;
+  padding: 11px;
+  background: #1D9E75;
+  color: #E1F5EE;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+  animation: none;
+}
+.submit-btn:hover { background: #0F6E56; }
+
+.ext-btn {
+  display: block;
+  width: 100%;
+  padding: 13px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  text-align: center;
+  margin-bottom: 10px;
+  transition: transform 0.15s;
+  animation: none;
+}
+.ext-btn:hover { transform: scale(1.02); }
+.ext-btn-green  { background: #1D9E75; color: #E1F5EE; }
+.ext-btn-teal   { background: #1D9E75; color: #E1F5EE; }
+.ext-btn-purple { background: #7F77DD; color: #EEEDFE; }
+
+.ext-notice { border-radius: 8px; padding: 10px 13px; font-size: 12px; line-height: 1.6; border: 0.5px solid; }
+.ext-notice-teal   { background: #E1F5EE; color: #085041; border-color: #5DCAA5; }
+.ext-notice-green  { background: #E1F5EE; color: #085041; border-color: #5DCAA5; }
+
+/* ── 신청서 패널 섹션 헤더 ── */
+.apply-section-hd {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+}
+.apply-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px;
+  background: #1D9E75; color: white;
+  font-size: 12px; font-weight: 700; border-radius: 50%; flex-shrink: 0;
+}
+.apply-section-title { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+
+/* ── 사전 설문지 박스 ── */
+.survey-box { background: #f9f9f9; border: 0.5px solid #e8e8e8; border-radius: 12px; padding: 14px; }
+.survey-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.survey-label { font-size: 12px; color: #666; white-space: nowrap; min-width: 90px; }
+.survey-input {
+  flex: 1; padding: 7px 10px;
+  border: 0.5px solid #e0e0e0; border-radius: 8px;
+  font-size: 13px; color: #1a1a1a; background: #fff;
+}
+.survey-input:focus { outline: none; border-color: #1D9E75; }
+.survey-q { font-size: 12px; font-weight: 600; color: #444; margin: 10px 0 6px; }
+.ext-notice-purple { background: #EEEDFE; color: #3C3489; border-color: #AFA9EC; }
+
+/* ── 체크리스트 ── */
+.chk-list { display: flex; flex-direction: column; gap: 7px; }
+.chk-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #1a1a1a; cursor: pointer; }
+.chk-item input { width: 16px; height: 16px; accent-color: #1D9E75; }
+
+/* ── 목표 섹션 ── */
+.goal-section { background: #f9f9f9; border-radius: 8px; padding: 14px; margin-top: 10px; border: 0.5px solid #e8e8e8; }
+.goal-title { font-size: 13px; font-weight: 600; color: #1a1a1a; margin-bottom: 10px; }
+
+/* ── 미션 목록 ── */
+.mission-list { display: flex; flex-direction: column; gap: 8px; }
+.mission-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 12px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  border: 0.5px solid #e8e8e8;
+  transition: transform 0.1s;
+}
+.mission-item:hover { transform: translateX(3px); }
+.mission-item.done { background: #E1F5EE; border-color: #5DCAA5; }
+.mi-icon { font-size: 18px; }
+.mi-text { flex: 1; font-size: 13px; color: #1a1a1a; }
+.mi-sub { font-size: 11px; color: #888; }
+.mi-right { text-align: right; }
+.mi-pt { font-size: 11px; color: #BA7517; font-weight: 600; }
+.m-btn {
+  padding: 5px 12px;
+  border: 0.5px solid #1D9E75;
+  border-radius: 8px;
+  background: none;
+  font-size: 12px;
+  color: #1D9E75;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+.m-btn:hover { transform: scale(1.08); }
+.m-btn.done { background: #5DCAA5; color: #085041; border-color: #5DCAA5; }
+
+/* ── 패들렛 인증 카드 (미션 하단) ── */
+.padlet-bottom-card {
+  background: #EAF3DE;
+  border: 1.5px solid #97C459;
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: none;
+}
+.pbc-icon { font-size: 26px; flex-shrink: 0; animation: none; }
+.pbc-body { flex: 1; }
+.pbc-title { font-size: 13px; font-weight: 600; color: #27500A; }
+.pbc-sub { font-size: 11px; color: #3B6D11; margin-top: 2px; }
+.pbc-btn {
+  display: inline-block;
+  padding: 8px 14px;
+  background: #3B6D11;
+  color: #EAF3DE;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── 골든벨 ── */
+.golden-bell-banner {
+  background: #FAEEDA;
+  border: 1.5px solid #EF9F27;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 14px;
+  text-align: center;
+}
+.gb-icon { font-size: 36px; display: inline-block; animation: none; margin-bottom: 6px; }
+.gb-title { font-size: 16px; font-weight: 600; color: #412402; margin-bottom: 4px; }
+.gb-sub { font-size: 12px; color: #854F0B; line-height: 1.5; }
+
+.grade-section { border: 0.5px solid #e0e0e0; border-radius: 14px; padding: 14px; margin-bottom: 12px; }
+.grade-section.low  { border-color: #5DCAA5; background: #E1F5EE; }
+.grade-section.high { border-color: #7F77DD; background: #EEEDFE; }
+.grade-hd { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.grade-emoji { font-size: 20px; }
+.grade-title { font-size: 14px; font-weight: 600; }
+.grade-section.low  .grade-title { color: #085041; }
+.grade-section.high .grade-title { color: #26215C; }
+.grade-badge { font-size: 10px; border-radius: 999px; padding: 2px 8px; }
+.grade-section.low  .grade-badge { background: #9FE1CB; color: #085041; }
+.grade-section.high .grade-badge { background: #CECBF6; color: #26215C; }
+.qr-box { background: #fff; border-radius: 8px; padding: 14px; text-align: center; border: 0.5px solid #e0e0e0; }
+.qr-placeholder {
+  width: 110px; height: 110px;
+  margin: 0 auto 8px;
+  border-radius: 8px;
+  border: 2px dashed;
+  display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 4px;
+}
+.grade-section.low  .qr-placeholder { border-color: #5DCAA5; background: #E1F5EE; }
+.grade-section.high .qr-placeholder { border-color: #AFA9EC; background: #EEEDFE; }
+.qr-img {
+  display: block;
+  width: 160px;
+  height: 160px;
+  margin: 0 auto 8px;
+  border-radius: 8px;
+  border: 3px solid;
+  object-fit: contain;
+  background: #fff;
+}
+.grade-section.low  .qr-img { border-color: #5DCAA5; }
+.grade-section.high .qr-img { border-color: #AFA9EC; }
+.qr-desc { font-size: 12px; color: #888; line-height: 1.5; margin-top: 6px; }
+
+.cert-notice {
+  border-radius: 8px; padding: 11px 13px; font-size: 12px; line-height: 1.6;
+  border: 0.5px solid #EF9F27; background: #FAEEDA; color: #633806;
+  margin-top: 14px; display: flex; align-items: center; gap: 8px;
+}
+.cert-icon { font-size: 18px; flex-shrink: 0; animation: none; }
+.cert-pt { font-weight: 600; color: #BA7517; }
+
+.padlet-proof-card {
+  background: #EEEDFE; border: 1.5px solid #AFA9EC;
+  border-radius: 14px; padding: 14px 16px; margin-top: 12px;
+  display: flex; align-items: center; gap: 12px;
+}
+.ppc-icon { font-size: 22px; flex-shrink: 0; animation: none; }
+.ppc-body { flex: 1; }
+.ppc-title { font-size: 13px; font-weight: 600; color: #26215C; }
+.ppc-sub { font-size: 11px; color: #534AB7; margin-top: 2px; }
+.ppc-btn {
+  display: inline-block; padding: 8px 14px;
+  background: #7F77DD; color: #EEEDFE;
+  border-radius: 8px; font-size: 12px; font-weight: 600;
+  text-decoration: none; white-space: nowrap; flex-shrink: 0;
+}
+
+/* ── 이번달 내 몸 ── */
+.private-notice {
+  background: #FBEAF0; border: 0.5px solid #ED93B1;
+  border-radius: 8px; padding: 10px 13px; font-size: 12px; color: #72243E;
+  display: flex; align-items: center; gap: 8px; margin-bottom: 14px;
+}
+.lock-icon { font-size: 16px; }
+
+.month-tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 14px; }
+.month-tab {
+  padding: 6px 10px; border: 0.5px solid #e0e0e0;
+  border-radius: 8px; font-size: 12px; color: #888;
+  cursor: pointer; background: #f5f5f5; transition: all 0.12s; white-space: nowrap;
+}
+.month-tab.active           { background: #D4537E; border-color: #D4537E; color: white; font-weight: 600; }
+.month-tab.has-data         { border-color: #ED93B1; color: #72243E; background: #FBEAF0; }
+.month-tab.active.has-data  { background: #D4537E; border-color: #D4537E; color: white; }
+
+.month-input-area {
+  background: #f9f9f9; border-radius: 14px;
+  padding: 16px; border: 0.5px solid #e8e8e8; margin-bottom: 12px;
+}
+.month-title    { font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+.month-subtitle { font-size: 12px; color: #888; margin-bottom: 14px; }
+.input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.input-group { display: flex; flex-direction: column; gap: 5px; }
+.input-label { font-size: 11px; color: #888; }
+.num-input {
+  width: 100%; padding: 9px 10px;
+  border: 0.5px solid #e0e0e0; border-radius: 8px;
+  font-size: 14px; color: #1a1a1a; background: #fff; text-align: center;
+}
+.num-input:focus { outline: none; border-color: #D4537E; }
+.calc-btn {
+  width: 100%; padding: 10px;
+  background: #D4537E; color: white;
+  border: none; border-radius: 8px;
+  font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 10px;
+}
+.calc-btn:hover { background: #993556; }
+.result-card { border-radius: 8px; padding: 14px; text-align: center; display: none; }
+.result-card.show { display: block; animation: none; }
+.result-bmi   { font-size: 28px; font-weight: 600; margin-bottom: 4px; }
+.result-label { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+.result-desc  { font-size: 12px; line-height: 1.5; color: #666; }
+
+.history-section { margin-bottom: 12px; }
+.history-title   { font-size: 13px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; }
+.history-private { font-size: 10px; color: #888; font-weight: 400; }
+.history-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; background: #f9f9f9;
+  border-radius: 8px; margin-bottom: 6px; border: 0.5px solid #e8e8e8;
+}
+.hi-month  { font-size: 13px; font-weight: 600; color: #1a1a1a; min-width: 28px; }
+.hi-data   { flex: 1; font-size: 12px; color: #888; }
+.hi-bmi    { font-size: 13px; font-weight: 600; }
+.hi-status { font-size: 10px; border-radius: 999px; padding: 2px 7px; margin-left: 4px; }
+
+/* ── 비만도 설명 ── */
+.ob-section-title { font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; }
+.ob-def {
+  font-size: 12px; color: #666; line-height: 1.7;
+  background: #f9f9f9; padding: 10px 12px; border-radius: 8px; margin-bottom: 10px;
+}
+.ob-formula {
+  background: #FBEAF0; border: 0.5px solid #ED93B1;
+  border-radius: 8px; padding: 12px; margin-bottom: 10px; text-align: center;
+}
+.ob-formula-title   { font-size: 11px; color: #72243E; margin-bottom: 6px; font-weight: 600; }
+.ob-formula-text    { font-size: 13px; color: #993556; font-weight: 600; line-height: 1.8; }
+.ob-formula-example { font-size: 11px; color: #72243E; }
+
+.ob-table-wrap { border: 0.5px solid #85B7EB; border-radius: 8px; overflow: hidden; margin-bottom: 8px; }
+.ob-table-header {
+  background: #0C447C; color: white;
+  font-size: 12px; font-weight: 600; padding: 8px 12px;
+  display: flex; align-items: center; gap: 6px;
+}
+.ob-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.ob-table th { background: #E6F1FB; color: #0C447C; padding: 7px 8px; text-align: center; font-weight: 600; border-bottom: 0.5px solid #85B7EB; }
+.ob-table td { padding: 8px; text-align: center; border-bottom: 0.5px solid #e8e8e8; color: #1a1a1a; }
+.ob-table tr:last-child td { border-bottom: none; }
+.ob-table tr:hover td { background: #f5f5f5; }
+
+.bmi-dot      { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+.bmi-thin     { color: #378ADD; font-weight: 600; }
+.bmi-normal   { color: #1D9E75; font-weight: 600; }
+.bmi-overweight { color: #EF9F27; font-weight: 600; }
+.bmi-obese1   { color: #D85A30; font-weight: 600; }
+.bmi-obese2   { color: #E24B4A; font-weight: 600; }
+.bmi-obese3   { color: #A32D2D; font-weight: 600; }
+
+.ob-note { font-size: 11px; color: #888; line-height: 1.6; margin-top: 6px; }
+
+/* ── 쏙쏙 건강채널 ── */
+.channel-banner {
+  background: #E1F5EE; border: 1.5px solid #5DCAA5;
+  border-radius: 14px; padding: 18px 16px; text-align: center;
+  margin-bottom: 14px; animation: none;
+}
+.ch-on-air {
+  display: inline-block; background: #E24B4A; color: white;
+  font-size: 10px; font-weight: 600; border-radius: 999px; padding: 2px 8px;
+  margin-bottom: 8px; animation: none;
+}
+.ch-tv   { font-size: 44px; display: inline-block; animation: none; margin-bottom: 8px; }
+.ch-name { font-size: 18px; font-weight: 600; color: #085041; margin-bottom: 4px; }
+.ch-sub  { font-size: 12px; color: #0F6E56; line-height: 1.5; }
+
+/* ── 숏폼 챌린지 ── */
+.shortform-banner {
+  background: #EEEDFE;
+  border: 1.5px solid #AFA9EC;
+  border-radius: 14px;
+  padding: 18px 16px;
+  text-align: center;
+  margin-bottom: 14px;
+  animation: none;
+}
+.sf-icon  { font-size: 44px; display: inline-block; animation: none; margin-bottom: 8px; }
+.sf-title { font-size: 18px; font-weight: 600; color: #26215C; margin-bottom: 4px; }
+.sf-sub   { font-size: 12px; color: #534AB7; line-height: 1.6; }
+
+.community-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 10px;
+  background: #F1EFE8;
+  border: 0.5px solid #B4B2A9;
+  border-radius: 8px;
+  padding: 10px 13px;
+  font-size: 12px;
+  color: #444441;
+  line-height: 1.6;
+}
+.cn-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+
+/* ── 명예의 전당 메뉴 카드 ── */
+.mc-link-hall {
+  display: inline-block; margin-top: 7px;
+  background: #FAEEDA; color: #633806;
+  font-size: 10px; border-radius: 999px; padding: 2px 8px;
+  border: 0.5px solid #EF9F27;
+  animation: none;
+}
+.hall-card {
+  border: 1.5px solid #EF9F27 !important;
+  background: linear-gradient(135deg, #fffbe6 0%, #fff8e1 100%) !important;
+  position: relative;
+  overflow: hidden;
+}
+.hall-card::before {
+  content: '✨';
+  position: absolute;
+  top: 6px; right: 8px;
+  font-size: 14px;
+  animation: none;
+}
+.hall-card .mc-icon { animation: none; }
+.hall-card .mc-title { color: #854F0B; }
+
+/* ── 명예의 전당 배너 ── */
+@keyframes shimmer { 0%,100%{opacity:1} 50%{opacity:0.75} }
+@keyframes trophySpin { 0%,100%{transform:rotate(-8deg) scale(1)} 50%{transform:rotate(8deg) scale(1.12)} }
+
+.hall-banner {
+  border-radius: 16px;
+  padding: 22px 16px 18px;
+  text-align: center;
+  margin-bottom: 14px;
+  background: #FAEEDA;
+  border: 2px solid #EF9F27;
+  position: relative;
+  overflow: hidden;
+}
+.hall-stars {
+  font-size: 16px;
+  letter-spacing: 4px;
+  margin-bottom: 10px;
+  animation: none;
+}
+.hall-trophy {
+  font-size: 52px;
+  display: inline-block;
+  animation: none;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 2px 6px rgba(186,117,23,0.3));
+}
+.hall-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #633806;
+  margin-bottom: 6px;
+  letter-spacing: -0.5px;
+}
+.hall-sub {
+  font-size: 12px;
+  color: #854F0B;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+.hall-crowns {
+  font-size: 20px;
+  letter-spacing: 6px;
+  animation: none;
+}
+
+.ext-btn-hall {
+  background: #BA7517;
+  color: #FFF8E1;
+  font-size: 15px;
+  animation: none;
+}
+.ext-btn-hall:hover { background: #854F0B; }
+.ext-notice-hall {
+  background: #FAEEDA; color: #633806; border-color: #EF9F27;
+  border-radius: 8px; padding: 10px 13px; font-size: 12px;
+  line-height: 1.6; border: 0.5px solid;
+}
+
+/* ── 이달의 퍼즐 완성 ── */
+@keyframes frameGlow { 0%,100%{box-shadow:0 0 0 0 rgba(239,159,39,0)} 50%{box-shadow:0 0 12px 4px rgba(239,159,39,0.35)} }
+@keyframes completePopIn { 0%{transform:scale(0.7);opacity:0} 80%{transform:scale(1.08)} 100%{transform:scale(1);opacity:1} }
+@keyframes starSpin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+
+.picture-card {
+  border: 1.5px solid #ED93B1 !important;
+  background: #FBEAF0 !important;
+  position: relative;
+  overflow: hidden;
+}
+.picture-card::before {
+  content: '🎨';
+  position: absolute;
+  top: 6px; right: 8px;
+  font-size: 14px;
+  animation: none;
+}
+.picture-card .mc-title { color: #72243E; }
+.mc-link-picture {
+  display: inline-block; margin-top: 7px;
+  background: #FBEAF0; color: #72243E;
+  font-size: 10px; border-radius: 999px; padding: 2px 8px;
+  border: 0.5px solid #ED93B1;
+  animation: none;
+}
+
+/* 진행 바 */
+.picture-progress-bar {
+  background: #f9f9f9;
+  border-radius: 12px;
+  border: 0.5px solid #e8e8e8;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+}
+.ppb-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.ppb-label { font-size: 12px; color: #888; }
+.ppb-pct { font-size: 18px; font-weight: 700; color: #D4537E; }
+.ppb-track { background: #e8e8e8; border-radius: 999px; height: 12px; overflow: hidden; margin-bottom: 6px; }
+.ppb-fill {
+  height: 100%; border-radius: 999px;
+  background: linear-gradient(90deg, #ED93B1, #D4537E);
+  transition: width 1s cubic-bezier(.4,0,.2,1);
+  width: 0%;
+}
+.ppb-meta { display: flex; justify-content: space-between; font-size: 11px; color: #888; }
+
+/* 액자 */
+.picture-frame-wrap { text-align: center; margin-bottom: 14px; }
+.picture-frame {
+  display: inline-block;
+  position: relative;
+  padding: 14px;
+  background: #FAEEDA;
+  border: 4px solid #BA7517;
+  border-radius: 12px;
+  animation: none;
+  box-shadow: 0 0 0 2px #EF9F27, inset 0 0 0 2px rgba(186,117,23,0.2);
+}
+.frame-corner {
+  position: absolute;
+  font-size: 14px;
+  color: #EF9F27;
+  animation: none;
+  line-height: 1;
+}
+.frame-corner.tl { top: -2px;  left: -2px;  }
+.frame-corner.tr { top: -2px;  right: -2px; }
+.frame-corner.bl { bottom: -2px; left: -2px; }
+.frame-corner.br { bottom: -2px; right: -2px; }
+
+.frame-inner {
+  position: relative;
+  width: 260px;
+  height: 300px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #f0f0f0;
+}
+.pic-image {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0.08;
+  transition: opacity 1.2s ease;
+  filter: grayscale(60%);
+}
+.pic-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.55);
+  transition: opacity 0.8s ease;
+}
+.pic-overlay-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: #D4537E;
+  text-align: center;
+  line-height: 1.7;
+  background: rgba(255,255,255,0.85);
+  border-radius: 10px;
+  padding: 10px 16px;
+}
+.picture-month-badge {
+  display: inline-block;
+  margin-top: 10px;
+  background: #BA7517;
+  color: #FFF8E1;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 4px 16px;
+}
+
+/* 완성 메시지 */
+.picture-complete {
+  background: #EAF3DE;
+  border: 1.5px solid #97C459;
+  border-radius: 14px;
+  padding: 16px;
+  text-align: center;
+  margin-bottom: 12px;
+  animation: completePopIn 0.6s ease;
+}
+.pc-icon  { font-size: 36px; margin-bottom: 6px; }
+.pc-title { font-size: 18px; font-weight: 700; color: #27500A; margin-bottom: 4px; }
+.pc-desc  { font-size: 12px; color: #3B6D11; line-height: 1.6; }
+
+/* 안내 */
+.picture-guide { background: #f9f9f9; border-radius: 10px; padding: 12px 14px; border: 0.5px solid #e8e8e8; }
+.pg-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #666; margin-bottom: 6px; }
+.pg-item:last-child { margin-bottom: 0; }
+.pg-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── 내 몸 탐험 ── */
+.panel-big-icon  { font-size: 40px; margin-bottom: 10px; display: inline-block; }
+.panel-big-title { font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+.panel-big-sub   { font-size: 12px; color: #888; margin-bottom: 16px; }
+
+/* ── 미니 배너 (패널 4·5·6 공통) ── */
+.mini-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  border: 0.5px solid;
+}
+.mini-banner-icon { font-size: 28px; flex-shrink: 0; }
+.mini-banner-title { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+.mini-banner-sub   { font-size: 11px; line-height: 1.5; }
+
+.mini-banner-teal   { background: #E1F5EE; border-color: #5DCAA5; }
+.mini-banner-teal .mini-banner-title { color: #085041; }
+.mini-banner-teal .mini-banner-sub   { color: #0F6E56; }
+
+.mini-banner-purple { background: #EEEDFE; border-color: #AFA9EC; }
+.mini-banner-purple .mini-banner-title { color: #26215C; }
+.mini-banner-purple .mini-banner-sub   { color: #534AB7; }
+
+.mini-banner-pink   { background: #FBEAF0; border-color: #ED93B1; }
+.mini-banner-pink .mini-banner-title { color: #72243E; }
+.mini-banner-pink .mini-banner-sub   { color: #993556; }
+
+/* ── 강조 패들렛 버튼 ── */
+.ext-btn-big {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 16px 18px;
+  border-radius: 14px;
+  text-decoration: none;
+  margin-bottom: 10px;
+  transition: transform 0.12s, opacity 0.12s;
+  border: none;
+}
+.ext-btn-big:hover  { transform: scale(1.02); opacity: 0.92; }
+.ext-btn-big:active { transform: scale(0.98); }
+
+.ext-btn-big .ebb-icon { font-size: 28px; flex-shrink: 0; }
+.ext-btn-big .ebb-text { display: flex; flex-direction: column; gap: 2px; }
+.ext-btn-big .ebb-main { font-size: 15px; font-weight: 700; }
+.ext-btn-big .ebb-sub  { font-size: 11px; opacity: 0.85; }
+
+.ext-btn-big-teal   { background: #1D9E75; color: #E1F5EE; }
+.ext-btn-big-purple { background: #7F77DD; color: #EEEDFE; }
+.ext-btn-big-amber  { background: #BA7517; color: #FFF8E1; }
+
+/* ── 관리자 버튼 & 상단바 ── */
+.header-top-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 4px;
+}
+.header-spacer { flex: 1; }
+.admin-btn {
+  background: #2C2C2A;
+  color: #D3D1C7;
+  border: none;
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  transition: background 0.15s, transform 0.12s;
+  animation: none;
+}
+.admin-btn:hover { background: #444441; transform: scale(1.05); }
+
+/* ── 비밀번호 모달 ── */
+.modal-wrap {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 99999;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+.modal-wrap.open { display: flex; }
+.modal-box {
+  background: #fff;
+  border-radius: 18px;
+  padding: 28px 24px 22px;
+  width: 280px;
+  text-align: center;
+  animation: fadeIn 0.3s ease;
+  position: relative;
+  z-index: 100000;
+  pointer-events: auto;
+}
+.modal-icon  { font-size: 36px; margin-bottom: 8px; }
+.modal-title { font-size: 17px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
+.modal-sub   { font-size: 12px; color: #888; margin-bottom: 14px; }
+.modal-input {
+  width: 100%; padding: 10px 12px;
+  border: 1.5px solid #e0e0e0; border-radius: 10px;
+  font-size: 16px; text-align: center; color: #1a1a1a;
+  margin-bottom: 6px; letter-spacing: 4px;
+}
+.modal-input:focus { outline: none; border-color: #1D9E75; }
+.modal-err { font-size: 12px; color: #E24B4A; min-height: 18px; margin-bottom: 10px; }
+.modal-btns { display: flex; gap: 8px; }
+.modal-cancel {
+  flex: 1; padding: 10px;
+  border: 1.5px solid #e0e0e0; border-radius: 10px;
+  background: #f5f5f5; color: #666; font-size: 14px; font-weight: 600; cursor: pointer;
+}
+.modal-confirm {
+  flex: 1; padding: 10px;
+  border: none; border-radius: 10px;
+  background: #1D9E75; color: white; font-size: 14px; font-weight: 600; cursor: pointer;
+}
+.modal-confirm:hover { background: #0F6E56; }
+
+/* ── 대시보드 ── */
+.dash-stats {
+  display: grid; grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 8px; margin-bottom: 14px;
+}
+.dash-stat {
+  background: #f9f9f9; border-radius: 10px;
+  padding: 12px 6px; text-align: center; border: 0.5px solid #e8e8e8;
+}
+.ds-num   { font-size: 22px; font-weight: 700; color: #1D9E75; }
+.ds-label { font-size: 10px; color: #888; margin-top: 3px; }
+
+.dash-section { margin-bottom: 16px; }
+.dash-section-title {
+  font-size: 13px; font-weight: 700; color: #1a1a1a;
+  margin-bottom: 10px; display: flex; align-items: center; gap: 5px;
+}
+
+/* 레벨 분포 바 */
+.dash-level-bars { display: flex; flex-direction: column; gap: 8px; }
+.dlb-row { display: flex; align-items: center; gap: 8px; }
+.dlb-label { font-size: 11px; color: #555; width: 90px; flex-shrink: 0; }
+.dlb-track { flex: 1; background: #f0f0f0; border-radius: 999px; height: 10px; overflow: hidden; }
+.dlb-fill  { height: 100%; border-radius: 999px; transition: width 1s ease; }
+.dlb-s1 { background: #97C459; }
+.dlb-s2 { background: #5DCAA5; }
+.dlb-s3 { background: #EF9F27; }
+.dlb-s4 { background: #7F77DD; }
+.dlb-num { font-size: 11px; color: #555; width: 28px; text-align: right; flex-shrink: 0; }
+
+/* 알림 카드 */
+.dash-alert {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 12px; border-radius: 10px; margin-bottom: 7px;
+  border: 0.5px solid;
+}
+.dash-alert.warn { background: #FAEEDA; border-color: #EF9F27; }
+.dash-alert.good { background: #E1F5EE; border-color: #5DCAA5; }
+.da-icon { font-size: 20px; flex-shrink: 0; }
+.da-body { flex: 1; }
+.da-name { font-size: 13px; font-weight: 600; color: #1a1a1a; }
+.da-desc { font-size: 11px; color: #666; margin-top: 2px; line-height: 1.5; }
+
+/* 포인트 지급 */
+.dash-grant { display: flex; flex-direction: column; gap: 7px; margin-bottom: 8px; }
+.dash-select {
+  width: 100%; padding: 8px 10px;
+  border: 0.5px solid #e0e0e0; border-radius: 8px;
+  font-size: 13px; color: #1a1a1a; background: #fff;
+}
+.dash-grant-row { display: flex; gap: 7px; }
+.dash-input {
+  flex: 1; padding: 8px 10px;
+  border: 0.5px solid #e0e0e0; border-radius: 8px;
+  font-size: 13px; color: #1a1a1a; background: #fff; text-align: center;
+}
+.dash-grant-btn {
+  padding: 8px 16px; background: #1D9E75; color: white;
+  border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;
+  white-space: nowrap;
+}
+.dash-grant-btn:hover { background: #0F6E56; }
+.grant-log { font-size: 12px; color: #555; max-height: 80px; overflow-y: auto; }
+.grant-log-item {
+  padding: 4px 0; border-bottom: 0.5px solid #f0f0f0;
+  display: flex; justify-content: space-between;
+}
+.grant-log-item:last-child { border-bottom: none; }
+
+/* 월별 현황 */
+.dash-month-grid {
+  display: grid; grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 6px;
+}
+.dmg-cell {
+  border-radius: 8px; padding: 8px 4px; text-align: center; border: 0.5px solid;
+}
+.dmg-m { font-size: 11px; margin-bottom: 2px; }
+.dmg-v { font-size: 13px; font-weight: 700; }
+.dmg-done   { background: #E1F5EE; border-color: #5DCAA5; }
+.dmg-done .dmg-m { color: #085041; }
+.dmg-done .dmg-v { color: #1D9E75; }
+.dmg-now    { background: #FAEEDA; border-color: #EF9F27; }
+.dmg-now .dmg-m  { color: #633806; }
+.dmg-now .dmg-v  { color: #BA7517; }
+.dmg-future { background: #f5f5f5; border-color: #e0e0e0; }
+.dmg-future .dmg-m { color: #aaa; }
+.dmg-future .dmg-v { color: #ccc; }
+
+.dash-logout-btn {
+  width: 100%; padding: 12px;
+  background: #2C2C2A; color: #D3D1C7;
+  border: none; border-radius: 10px;
+  font-size: 14px; font-weight: 600; cursor: pointer;
+}
+.dash-logout-btn:hover { background: #444441; }
+
+/* ══════════════════════════════
+   새 메뉴 레이아웃
+══════════════════════════════ */
+
+/* 섹션 라벨 */
+.menu-section-label {
+  font-size: 14px; font-weight: 700; color: #444;
+  margin: 14px 0 8px 2px;
+  display: flex; align-items: center; gap: 6px;
+}
+
+/* 행 1: 신청서(작게) + 히어로 미션 */
+.menu-row-top {
+  display: flex; flex-direction: column; gap: 8px;
+  margin-bottom: 6px;
+}
+
+/* 신청서: 작은 가로형 */
+.menu-card-sm {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px !important;
+  background: #f9f9f9 !important;
+  border-color: #e0e0e0 !important;
+}
+.mc-icon-sm { font-size: 22px; flex-shrink: 0; }
+.mc-body-sm { flex: 1; }
+.mc-title-sm { font-size: 12px; font-weight: 600; color: #555; margin-bottom: 4px; }
+.mc-badge-sm { font-size: 10px !important; margin-top: 0 !important; }
+
+/* 히어로 카드: 오늘의 미션 */
+.menu-card-hero {
+  background: linear-gradient(135deg, #fff8f0 0%, #ffeedd 100%) !important;
+  border: 2px solid #EF9F27 !important;
+  border-radius: 18px !important;
+  padding: 22px 20px !important;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.15s !important;
+  animation: none;
+}
+.menu-card-hero:hover { transform: scale(1.02) !important; }
+.hero-icon  { font-size: 52px; display: inline-block; animation: none; margin-bottom: 10px; }
+.hero-title { font-size: 22px; font-weight: 700; color: #633806; margin-bottom: 6px; }
+.hero-desc  { font-size: 14px; color: #854F0B; line-height: 1.6; margin-bottom: 10px; }
+.hero-badge {
+  display: inline-block; background: #FAEEDA; color: #854F0B;
+  font-size: 12px; font-weight: 600; border-radius: 999px;
+  padding: 4px 14px; margin-bottom: 12px;
+  border: 1px solid #EF9F27;
+  animation: none;
+}
+.hero-cta {
+  display: block; background: #BA7517; color: #FFF8E1;
+  font-size: 15px; font-weight: 700; border-radius: 12px;
+  padding: 12px; animation: none;
+}
+
+/* 행 2: 3열 */
+.menu-row-3col {
+  display: grid; grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 8px; margin-bottom: 6px;
+}
+.menu-card-md {
+  padding: 14px 10px !important;
+  text-align: center;
+  border-radius: 14px !important;
+}
+.mc-icon-md   { font-size: 28px; display: inline-block; margin-bottom: 6px; animation: none; }
+.mc-title-md  { font-size: 12px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px; line-height: 1.4; }
+.mc-badge-md  { font-size: 10px !important; margin-top: 0 !important; }
+.mc-desc-sm   { font-size: 11px; color: #888; margin-bottom: 6px; }
+
+/* 행 3: 2열 */
+.menu-row-2col {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 8px; margin-bottom: 8px;
+}
+.menu-card-half {
+  padding: 16px 12px !important;
+  text-align: center;
+  border-radius: 16px !important;
+}
+
+/* 행 4: 전체 너비 가로형 */
+.menu-card-wide {
+  display: flex !important;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px !important;
+  border-radius: 14px !important;
+  margin-bottom: 12px;
+}
+.mc-wide-body { flex: 1; }
+
+/* ── 동기부여 문구 배너 ── */
+@keyframes motivePulse {
+  0%,100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(29,158,117,0); }
+  50%      { transform: scale(1.01); box-shadow: 0 0 0 5px rgba(29,158,117,0.12); }
+}
+.motivation-banner {
+  background: linear-gradient(135deg, #E1F5EE 0%, #FAEEDA 100%);
+  border: 1.5px solid #5DCAA5;
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  animation: none;
+}
+.mb-text {
+  font-size: 13px;
+  color: #085041;
+  line-height: 1.8;
+  text-align: center;
+}
+.mb-levels {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #BA7517;
+  background: rgba(255,255,255,0.6);
+  border-radius: 8px;
+  padding: 3px 8px;
+  margin: 3px 0;
+  line-height: 1.6;
+}
+.mb-question {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1D9E75;
+}
+
+/* ── 링크 클릭 보장 (z-index / pointer-events 명시) ── */
+.panel a,
+.panel button,
+.panel input,
+.panel select {
+  position: relative;
+  z-index: 2;
+  pointer-events: auto;
+}
+.ext-btn-big {
+  position: relative;
+  z-index: 2;
+  pointer-events: auto;
+  cursor: pointer;
+}
+.pbc-btn,
+.ppc-btn,
+.ext-btn,
+.ext-btn-hall,
+.ext-btn-teal,
+.ext-btn-purple {
+  position: relative;
+  z-index: 2;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* 애니메이션 transform이 stacking context 만들지 않도록
+   will-change 대신 opacity만 사용 */
+.padlet-bottom-card,
+.padlet-proof-card,
+.channel-banner,
+.shortform-banner,
+.hall-banner,
+.picture-frame {
+  isolation: isolate;
+}
+
+/* 애니메이션이 걸린 요소들이 링크 위를 덮지 않도록 */
+.mc-link, .mc-link-teal, .mc-link-amber,
+.mc-link-purple, .mc-link-gold, .mc-link-body,
+.mc-link-hall, .mc-link-picture {
+  pointer-events: none;
+}
+
+/* ── 전체 글씨 크기 업 + 진하게 ── */
+.mc-title       { font-size: 15px !important; font-weight: 800 !important; }
+.mc-title-sm    { font-size: 14px !important; font-weight: 800 !important; }
+.mc-title-md    { font-size: 15px !important; font-weight: 800 !important; }
+.mc-desc        { font-size: 13px !important; font-weight: 700 !important; }
+.mc-desc-sm     { font-size: 13px !important; font-weight: 700 !important; }
+.level-name     { font-size: 17px !important; font-weight: 800 !important; }
+.level-sub      { font-size: 14px !important; font-weight: 700 !important; }
+.coin-num       { font-size: 24px !important; font-weight: 800 !important; }
+.coin-lbl       { font-size: 13px !important; font-weight: 700 !important; }
+.prog-labels    { font-size: 13px !important; font-weight: 700 !important; }
+.header-title   { font-size: 26px !important; font-weight: 800 !important; }
+.header-sub     { font-size: 15px !important; font-weight: 700 !important; }
+.hero-title     { font-size: 26px !important; font-weight: 800 !important; }
+.hero-desc      { font-size: 16px !important; font-weight: 700 !important; }
+.hero-cta       { font-size: 17px !important; font-weight: 800 !important; }
+.hero-badge     { font-size: 14px !important; font-weight: 800 !important; }
+.menu-section-label { font-size: 17px !important; font-weight: 800 !important; }
+.mb-text        { font-size: 15px !important; font-weight: 700 !important; }
+.mb-levels      { font-size: 13px !important; font-weight: 800 !important; }
+.mb-question    { font-size: 15px !important; font-weight: 800 !important; }
+.ph h2          { font-size: 18px !important; font-weight: 800 !important; }
+.mi-text        { font-size: 15px !important; font-weight: 700 !important; }
+.mi-sub         { font-size: 13px !important; font-weight: 700 !important; }
+.mi-pt          { font-size: 14px !important; font-weight: 800 !important; }
+.m-btn          { font-size: 14px !important; font-weight: 800 !important; }
+.pbc-title      { font-size: 15px !important; font-weight: 800 !important; }
+.pbc-sub        { font-size: 13px !important; font-weight: 700 !important; }
+.pbc-btn        { font-size: 14px !important; font-weight: 800 !important; }
+.ebb-main       { font-size: 16px !important; font-weight: 800 !important; }
+.ebb-sub        { font-size: 13px !important; font-weight: 700 !important; }
+.mini-banner-title { font-size: 16px !important; font-weight: 800 !important; }
+.mini-banner-sub   { font-size: 14px !important; font-weight: 700 !important; }
+.ext-notice     { font-size: 14px !important; font-weight: 700 !important; }
+.lv-card .ln    { font-size: 12px !important; font-weight: 800 !important; }
+.lv-card .lc    { font-size: 12px !important; font-weight: 700 !important; }
+.mc-link, .mc-link-teal, .mc-link-amber,
+.mc-link-purple, .mc-link-gold, .mc-link-body,
+.mc-link-hall, .mc-link-picture,
+.mc-badge-sm, .mc-badge-md { font-size: 12px !important; font-weight: 700 !important; }
+.close-btn      { font-size: 15px !important; font-weight: 800 !important; }
+.submit-btn     { font-size: 17px !important; font-weight: 800 !important; }
+.calc-btn       { font-size: 16px !important; font-weight: 800 !important; }
+.month-title    { font-size: 18px !important; font-weight: 800 !important; }
+.month-subtitle { font-size: 14px !important; font-weight: 700 !important; }
+.month-tab      { font-size: 14px !important; font-weight: 700 !important; }
+.ob-section-title { font-size: 17px !important; font-weight: 800 !important; }
+.ob-def         { font-size: 14px !important; font-weight: 700 !important; }
+.ob-formula-text { font-size: 15px !important; font-weight: 800 !important; }
+.ob-table th, .ob-table td { font-size: 14px !important; font-weight: 700 !important; }
+.gb-title       { font-size: 20px !important; font-weight: 800 !important; }
+.gb-sub         { font-size: 14px !important; font-weight: 700 !important; }
+.cert-notice    { font-size: 14px !important; font-weight: 700 !important; }
+.cert-pt        { font-size: 15px !important; font-weight: 800 !important; }
+.ppb-label      { font-size: 14px !important; font-weight: 700 !important; }
+.ppb-pct        { font-size: 22px !important; font-weight: 800 !important; }
+.ppb-meta       { font-size: 13px !important; font-weight: 700 !important; }
+.da-name        { font-size: 15px !important; font-weight: 800 !important; }
+.da-desc        { font-size: 13px !important; font-weight: 700 !important; }
+.ds-num         { font-size: 26px !important; font-weight: 800 !important; }
+.ds-label       { font-size: 13px !important; font-weight: 700 !important; }
+.private-notice { font-size: 14px !important; font-weight: 700 !important; }
+.community-notice { font-size: 14px !important; font-weight: 700 !important; }
+.sf-title       { font-size: 20px !important; font-weight: 800 !important; }
+.sf-sub         { font-size: 14px !important; font-weight: 700 !important; }
+.hall-title     { font-size: 26px !important; font-weight: 800 !important; }
+.hall-sub       { font-size: 14px !important; font-weight: 700 !important; }
+.pg-item        { font-size: 14px !important; font-weight: 700 !important; }
+.qr-desc        { font-size: 14px !important; font-weight: 700 !important; }
+.grade-title    { font-size: 16px !important; font-weight: 800 !important; }
+.grade-badge    { font-size: 13px !important; font-weight: 700 !important; }
+.toast          { font-size: 16px !important; font-weight: 800 !important; }
+.motivation-banner { font-family: 'Gaegu', sans-serif !important; }
+
+/* ── 레벨업 축하 모달 ── */
+@keyframes lumIn    { 0%{opacity:0;transform:scale(0.5) rotate(-10deg)} 70%{transform:scale(1.1) rotate(3deg)} 100%{opacity:1;transform:scale(1) rotate(0deg)} }
+@keyframes lumBadge { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
+@keyframes confettiFall { 0%{transform:translateY(-10px) rotate(0deg);opacity:1} 100%{transform:translateY(200px) rotate(720deg);opacity:0} }
+@keyframes starBlink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
+
+.levelup-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 99998;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Gaegu', sans-serif;
+}
+.levelup-modal.open { display: flex; }
+
+.lum-box {
+  position: relative;
+  background: #fff;
+  border-radius: 28px;
+  padding: 36px 28px 28px;
+  width: 300px;
+  text-align: center;
+  animation: lumIn 0.6s cubic-bezier(.4,0,.2,1);
+  overflow: hidden;
+  border: 3px solid #EF9F27;
+}
+
+/* 3종 색상 테마 */
+.lum-box.theme-2 { border-color: #5DCAA5; }
+.lum-box.theme-3 { border-color: #EF9F27; }
+.lum-box.theme-4 { border-color: #7F77DD; background: linear-gradient(135deg,#EEEDFE,#fff); }
+
+.lum-confetti {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 100%;
+  pointer-events: none;
+}
+.lum-confetti span {
+  position: absolute;
+  font-size: 18px;
+  animation: confettiFall 2s ease-in forwards;
+}
+
+.lum-icon  { font-size: 64px; display: inline-block; animation: none; margin-bottom: 8px; }
+.lum-badge {
+  display: inline-block;
+  background: #EF9F27;
+  color: white;
+  font-size: 15px;
+  font-weight: 800;
+  border-radius: 999px;
+  padding: 4px 18px;
+  margin-bottom: 8px;
+  animation: none;
+  font-family: 'Gaegu', sans-serif;
+}
+.lum-box.theme-2 .lum-badge { background: #1D9E75; }
+.lum-box.theme-3 .lum-badge { background: #EF9F27; }
+.lum-box.theme-4 .lum-badge { background: #7F77DD; }
+
+.lum-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin-bottom: 6px;
+  font-family: 'Gaegu', sans-serif;
+}
+.lum-msg {
+  font-size: 17px;
+  font-weight: 700;
+  color: #555;
+  margin-bottom: 10px;
+  font-family: 'Gaegu', sans-serif;
+}
+.lum-stars {
+  font-size: 24px;
+  letter-spacing: 6px;
+  margin-bottom: 18px;
+  animation: none;
+}
+.lum-btn {
+  width: 100%;
+  padding: 13px;
+  background: #1D9E75;
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 17px;
+  font-weight: 800;
+  cursor: pointer;
+  font-family: 'Gaegu', sans-serif;
+  animation: none;
+}
+.lum-box.theme-4 .lum-btn { background: #7F77DD; }
+
+/* ── 미션 일일 현황 ── */
+.mission-daily-info {
+  margin-top: 12px;
+  background: #f9f9f9;
+  border: 0.5px solid #e8e8e8;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #555;
+  text-align: center;
+  line-height: 1.6;
+}
+.mission-daily-info .mdi-done {
+  color: #1D9E75;
+  font-size: 15px;
+  font-weight: 800;
+}
+.mission-daily-info .mdi-warn {
+  color: #E24B4A;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+/* ── 슈퍼히어로 특별 모달 ── */
+@keyframes heroIn {
+  0%   { opacity:0; transform:scale(0.3) rotate(-15deg); }
+  60%  { transform:scale(1.15) rotate(5deg); }
+  80%  { transform:scale(0.95) rotate(-2deg); }
+  100% { opacity:1; transform:scale(1) rotate(0deg); }
+}
+@keyframes crownBounce {
+  0%,100% { transform:translateY(0) rotate(-10deg); }
+  50%     { transform:translateY(-12px) rotate(10deg); }
+}
+@keyframes heroGlow {
+  0%,100% { box-shadow: 0 0 20px 4px rgba(127,119,221,0.4); }
+  50%     { box-shadow: 0 0 40px 12px rgba(127,119,221,0.7); }
+}
+@keyframes firework {
+  0%,100% { transform:scale(1); opacity:1; }
+  50%     { transform:scale(1.4); opacity:0.7; }
+}
+@keyframes rainbowText {
+  0%   { color:#E24B4A; }
+  25%  { color:#EF9F27; }
+  50%  { color:#1D9E75; }
+  75%  { color:#7F77DD; }
+  100% { color:#E24B4A; }
+}
+
+.hero-lum-box {
+  position: relative;
+  background: linear-gradient(135deg, #1a0533 0%, #2d0a5e 40%, #1a0533 100%);
+  border-radius: 28px;
+  padding: 32px 24px 28px;
+  width: 310px;
+  text-align: center;
+  animation: heroIn 0.8s cubic-bezier(.4,0,.2,1), heroGlow 2s ease-in-out infinite 0.8s;
+  overflow: hidden;
+  border: 3px solid #7F77DD;
+}
+.hero-lum-firework {
+  font-size: 28px;
+  letter-spacing: 6px;
+  margin-bottom: 6px;
+  animation: firework 1.2s ease-in-out infinite;
+}
+.hero-lum-crown {
+  font-size: 52px;
+  display: block;
+  animation: crownBounce 1.4s ease-in-out infinite;
+  margin-bottom: 2px;
+}
+.hero-lum-icon {
+  font-size: 64px;
+  display: block;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 0 12px rgba(255,200,50,0.8));
+}
+.hero-lum-badge {
+  display: inline-block;
+  background: linear-gradient(90deg, #FFD700, #FFA500, #FFD700);
+  color: #1a0533;
+  font-size: 16px;
+  font-weight: 800;
+  border-radius: 999px;
+  padding: 5px 20px;
+  margin-bottom: 8px;
+  font-family: 'Gaegu', sans-serif;
+  letter-spacing: 1px;
+}
+.hero-lum-title {
+  font-size: 36px;
+  font-weight: 800;
+  color: #FFD700;
+  margin-bottom: 4px;
+  font-family: 'Gaegu', sans-serif;
+  text-shadow: 0 0 20px rgba(255,215,0,0.8);
+  animation: rainbowText 2s ease-in-out infinite;
+}
+.hero-lum-subtitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #EEEDFE;
+  margin-bottom: 14px;
+  font-family: 'Gaegu', sans-serif;
+}
+.hero-lum-msg {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,215,0,0.4);
+  border-radius: 14px;
+  padding: 14px 12px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.8;
+  margin-bottom: 12px;
+  font-family: 'Gaegu', sans-serif;
+}
+.hero-lum-gift {
+  display: block;
+  font-size: 17px;
+  font-weight: 800;
+  color: #FFD700;
+  margin-top: 4px;
+}
+.hero-lum-stars {
+  font-size: 22px;
+  letter-spacing: 4px;
+  margin-bottom: 16px;
+}
+.hero-lum-btn {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(90deg, #FFD700, #FFA500);
+  color: #1a0533;
+  border: none;
+  border-radius: 14px;
+  font-size: 18px;
+  font-weight: 800;
+  cursor: pointer;
+  font-family: 'Gaegu', sans-serif;
+  letter-spacing: 0.5px;
+}
+.hero-lum-btn:hover { opacity: 0.9; }
+
+/* ── 교사용 대시보드 오버레이 ── */
+.dashboard-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 9000;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 16px;
+  overflow-y: auto;
+}
+.dashboard-overlay.open { display: flex; }
+.dashboard-wrap {
+  background: #fff;
+  border-radius: 18px;
+  border: 0.5px solid #e0e0e0;
+  padding: 0 16px 20px;
+  width: 100%;
+  max-width: 430px;
+  position: relative;
+  z-index: 9001;
+  margin-top: 8px;
+  font-family: 'Gaegu', sans-serif;
+}
+
+  </style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- 헤더 -->
+  <div class="header">
+    <div class="header-top-bar">
+      <div class="header-spacer"></div>
+      <button class="admin-btn" onclick="openAdminLogin()">🔐 관리자</button>
+    </div>
+    <div class="header-logo">🧭</div>
+    <div class="header-title"><span>튼튼탐험대</span> 출발!</div>
+    <div class="header-sub">튼튼하고 건강한 '나' 만들기 프로젝트</div>
+  </div>
+
+  <!-- 레벨업 축하 모달 (1→2단계 / 2→3단계 공용) -->
+  <div class="levelup-modal" id="levelup-modal">
+    <div class="lum-box" id="lum-box">
+      <div class="lum-confetti" id="lum-confetti"></div>
+      <div class="lum-icon" id="lum-icon">🧭</div>
+      <div class="lum-badge" id="lum-badge">2단계</div>
+      <div class="lum-title" id="lum-title">튼튼탐험가</div>
+      <div class="lum-msg" id="lum-msg">축하해요! 레벨업!</div>
+      <div class="lum-stars" id="lum-stars">⭐ ⭐ ⭐</div>
+      <button class="lum-btn" id="lum-btn" onclick="closeLevelup()">계속 도전! →</button>
+    </div>
+  </div>
+
+  <!-- 슈퍼히어로 특별 모달 (3→4단계) -->
+  <div class="levelup-modal" id="hero-modal">
+    <div class="hero-lum-box">
+      <div class="lum-confetti" id="hero-confetti"></div>
+      <div class="hero-lum-firework">🎆🎇🎆</div>
+      <div class="hero-lum-crown">👑</div>
+      <div class="hero-lum-icon">🦸</div>
+      <div class="hero-lum-badge">4단계 달성!</div>
+      <div class="hero-lum-title">슈퍼히어로!</div>
+      <div class="hero-lum-subtitle">최고 레벨 완전 정복!</div>
+      <div class="hero-lum-msg">
+        🎁 아주 특별한 선물이<br>기다리고 있어요!<br>
+        <span class="hero-lum-gift">선생님께 확인하세요! 🎀</span>
+      </div>
+      <div class="hero-lum-stars">🌟 👑 🌟 👑 🌟</div>
+      <button class="hero-lum-btn" onclick="closeHeroModal()">🦸 나는 슈퍼히어로! 🦸</button>
+    </div>
+  </div>
+
+  <!-- 비밀번호 모달 -->
+  <div class="modal-wrap" id="admin-modal">
+    <div class="modal-box">
+      <div class="modal-icon">🔐</div>
+      <div class="modal-title">관리자 로그인</div>
+      <div class="modal-sub">비밀번호를 입력해 주세요</div>
+      <input class="modal-input" type="password" id="admin-pw" placeholder="비밀번호" onkeydown="if(event.key==='Enter')checkAdmin()">
+      <div class="modal-err" id="admin-err"></div>
+      <div class="modal-btns">
+        <button class="modal-cancel" onclick="closeAdminLogin()">취소</button>
+        <button class="modal-confirm" onclick="checkAdmin()">확인</button>
+      </div>
+    </div>
+  </div>
+
+
+  </div>
+
+  <!-- 동기부여 문구 배너 — 레벨바 위 -->
+  <div class="motivation-banner">
+    <div class="mb-text">
+      포인트를 모으면 레벨이 올라가요!<br>
+      <span class="mb-levels">1단계(건강새내기) → 2단계(튼튼탐험가) → 3단계(건강챔피언) → 4단계(슈퍼히어로)</span><br>
+      가 되면 아주 특별한 🎁🎀🎉 <strong>선물이 기다리고 있어요!</strong><br>
+      <span class="mb-question">과연 어떤 선물일까요? 지금부터 도전해볼까요?</span>
+    </div>
+  </div>
+
+  <!-- 레벨 & 포인트 바 -->
+  <div class="level-bar">
+    <div class="level-row">
+      <div class="level-icon" id="cur-icon">🌱</div>
+      <div class="level-info">
+        <div class="level-name" id="cur-level">1단계: 건강새내기</div>
+        <div class="level-sub" id="cur-next">다음 단계까지 포인트 180개 더!</div>
+      </div>
+      <div class="coin-box">
+        <div class="coin-num" id="coin-count">20</div>
+        <div class="coin-lbl">⭐ 탐험 포인트</div>
+      </div>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-track">
+        <div class="prog-fill" id="prog-fill" style="width:10%"></div>
+      </div>
+      <div class="prog-labels">
+        <span>0</span>
+        <span id="prog-max">200포인트</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 토스트 알림 -->
+  <div class="toast-wrap">
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <!-- 메인 메뉴 -->
+  <div id="main-menu">
+
+    <!-- 행 1: 신청서 (작게) + 오늘의 미션 (크게 강조) -->
+    <div class="menu-row-top">
+
+      <!-- 신청서: 작은 가로형 카드 -->
+      <div class="menu-card menu-card-sm" onclick="openPanel('panel-apply')">
+        <div class="mc-icon-sm">📋</div>
+        <div class="mc-body-sm">
+          <div class="mc-title-sm">신청서/동의서/사전 설문지</div>
+          <div class="mc-link mc-badge-sm">📝 Google Forms</div>
+        </div>
+      </div>
+
+      <!-- 오늘의 미션: 크고 강조된 히어로 카드 -->
+      <div class="menu-card menu-card-hero" onclick="openPanel('panel-mission')">
+        <div class="hero-icon">🍀</div>
+        <div class="hero-title">오늘의 미션</div>
+        <div class="hero-desc">매일 저녁,<br>운동미션을 인증하세요!</div>
+        <div class="hero-badge">+5~10포인트</div>
+        <div class="hero-cta">지금 바로 인증하기 →</div>
+      </div>
+    </div>
+
+    <!-- 행 2: 도전 & 챌린지 섹션 라벨 -->
+    <div class="menu-section-label">⚽ 도전 및 챌린지</div>
+    <div class="menu-row-3col">
+      <div class="menu-card menu-card-md" onclick="openPanel('panel-quiz')">
+        <div class="mc-icon-md">🔔</div>
+        <div class="mc-title-md">도전! 골든벨</div>
+        <div class="mc-link-gold mc-badge-md">+5포인트 인증</div>
+      </div>
+      <div class="menu-card menu-card-md" onclick="openPanel('panel-body')">
+        <div class="mc-icon-md">🎬</div>
+        <div class="mc-title-md">숏폼 챌린지</div>
+        <div class="mc-link-purple mc-badge-md">📌 Padlet</div>
+      </div>
+      <div class="menu-card menu-card-md" onclick="openPanel('panel-body-score')">
+        <div class="mc-icon-md">💗</div>
+        <div class="mc-title-md">체중 입력<br><span style="font-size:10px;font-weight:400">(Body Score)</span></div>
+        <div class="mc-link-body mc-badge-md">6~12월 기록</div>
+      </div>
+    </div>
+
+    <!-- 행 3: 신난다! 재미있다!! 섹션 -->
+    <div class="menu-section-label">🎉 신난다! 재미있다!!</div>
+    <div class="menu-row-2col">
+      <div class="menu-card menu-card-half" onclick="openPanel('panel-tips')">
+        <div class="mc-icon-md">📺</div>
+        <div class="mc-title-md">쏙쏙 건강채널</div>
+        <div class="mc-desc-sm">건강 정보 채널 바로가기</div>
+        <div class="mc-link-teal mc-badge-md">📌 Padlet</div>
+      </div>
+      <div class="menu-card picture-card menu-card-half" onclick="openPanel('panel-picture')">
+        <div class="mc-icon-md">🖼️</div>
+        <div class="mc-title-md">이달의 퍼즐</div>
+        <div class="mc-desc-sm">포인트 모아 퍼즐 완성!</div>
+        <div class="mc-link-picture mc-badge-md">🎨 채워가기</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== 패널들 ===== -->
+
+  <!-- 1. 신청서/동의서/사전 설문지 -->
+  <div class="panel" id="panel-apply">
+    <div class="ph">
+      <div class="ph-icon">📋</div>
+      <h2>신청서 / 동의서 / 사전 설문지</h2>
+      <button class="close-btn" onclick="closePanel('panel-apply')">닫기</button>
+    </div>
+    <div class="mini-banner mini-banner-teal" style="margin-bottom:16px">
+      <span class="mini-banner-icon">📝</span>
+      <div>
+        <div class="mini-banner-title">튼튼하고 건강한 '나' 만들기 프로젝트</div>
+        <div class="mini-banner-sub">신청서 · 동의서 · 사전 설문지가 포함되어 있어요</div>
+      </div>
+    </div>
+    <a class="ext-btn-big ext-btn-big-teal" href="https://docs.google.com/forms/d/10Hd0DfOwFndrI78kb3JqTVuPSH6wFnBUkieXcYyQ_e4/viewform" target="_blank">
+      <span class="ebb-icon">📋</span>
+      <span class="ebb-text">
+        <span class="ebb-main">튼튼하고 건강한 '나' 만들기 프로젝트</span>
+        <span class="ebb-sub">Google Forms 바로가기 →</span>
+      </span>
+    </a>
+    <div class="ext-notice ext-notice-green">버튼을 누르면 Google Forms 신청서가 열려요!</div>
+  </div>
+
+  <!-- 2. 오늘의 미션 -->
+  <div class="panel" id="panel-mission">
+    <div class="ph">
+      <div class="ph-icon">🍀</div>
+      <h2>오늘의 미션</h2>
+      <button class="close-btn" onclick="closePanel('panel-mission')">닫기</button>
+    </div>
+    <p class="panel-desc">미션을 완료하면 탐험 포인트가 쌓여요!</p>
+    <div class="mission-list">
+      <div class="mission-item" id="m1">
+        <div class="mi-icon">💧</div>
+        <div class="mi-text">물 6컵 마시기<div class="mi-sub">건강한 수분 섭취</div></div>
+        <div class="mi-right"><div class="mi-pt">+5P</div><button class="m-btn" id="btn-m1" onclick="doMission('m1',5)">완료!</button></div>
+      </div>
+      <div class="mission-item" id="m2">
+        <div class="mi-icon">🥗</div>
+        <div class="mi-text">채소 반찬 먹기<div class="mi-sub">오늘 식사에 채소 포함</div></div>
+        <div class="mi-right"><div class="mi-pt">+5P</div><button class="m-btn" id="btn-m2" onclick="doMission('m2',5)">완료!</button></div>
+      </div>
+      <div class="mission-item" id="m3">
+        <div class="mi-icon">🚶</div>
+        <div class="mi-text">30분 걷기 또는 운동<div class="mi-sub">신체 활동 실천</div></div>
+        <div class="mi-right"><div class="mi-pt">+8P</div><button class="m-btn" id="btn-m3" onclick="doMission('m3',8)">완료!</button></div>
+      </div>
+      <div class="mission-item" id="m4">
+        <div class="mi-icon">🍚</div>
+        <div class="mi-text">아침밥 먹기<div class="mi-sub">하루를 건강하게 시작</div></div>
+        <div class="mi-right"><div class="mi-pt">+5P</div><button class="m-btn" id="btn-m4" onclick="doMission('m4',5)">완료!</button></div>
+      </div>
+      <div class="mission-item" id="m5">
+        <div class="mi-icon">📵</div>
+        <div class="mi-text">스마트폰 2시간 이하<div class="mi-sub">활동적인 생활 유지</div></div>
+        <div class="mi-right"><div class="mi-pt">+7P</div><button class="m-btn" id="btn-m5" onclick="doMission('m5',7)">완료!</button></div>
+      </div>
+    </div>
+    <!-- 오늘 미션 현황 -->
+    <div class="mission-daily-info" id="mission-daily-info"></div>
+    <div class="padlet-bottom-card">
+      <div class="pbc-icon">🍀</div>
+      <div class="pbc-body">
+        <div class="pbc-title">운동 미션 인증</div>
+        <div class="pbc-sub">매일 저녁 운동 후 Padlet에 인증해요! (완주 청완초)</div>
+      </div>
+      <a class="pbc-btn" href="https://padlet.com/a01067752602/padlet-il6qwpw58h6dyssw" target="_blank">인증하기 →</a>
+    </div>
+  </div>
+
+  <!-- 3. 도전! 골든벨 -->
+  <div class="panel" id="panel-quiz">
+    <div class="ph">
+      <div class="ph-icon">🔔</div>
+      <h2>도전! 골든벨 서바이벌 퀴즈</h2>
+      <button class="close-btn" onclick="closePanel('panel-quiz')">닫기</button>
+    </div>
+    <div class="golden-bell-banner">
+      <div class="gb-icon">🔔</div>
+      <div class="gb-title">골든벨을 울려라!</div>
+      <div class="gb-sub">띵커벨 QR을 찍고 퀴즈에 도전하세요!<br>마지막 화면을 캡처해서 인증하면 포인트 GET!<br><span style="color:#BA7517;font-weight:600">📅 매주 수요일 새 퀴즈가 업데이트돼요!</span></div>
+    </div>
+    <!-- 저학년 -->
+    <div class="grade-section low">
+      <div class="grade-hd">
+        <span class="grade-emoji">🌱</span>
+        <span class="grade-title">저학년 도전</span>
+        <span class="grade-badge">1 · 2 · 3학년</span>
+      </div>
+      <div class="qr-box">
+        <img src="qr_low.png" alt="저학년 QR코드" class="qr-img">
+        <div class="qr-desc">📷 카메라로 QR을 찍으면 바로 참여돼요!</div>
+      </div>
+    </div>
+    <!-- 고학년 -->
+    <div class="grade-section high">
+      <div class="grade-hd">
+        <span class="grade-emoji">🏅</span>
+        <span class="grade-title">고학년 도전</span>
+        <span class="grade-badge">4 · 5 · 6학년</span>
+      </div>
+      <div class="qr-box">
+        <img src="qr_high.png" alt="고학년 QR코드" class="qr-img">
+        <div class="qr-desc">📷 카메라로 QR을 찍으면 바로 참여돼요!</div>
+      </div>
+    </div>
+    <div class="cert-notice">
+      <span class="cert-icon">📸</span>
+      <span>퀴즈 마지막 화면을 캡처해서 인증하면 <span class="cert-pt">포인트 +5</span> 획득!</span>
+    </div>
+    <div class="padlet-proof-card">
+      <div class="ppc-icon">🏆</div>
+      <div class="ppc-body">
+        <div class="ppc-title">인증샷 올리기</div>
+        <div class="ppc-sub">퀴즈 결과 캡처 → Padlet에 올리면 포인트 지급!</div>
+      </div>
+      <a class="ppc-btn" href="https://padlet.com/a01067752602/padlet-59fg3k9ls5gjuarn" target="_blank">인증하기 →</a>
+    </div>
+  </div>
+
+  <!-- 4. 이번달 내 몸은 몇점? -->
+  <div class="panel" id="panel-body-score">
+    <div class="ph">
+      <div class="ph-icon">💗</div>
+      <h2>이번달 내 몸은 몇점?</h2>
+      <button class="close-btn" onclick="closePanel('panel-body-score')">닫기</button>
+    </div>
+    <div class="mini-banner mini-banner-pink">
+      <span class="mini-banner-icon">💗</span>
+      <div>
+        <div class="mini-banner-title">내 몸 점수 확인</div>
+        <div class="mini-banner-sub">6~12월 매달 1회 체중 기록 · 나만 볼 수 있어요 🔒</div>
+      </div>
+    </div>
+    <div class="private-notice">
+      <span class="lock-icon">🔒</span>
+      <span>내 기록은 <strong>나만 볼 수 있어요</strong>. 이 기기에 안전하게 저장돼요!</span>
+    </div>
+    <!-- 월 탭 -->
+    <div class="month-tabs" id="month-tabs">
+      <div class="month-tab active" onclick="selectMonth(6,this)" id="tab-6">6월</div>
+      <div class="month-tab" onclick="selectMonth(7,this)" id="tab-7">7월</div>
+      <div class="month-tab" onclick="selectMonth(8,this)" id="tab-8">8월</div>
+      <div class="month-tab" onclick="selectMonth(9,this)" id="tab-9">9월</div>
+      <div class="month-tab" onclick="selectMonth(10,this)" id="tab-10">10월</div>
+      <div class="month-tab" onclick="selectMonth(11,this)" id="tab-11">11월</div>
+      <div class="month-tab" onclick="selectMonth(12,this)" id="tab-12">12월</div>
+    </div>
+    <!-- 입력 영역 -->
+    <div class="month-input-area">
+      <div class="month-title" id="month-input-title">6월 체중 기록</div>
+      <div class="month-subtitle">키와 몸무게를 입력하고 비만도를 확인해요!</div>
+      <div class="input-row">
+        <div class="input-group">
+          <div class="input-label">키 (cm)</div>
+          <input class="num-input" type="number" id="input-height" placeholder="예) 140" min="80" max="200">
+        </div>
+        <div class="input-group">
+          <div class="input-label">몸무게 (kg)</div>
+          <input class="num-input" type="number" id="input-weight" placeholder="예) 35" min="10" max="150">
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calcBMI()">📊 저장하고 비만도 확인하기</button>
+      <div class="result-card" id="result-card"></div>
+    </div>
+    <!-- 누적 기록 -->
+    <div class="history-section" id="history-section" style="display:none">
+      <div class="history-title">
+        📅 내 체중 변화 기록
+        <span class="history-private">(나만 볼 수 있어요)</span>
+      </div>
+      <div id="history-list"></div>
+    </div>
+    <div class="divider"></div>
+    <!-- 비만도 설명 -->
+    <div class="ob-section-title">📖 비만도란 무엇일까요?</div>
+    <div class="ob-def">
+      비만도는 키와 몸무게로 내 몸이 건강한지 알아보는 방법이에요.
+      <strong>BMI(체질량지수)</strong>를 사용하는데, 값이 높을수록 체지방이 많다는 뜻이에요.
+      어린이도 같은 공식으로 계산하지만 판정 기준은 어른과 조금 다를 수 있어요!
+    </div>
+    <div class="ob-formula">
+      <div class="ob-formula-title">✏️ BMI 계산 공식</div>
+      <div class="ob-formula-text">
+        BMI = 몸무게(kg) ÷ 키(m) ÷ 키(m)<br>
+        <span class="ob-formula-example">예) 키 140cm, 몸무게 35kg → 35 ÷ 1.4 ÷ 1.4 ≈ 17.9</span>
+      </div>
+    </div>
+    <div class="ob-table-wrap">
+      <div class="ob-table-header">
+        <span>📌</span>
+        <span>대한비만학회 BMI 판정 기준</span>
+      </div>
+      <table class="ob-table">
+        <thead>
+          <tr><th>BMI 범위</th><th>판정</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>18.5 미만</td><td><span class="bmi-dot" style="background:#378ADD"></span><span class="bmi-thin">저체중</span></td></tr>
+          <tr><td>18.5 ~ 22.9</td><td><span class="bmi-dot" style="background:#1D9E75"></span><span class="bmi-normal">정상</span></td></tr>
+          <tr><td>23.0 ~ 24.9</td><td><span class="bmi-dot" style="background:#EF9F27"></span><span class="bmi-overweight">과체중 (비만 전단계)</span></td></tr>
+          <tr><td>25.0 ~ 29.9</td><td><span class="bmi-dot" style="background:#D85A30"></span><span class="bmi-obese1">1단계 비만</span></td></tr>
+          <tr><td>30.0 ~ 34.9</td><td><span class="bmi-dot" style="background:#E24B4A"></span><span class="bmi-obese2">2단계 비만</span></td></tr>
+          <tr><td>35.0 이상</td><td><span class="bmi-dot" style="background:#A32D2D"></span><span class="bmi-obese3">3단계 비만 (고도비만)</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="ob-note">※ 위 기준은 성인 기준이에요. 어린이·청소년은 성장 단계에 따라 기준이 다를 수 있으니 정확한 판정은 선생님이나 전문가와 함께 확인하세요!</div>
+  </div>
+
+  <!-- 5. 쏙쏙 건강채널 -->
+  <div class="panel" id="panel-tips">
+    <div class="ph">
+      <div class="ph-icon">📺</div>
+      <h2>쏙쏙 건강채널</h2>
+      <button class="close-btn" onclick="closePanel('panel-tips')">닫기</button>
+    </div>
+    <div class="mini-banner mini-banner-teal">
+      <span class="mini-banner-icon">📺</span>
+      <div>
+        <div class="mini-banner-title">쏙쏙 건강채널</div>
+        <div class="mini-banner-sub">선생님이 올려주신 건강 정보 · 계속 업데이트!</div>
+      </div>
+    </div>
+    <a class="ext-btn-big ext-btn-big-teal" href="https://padlet.com/a01067752602/padlet-9ri47j3wo65y4rc7" target="_blank">
+      <span class="ebb-icon">📌</span>
+      <span class="ebb-text">
+        <span class="ebb-main">쏙쏙 건강채널 보러가기</span>
+        <span class="ebb-sub">Padlet 바로가기 →</span>
+      </span>
+    </a>
+  </div>
+
+  <!-- 6. 숏폼 챌린지 -->
+  <div class="panel" id="panel-body">
+    <div class="ph">
+      <div class="ph-icon">🎬</div>
+      <h2>숏폼 챌린지</h2>
+      <button class="close-btn" onclick="closePanel('panel-body')">닫기</button>
+    </div>
+    <div class="mini-banner mini-banner-purple">
+      <span class="mini-banner-icon">🎬</span>
+      <div>
+        <div class="mini-banner-title">숏폼 챌린지</div>
+        <div class="mini-banner-sub">건강 챌린지 영상 보고 나도 도전!</div>
+      </div>
+    </div>
+    <a class="ext-btn-big ext-btn-big-purple" href="https://padlet.com/a01067752602/padlet-a1s7bft7ayd8chrj" target="_blank">
+      <span class="ebb-icon">📌</span>
+      <span class="ebb-text">
+        <span class="ebb-main">숏폼 챌린지 보러가기</span>
+        <span class="ebb-sub">Padlet 바로가기 →</span>
+      </span>
+    </a>
+    <div class="community-notice">
+      <span class="cn-icon">🧹</span>
+      <span>우리들의 깨끗한 공간을 위해, 주제와 상관없는 글이나 영상은 삭제될 수 있습니다.</span>
+    </div>
+  </div>
+  <!-- 7. 명예의 전당 -->
+  <div class="panel" id="panel-hall">
+    <div class="ph">
+      <div class="ph-icon">🏆</div>
+      <h2>명예의 전당</h2>
+      <button class="close-btn" onclick="closePanel('panel-hall')">닫기</button>
+    </div>
+    <div class="hall-banner">
+      <div class="hall-stars">✨ ⭐ 🌟 ⭐ ✨</div>
+      <div class="hall-trophy">🏆</div>
+      <div class="hall-title">명예의 전당</div>
+      <div class="hall-sub">튼튼탐험대 최고의 건강 챔피언들!<br>꾸준히 노력한 모든 탐험대원을 응원해요!</div>
+      <div class="hall-crowns">👑 👑 👑</div>
+    </div>
+    <a class="pbc-btn" href="https://padlet.com/a01067752602/padlet-gsgizq88bgcl9a3r" target="_blank" style="display:inline-block;margin-top:4px">🏆 명예의 전당 보러가기 →</a>
+  </div>
+  <!-- 8. 이달의 퍼즐 완성 -->
+  <div class="panel" id="panel-picture">
+    <div class="ph">
+      <div class="ph-icon">🖼️</div>
+      <h2>이달의 퍼즐 완성</h2>
+      <button class="close-btn" onclick="closePanel('panel-picture')">닫기</button>
+    </div>
+
+    <!-- 진행 현황 -->
+    <div class="picture-progress-bar">
+      <div class="ppb-top">
+        <span class="ppb-label">이번 달 포인트 달성률</span>
+        <span class="ppb-pct" id="pic-pct">0%</span>
+      </div>
+      <div class="ppb-track">
+        <div class="ppb-fill" id="pic-fill"></div>
+      </div>
+      <div class="ppb-meta">
+        <span id="pic-points-label">현재 <strong id="pic-cur">20</strong>P</span>
+        <span>목표 <strong id="pic-goal">200</strong>P · 매월 28일 완성!</span>
+      </div>
+    </div>
+
+    <!-- 액자 + 퍼즐 -->
+    <div class="picture-frame-wrap">
+      <div class="picture-frame">
+        <div class="frame-corner tl">★</div>
+        <div class="frame-corner tr">★</div>
+        <div class="frame-corner bl">★</div>
+        <div class="frame-corner br">★</div>
+        <div class="frame-inner">
+          <img id="pic-img" src="6월.png" alt="이달의 퍼즐" class="pic-image">
+          <div class="pic-overlay" id="pic-overlay">
+            <div class="pic-overlay-text" id="pic-overlay-text">🧩 포인트를 모아<br>퍼즐을 완성해요!</div>
+          </div>
+        </div>
+      </div>
+      <div class="picture-month-badge" id="pic-month-badge">6월의 퍼즐</div>
+    </div>
+
+    <!-- 완성 메시지 -->
+    <div class="picture-complete" id="pic-complete" style="display:none">
+      <div class="pc-icon">🎉</div>
+      <div class="pc-title">퍼즐 완성!</div>
+      <div class="pc-desc">이번 달 목표를 달성했어요!<br>건강 탐험가로 한 걸음 더 나아갔어요!</div>
+    </div>
+
+    <!-- 안내 -->
+    <div class="picture-guide">
+      <div class="pg-item"><span class="pg-dot" style="background:#EAF3DE;border:1.5px solid #5DCAA5"></span><span>포인트가 쌓일수록 퍼즐이 선명해져요</span></div>
+      <div class="pg-item"><span class="pg-dot" style="background:#FAEEDA;border:1.5px solid #EF9F27"></span><span>매월 28일 기준으로 완성 여부가 결정돼요</span></div>
+      <div class="pg-item"><span class="pg-dot" style="background:#EEEDFE;border:1.5px solid #AFA9EC"></span><span>다음 달이 되면 새로운 퍼즐로 바뀌어요</span></div>
+    </div>
+  </div>
+
+</div><!-- /.app -->
+
+  <!-- 교사용 대시보드 오버레이 -->
+  <div class="dashboard-overlay" id="dashboard-overlay">
+    <div class="dashboard-wrap">
+      <div class="ph" style="position:sticky;top:0;background:#fff;z-index:10;padding-top:8px;border-bottom:0.5px solid #e8e8e8;margin-bottom:14px;">
+        <div class="ph-icon">📊</div>
+        <h2>교사용 대시보드</h2>
+        <button class="close-btn" onclick="closeDashboard()">닫기</button>
+      </div>
+
+      <!-- 요약 통계 -->
+      <div class="dash-stats">
+        <div class="dash-stat">
+          <div class="ds-num" id="ds-total">24</div>
+          <div class="ds-label">전체 학생</div>
+        </div>
+        <div class="dash-stat">
+          <div class="ds-num" id="ds-active">18</div>
+          <div class="ds-label">이번 주 참여</div>
+        </div>
+        <div class="dash-stat">
+          <div class="ds-num" id="ds-levelup">5</div>
+          <div class="ds-label">레벨업 달성</div>
+        </div>
+        <div class="dash-stat">
+          <div class="ds-num" id="ds-avg">340</div>
+          <div class="ds-label">평균 포인트</div>
+        </div>
+      </div>
+
+      <!-- 레벨 분포 -->
+      <div class="dash-section">
+        <div class="dash-section-title">📈 단계별 학생 분포</div>
+        <div class="dash-level-bars">
+          <div class="dlb-row">
+            <span class="dlb-label">🌱 건강새내기</span>
+            <div class="dlb-track"><div class="dlb-fill dlb-s1" style="width:50%"></div></div>
+            <span class="dlb-num">12명</span>
+          </div>
+          <div class="dlb-row">
+            <span class="dlb-label">🧭 튼튼탐험가</span>
+            <div class="dlb-track"><div class="dlb-fill dlb-s2" style="width:33%"></div></div>
+            <span class="dlb-num">8명</span>
+          </div>
+          <div class="dlb-row">
+            <span class="dlb-label">🏅 건강챔피언</span>
+            <div class="dlb-track"><div class="dlb-fill dlb-s3" style="width:12%"></div></div>
+            <span class="dlb-num">3명</span>
+          </div>
+          <div class="dlb-row">
+            <span class="dlb-label">🦸 슈퍼히어로</span>
+            <div class="dlb-track"><div class="dlb-fill dlb-s4" style="width:4%"></div></div>
+            <span class="dlb-num">1명</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 알림 -->
+      <div class="dash-section">
+        <div class="dash-section-title">⚠️ 관찰 필요 학생</div>
+        <div class="dash-alert warn">
+          <span class="da-icon">😴</span>
+          <div class="da-body">
+            <div class="da-name">3주 이상 미참여</div>
+            <div class="da-desc">강도현 · 윤채원 · 오준서 — 개별 독려 필요</div>
+          </div>
+        </div>
+        <div class="dash-alert good">
+          <span class="da-icon">🔥</span>
+          <div class="da-body">
+            <div class="da-name">레벨업 임박</div>
+            <div class="da-desc">김민준 · 이서연 — 이번 주 달성 가능!</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 포인트 수동 지급 -->
+      <div class="dash-section">
+        <div class="dash-section-title">🪙 포인트 수동 지급</div>
+        <div class="dash-grant">
+          <select class="dash-select" id="grant-name">
+            <option value="">학생 선택</option>
+            <option>김민준</option>
+            <option>이서연</option>
+            <option>박지후</option>
+            <option>최수아</option>
+            <option>정하은</option>
+            <option>강도현</option>
+            <option>윤채원</option>
+            <option>오준서</option>
+          </select>
+          <select class="dash-select" id="grant-reason">
+            <option>미션 완료</option>
+            <option>퀴즈 정답</option>
+            <option>개근 보너스</option>
+            <option>레벨업 보너스</option>
+            <option>선생님 재량</option>
+          </select>
+          <div class="dash-grant-row">
+            <input class="dash-input" type="number" id="grant-pt" placeholder="포인트" value="5" min="1" max="100">
+            <button class="dash-grant-btn" onclick="grantPoint()">지급 ➕</button>
+          </div>
+        </div>
+        <div class="grant-log" id="grant-log"></div>
+      </div>
+
+      <!-- 월별 현황 -->
+      <div class="dash-section">
+        <div class="dash-section-title">📅 월별 참여 현황</div>
+        <div class="dash-month-grid">
+          <div class="dmg-cell dmg-done"><div class="dmg-m">6월</div><div class="dmg-v">89%</div></div>
+          <div class="dmg-cell dmg-done"><div class="dmg-m">7월</div><div class="dmg-v">82%</div></div>
+          <div class="dmg-cell dmg-done"><div class="dmg-m">8월</div><div class="dmg-v">76%</div></div>
+          <div class="dmg-cell dmg-now"><div class="dmg-m">9월</div><div class="dmg-v">79%</div></div>
+          <div class="dmg-cell dmg-future"><div class="dmg-m">10월</div><div class="dmg-v">-</div></div>
+          <div class="dmg-cell dmg-future"><div class="dmg-m">11월</div><div class="dmg-v">-</div></div>
+          <div class="dmg-cell dmg-future"><div class="dmg-m">12월</div><div class="dmg-v">-</div></div>
+        </div>
+      </div>
+
+      <button class="dash-logout-btn" onclick="closeDashboard()">대시보드 닫기</button>
+    </div>
+
+
+<script>
+/* ===========================
+   튼튼탐험대 — app.js
+   =========================== */
+
+/* ── 전역 상태 ── */
+var points      = 20;
+var missionDone = {};
+var curMonth    = 6;
+var STORAGE_KEY = 'tuntun_body_records_v2';
+
+/* ── 레벨 정의 ── */
+var LEVELS = [
+  { name: '1단계: 건강새내기', icon: '🌱', max: 200  },
+  { name: '2단계: 튼튼탐험가', icon: '🧭', max: 600  },
+  { name: '3단계: 건강챔피언', icon: '🏅', max: 1200 },
+  { name: '4단계: 슈퍼히어로', icon: '🦸', max: 99999 }
+];
+
+/* ── 로컬스토리지 헬퍼 ── */
+function loadRecords() {
+  try {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) { return {}; }
+}
+function saveRecords(recs) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(recs)); } catch (e) {}
+}
+
+/* ── 레벨 인덱스 ── */
+function getLvIdx(p) {
+  for (var i = 0; i < LEVELS.length; i++) {
+    if (p <= LEVELS[i].max) return i;
+  }
+  return 3;
+}
+
+/* ── UI 업데이트 ── */
+function updateUI() {
+  var i    = getLvIdx(points);
+  var lv   = LEVELS[i];
+  var prev = i === 0 ? 0 : LEVELS[i - 1].max;
+  var next = lv.max === 99999 ? prev + 500 : lv.max;
+  var pct  = Math.min(100, Math.round((points - prev) / (next - prev) * 100));
+
+  document.getElementById('coin-count').textContent  = points;
+  document.getElementById('cur-level').textContent   = lv.name;
+  document.getElementById('cur-icon').textContent    = lv.icon;
+  document.getElementById('cur-next').textContent    = i < 3
+    ? '다음 단계까지 포인트 ' + (next - points) + '개 더!'
+    : '최고 단계 달성! 슈퍼히어로!';
+  document.getElementById('prog-fill').style.width   = pct + '%';
+  document.getElementById('prog-max').textContent    = (i < 3 ? next : '최고') + '포인트';
+
+  for (var j = 0; j < 4; j++) {
+    document.getElementById('lv' + j).className = 'lv-card' + (j === i ? ' active' : '');
+  }
+}
+
+/* ── 토스트 ── */
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent  = msg;
+  t.style.display = 'block';
+  setTimeout(function () { t.style.display = 'none'; }, 2500);
+}
+
+/* ── 포인트 추가 ── */
+function addPoints(n) {
+  var before = getLvIdx(points);
+  points += n;
+  var after = getLvIdx(points);
+  updateUI();
+  if (after > before) {
+    showLevelup(after);
+  } else {
+    showToast('⭐ 탐험 포인트 +' + n + ' 획득!');
+  }
+  // 패널이 열려 있으면 퍼즐도 즉시 업데이트
+  if (document.getElementById('panel-picture').classList.contains('open')) {
+    initPicture();
+  }
+}
+
+/* ── 레벨업 축하 모달 ── */
+var LEVELUP_DATA = [
+  null,
+  { badge:'2단계 달성! 🎉', icon:'🧭', title:'튼튼탐험가', msg:'멋진 탐험가가 됐어요!\n계속 건강을 쌓아가요!', stars:'⭐ ⭐ ⭐', btnText:'계속 도전! →', theme:'theme-2', emoji:['🎉','⭐','🌟','🎊','✨','💚','🍀','🌿'] },
+  { badge:'3단계 달성! 🏅', icon:'🏅', title:'건강챔피언', msg:'건강 챔피언 등극!\n정말 대단해요!', stars:'🏅 🔥 🏅 🔥 🏅', btnText:'챔피언처럼 고고! →', theme:'theme-3', emoji:['🏅','🔥','💪','🎯','⭐','🎉','👊','✨'] }
+];
+
+function showLevelup(lvIdx) {
+  if (lvIdx === 3) { showHeroModal(); return; }
+  var d = LEVELUP_DATA[lvIdx];
+  if (!d) { showToast('🎉 레벨업!'); return; }
+
+  var box = document.getElementById('lum-box');
+  box.className = 'lum-box ' + d.theme;
+  document.getElementById('lum-icon').textContent  = d.icon;
+  document.getElementById('lum-badge').textContent = d.badge;
+  document.getElementById('lum-title').textContent = d.title;
+  document.getElementById('lum-msg').textContent   = d.msg;
+  document.getElementById('lum-stars').textContent = d.stars;
+  document.getElementById('lum-btn').textContent   = d.btnText;
+
+  var cc = document.getElementById('lum-confetti');
+  cc.innerHTML = '';
+  for (var i = 0; i < 20; i++) {
+    var s = document.createElement('span');
+    s.textContent = d.emoji[i % d.emoji.length];
+    s.style.cssText = 'position:absolute;left:' + Math.random()*90 + '%;top:-20px;font-size:' + (14+Math.random()*14) + 'px;animation:confettiFall ' + (1.2+Math.random()*1.2) + 's ' + (Math.random()*1.2) + 's ease-in forwards;';
+    cc.appendChild(s);
+  }
+  document.getElementById('levelup-modal').classList.add('open');
+}
+
+function closeLevelup() {
+  document.getElementById('levelup-modal').classList.remove('open');
+}
+
+/* ── 슈퍼히어로 특별 모달 ── */
+function showHeroModal() {
+  var cc = document.getElementById('hero-confetti');
+  cc.innerHTML = '';
+  var heroEmoji = ['🦸','👑','🌈','💫','🎆','🎇','⭐','🌟','✨','🎉','🎊','🏆'];
+  for (var i = 0; i < 30; i++) {
+    var s = document.createElement('span');
+    s.textContent = heroEmoji[i % heroEmoji.length];
+    s.style.cssText = 'position:absolute;left:' + Math.random()*90 + '%;top:-20px;font-size:' + (16+Math.random()*18) + 'px;animation:confettiFall ' + (1.5+Math.random()*1.5) + 's ' + (Math.random()*1.5) + 's ease-in forwards;';
+    cc.appendChild(s);
+  }
+  document.getElementById('hero-modal').classList.add('open');
+}
+
+function closeHeroModal() {
+  document.getElementById('hero-modal').classList.remove('open');
+  showToast('🦸 슈퍼히어로 달성! 선생님께 선물을 받으세요! 🎁');
+}
+
+/* ── 패널 열기 / 닫기 ── */
+function openPanel(id) {
+  document.querySelectorAll('.panel').forEach(function (p) { p.classList.remove('open'); });
+  var panel = document.getElementById(id);
+  panel.classList.add('open');
+  document.getElementById('main-menu').style.display = 'none';
+  if (id === 'panel-body-score') initBodyScore();
+  if (id === 'panel-picture')    initPicture();
+  if (id === 'panel-mission')    initMissionPanel();
+  window.scrollTo(0, 0);
+  /* 패널 내 모든 a 태그 클릭 이벤트 보장 */
+  panel.querySelectorAll('a[href]').forEach(function(a) {
+    a.style.pointerEvents = 'auto';
+    a.style.position = 'relative';
+    a.style.zIndex = '10';
+  });
+}
+function closePanel(id) {
+  document.getElementById(id).classList.remove('open');
+  document.getElementById('main-menu').style.display = 'block';
+}
+
+/* ── 미션 관련 상수 ── */
+var MISSION_STORAGE_KEY = 'tuntun_mission_daily';
+var MISSION_MAX_PT = 30; // 하루 최대 포인트 (5+5+8+5+7)
+var MISSION_CONFIG = { m1:5, m2:5, m3:8, m4:5, m5:7 };
+
+/* 오늘 날짜 문자열 */
+function getTodayStr() {
+  var d = new Date();
+  return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate();
+}
+
+/* 오늘 미션 데이터 로드 */
+function loadMissionToday() {
+  try {
+    var raw = localStorage.getItem(MISSION_STORAGE_KEY);
+    if (!raw) return { date: getTodayStr(), done: {}, pts: 0 };
+    var data = JSON.parse(raw);
+    if (data.date !== getTodayStr()) {
+      // 날짜가 바뀌면 초기화
+      return { date: getTodayStr(), done: {}, pts: 0 };
+    }
+    return data;
+  } catch(e) { return { date: getTodayStr(), done: {}, pts: 0 }; }
+}
+
+/* 오늘 미션 데이터 저장 */
+function saveMissionToday(data) {
+  try { localStorage.setItem(MISSION_STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
+}
+
+/* 미션 패널 열릴 때 오늘 상태 복원 */
+function initMissionPanel() {
+  var data = loadMissionToday();
+  var ids = ['m1','m2','m3','m4','m5'];
+  ids.forEach(function(id) {
+    var el  = document.getElementById(id);
+    var btn = document.getElementById('btn-' + id);
+    if (!el || !btn) return;
+    if (data.done[id]) {
+      el.classList.add('done');
+      btn.textContent = '완료 ✓';
+      btn.classList.add('done');
+    } else {
+      el.classList.remove('done');
+      btn.textContent = '완료!';
+      btn.classList.remove('done');
+    }
+  });
+  renderMissionInfo(data);
+}
+
+/* 미션 현황 표시 */
+function renderMissionInfo(data) {
+  var el = document.getElementById('mission-daily-info');
+  if (!el) return;
+  var earned = data.pts || 0;
+  var remain = MISSION_MAX_PT - earned;
+  if (earned >= MISSION_MAX_PT) {
+    el.innerHTML = '<span class="mdi-done">🎉 오늘 미션 포인트를 모두 획득했어요! (+' + earned + 'P)<br>내일 또 도전해요!</span>';
+  } else {
+    el.innerHTML = '오늘 획득 <strong>' + earned + 'P</strong> / 최대 <strong>' + MISSION_MAX_PT + 'P</strong> &nbsp;|&nbsp; 남은 포인트 <span class="mdi-done">+' + remain + 'P</span>';
+  }
+}
+
+/* ── 미션 완료 (일일 제한 포함) ── */
+function doMission(id, n) {
+  var data = loadMissionToday();
+  // 이미 완료한 미션
+  if (data.done[id]) {
+    showToast('✅ 이미 완료한 미션이에요!');
+    return;
+  }
+  // 일일 포인트 한도 초과 체크
+  if (data.pts + n > MISSION_MAX_PT) {
+    showToast('⚠️ 오늘 미션 포인트(' + MISSION_MAX_PT + 'P)를 모두 채웠어요!');
+    return;
+  }
+  // 완료 처리
+  data.done[id] = true;
+  data.pts = (data.pts || 0) + n;
+  saveMissionToday(data);
+  missionDone[id] = true;
+  var el  = document.getElementById(id);
+  var btn = document.getElementById('btn-' + id);
+  el.classList.add('done');
+  btn.textContent = '완료 ✓';
+  btn.classList.add('done');
+  addPoints(n);
+  renderMissionInfo(data);
+}
+
+/* ─────────────────────────────
+   이번달 내 몸은 몇점? 기능
+───────────────────────────── */
+
+/* 대한비만학회 기준 BMI 판정 */
+function getBmiStatus(bmi) {
+  if (bmi < 18.5) return { label: '저체중',              color: '#378ADD', bg: '#E6F1FB', desc: '몸무게가 조금 부족해요. 균형 잡힌 식사로 건강하게 몸을 키워봐요!' };
+  if (bmi < 23  ) return { label: '정상',                color: '#1D9E75', bg: '#E1F5EE', desc: '아주 건강한 상태예요! 지금처럼 건강한 생활을 유지해요!' };
+  if (bmi < 25  ) return { label: '과체중 (비만 전단계)', color: '#EF9F27', bg: '#FAEEDA', desc: '비만 전단계예요. 규칙적인 운동과 균형 잡힌 식사를 시작해봐요!' };
+  if (bmi < 30  ) return { label: '1단계 비만',           color: '#D85A30', bg: '#FAECE7', desc: '1단계 비만이에요. 건강한 식습관과 운동이 꼭 필요해요!' };
+  if (bmi < 35  ) return { label: '2단계 비만',           color: '#E24B4A', bg: '#FCEBEB', desc: '2단계 비만이에요. 선생님 또는 전문가와 함께 건강 계획을 세워봐요!' };
+  return               { label: '3단계 비만 (고도비만)',  color: '#A32D2D', bg: '#FCEBEB', desc: '고도비만이에요. 전문가의 도움이 필요해요. 선생님께 꼭 말씀드려요!' };
+}
+
+/* 패널 초기화 */
+function initBodyScore() {
+  var recs = loadRecords();
+  updateTabStyles(recs);
+  selectMonth(curMonth, document.getElementById('tab-' + curMonth));
+}
+
+/* 탭 색상 업데이트 (기록 있는 달 표시) */
+function updateTabStyles(recs) {
+  [6, 7, 8, 9, 10, 11, 12].forEach(function (m) {
+    var tab = document.getElementById('tab-' + m);
+    if (!tab) return;
+    if (recs[m]) { tab.classList.add('has-data');    }
+    else         { tab.classList.remove('has-data'); }
+  });
+}
+
+/* 월 선택 */
+function selectMonth(m, el) {
+  curMonth = m;
+  document.querySelectorAll('.month-tab').forEach(function (t) { t.classList.remove('active'); });
+  el.classList.add('active');
+  document.getElementById('month-input-title').textContent = m + '월 체중 기록';
+
+  var recs = loadRecords();
+  var rc   = document.getElementById('result-card');
+  rc.className = 'result-card';
+  rc.innerHTML = '';
+
+  if (recs[m]) {
+    document.getElementById('input-height').value = recs[m].h;
+    document.getElementById('input-weight').value = recs[m].w;
+    showResultCard(recs[m].bmi);
+  } else {
+    document.getElementById('input-height').value = '';
+    document.getElementById('input-weight').value = '';
+  }
+  renderHistory(recs);
+}
+
+/* 결과 카드 표시 */
+function showResultCard(bmi) {
+  var st = getBmiStatus(bmi);
+  var rc = document.getElementById('result-card');
+  rc.style.background   = st.bg;
+  rc.style.borderRadius = '8px';
+  rc.style.padding      = '14px';
+  rc.innerHTML =
+    '<div class="result-bmi" style="color:' + st.color + '">BMI ' + bmi.toFixed(1) + '</div>' +
+    '<div class="result-label" style="color:' + st.color + '">' + st.label + '</div>' +
+    '<div class="result-desc">' + st.desc + '</div>' +
+    '<div style="font-size:10px;color:#888;margin-top:6px">기준: 대한비만학회</div>';
+  rc.className = 'result-card show';
+}
+
+/* BMI 계산 & 저장 */
+function calcBMI() {
+  var h = parseFloat(document.getElementById('input-height').value);
+  var w = parseFloat(document.getElementById('input-weight').value);
+  if (!h || !w || h < 80 || h > 220 || w < 10 || w > 200) {
+    showToast('키와 몸무게를 올바르게 입력해 주세요!');
+    return;
+  }
+  var bmi  = w / ((h / 100) * (h / 100));
+  var recs = loadRecords();
+  recs[curMonth] = { h: h, w: w, bmi: bmi };
+  saveRecords(recs);
+  showResultCard(bmi);
+  updateTabStyles(recs);
+  renderHistory(recs);
+  showToast(curMonth + '월 기록 저장 완료! 🔒');
+}
+
+/* 누적 기록 렌더링 */
+function renderHistory(recs) {
+  var keys = Object.keys(recs).map(Number).sort(function (a, b) { return a - b; });
+  if (keys.length === 0) {
+    document.getElementById('history-section').style.display = 'none';
+    return;
+  }
+  document.getElementById('history-section').style.display = 'block';
+  var html = '';
+  keys.forEach(function (m, idx) {
+    var r  = recs[m];
+    var st = getBmiStatus(r.bmi);
+    var trend = '';
+    if (idx > 0) {
+      var diff = r.bmi - recs[keys[idx - 1]].bmi;
+      trend = diff > 0.2
+        ? '<span style="color:#E24B4A">↑</span>'
+        : diff < -0.2
+          ? '<span style="color:#1D9E75">↓</span>'
+          : '<span style="color:#888">→</span>';
+    }
+    html +=
+      '<div class="history-item">' +
+        '<span class="hi-month">'  + m + '월</span>' +
+        '<span class="hi-data">키 ' + r.h + 'cm · ' + r.w + 'kg</span>' +
+        '<span class="hi-bmi" style="color:' + st.color + '">' + r.bmi.toFixed(1) + trend + '</span>' +
+        '<span class="hi-status" style="background:' + st.bg + ';color:' + st.color + '">' + st.label + '</span>' +
+      '</div>';
+  });
+  document.getElementById('history-list').innerHTML = html;
+}
+
+/* ── 초기 실행 ── */
+updateUI();
+
+/* ── 이달의 퍼즐 완성 ── */
+function initPicture() {
+  var today     = new Date();
+  var month     = today.getMonth() + 1;
+  var day       = today.getDate();
+  var goalPts   = getLvIdx(points) < 1 ? 200 : getLvIdx(points) < 2 ? 600 : 1200;
+
+  // 28일 기준 목표치 (월 목표의 28/31 비율로 일할 계산도 가능하지만 심플하게 월 목표 고정)
+  var goal      = 200; // 월 기본 목표
+  var ratio     = Math.min(1, points / goal);
+  var pct       = Math.round(ratio * 100);
+
+  // 28일 지났으면 완성 여부 확정
+  var isDeadline = day >= 28;
+
+  document.getElementById('pic-cur').textContent  = points;
+  document.getElementById('pic-goal').textContent = goal;
+  document.getElementById('pic-pct').textContent  = pct + '%';
+  document.getElementById('pic-month-badge').textContent = month + '월의 퍼즐';
+
+  // 진행 바
+  document.getElementById('pic-fill').style.width = pct + '%';
+
+  // 이미지 선명도: 0%→투명(밑그림), 100%→완전 선명
+  var imgOpacity   = 0.08 + (ratio * 0.92);   // 0.08 ~ 1.0
+  var grayScale    = Math.round((1 - ratio) * 60); // 60% → 0%
+  var overlayOpacity = Math.max(0, 1 - ratio * 1.4);
+
+  var img = document.getElementById('pic-img');
+  img.style.opacity = imgOpacity.toFixed(2);
+  img.style.filter  = 'grayscale(' + grayScale + '%)';
+
+  var overlay = document.getElementById('pic-overlay');
+  overlay.style.opacity = overlayOpacity.toFixed(2);
+  if (overlayOpacity <= 0) overlay.style.display = 'none';
+  else overlay.style.display = 'flex';
+
+  // 오버레이 문구
+  var overlayText = document.getElementById('pic-overlay-text');
+  if (pct < 25)       overlayText.innerHTML = '🧩 포인트를 모아<br>퍼즐을 완성해요!';
+  else if (pct < 50)  overlayText.innerHTML = '✨ ' + pct + '% 완성!<br>계속 모아봐요!';
+  else if (pct < 75)  overlayText.innerHTML = '🌟 절반 넘었어요!<br>' + pct + '% 달성!';
+  else if (pct < 100) overlayText.innerHTML = '🔥 거의 다 왔어요!<br>' + pct + '% 달성!';
+  else                overlayText.innerHTML = '🎉 완성!';
+
+  // 완성 메시지 (28일 이후 + 100% 달성 or 28일 이후 현황)
+  var completeEl = document.getElementById('pic-complete');
+  if (ratio >= 1) {
+    completeEl.style.display = 'block';
+  } else {
+    completeEl.style.display = 'none';
+  }
+}
+
+
+/* ── 관리자 로그인 ── */
+var ADMIN_PW = '1234'; // 비밀번호 여기서 변경하세요
+
+function openAdminLogin() {
+  document.getElementById('admin-modal').classList.add('open');
+  document.getElementById('admin-pw').value = '';
+  document.getElementById('admin-err').textContent = '';
+  setTimeout(function(){ document.getElementById('admin-pw').focus(); }, 100);
+}
+
+function closeAdminLogin() {
+  document.getElementById('admin-modal').classList.remove('open');
+}
+
+function checkAdmin() {
+  var pw = document.getElementById('admin-pw').value;
+  if (pw === ADMIN_PW) {
+    closeAdminLogin();
+    openDashboard();
+  } else {
+    document.getElementById('admin-err').textContent = '❌ 비밀번호가 틀렸어요';
+    document.getElementById('admin-pw').value = '';
+    document.getElementById('admin-pw').focus();
+  }
+}
+
+function openDashboard() {
+  document.getElementById('dashboard-overlay').classList.add('open');
+}
+
+function closeDashboard() {
+  document.getElementById('dashboard-overlay').classList.remove('open');
+  showToast('관리자 화면을 닫았어요');
+}
+
+/* ── 포인트 수동 지급 ── */
+function grantPoint() {
+  var name   = document.getElementById('grant-name').value;
+  var reason = document.getElementById('grant-reason').value;
+  var pt     = parseInt(document.getElementById('grant-pt').value) || 0;
+  if (!name) { alert('학생을 선택해 주세요'); return; }
+  if (pt < 1) { alert('포인트를 입력해 주세요'); return; }
+
+  var log  = document.getElementById('grant-log');
+  var now  = new Date();
+  var time = now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0');
+  var item = document.createElement('div');
+  item.className = 'grant-log-item';
+  item.innerHTML =
+    '<span><strong>' + name + '</strong> · ' + reason + '</span>' +
+    '<span style="color:#1D9E75;font-weight:600">+' + pt + 'P · ' + time + '</span>';
+  log.insertBefore(item, log.firstChild);
+  showToast('✅ ' + name + ' 에게 ' + pt + '포인트 지급 완료!');
+  document.getElementById('grant-pt').value = '5';
+  document.getElementById('grant-name').value = '';
+}
+
+</script>
+</body>
+</html>
