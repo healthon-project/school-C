@@ -416,6 +416,34 @@
       color:rgba(120,220,160,0.9);
     }
     .sheets-status.err { color:rgba(255,120,120,0.9); }
+  
+    /* ══════════════════════════════
+       학번/이름 재입력 팝업 (GUEST 건너뛴 사람용)
+    ══════════════════════════════ */
+    .reg-overlay{display:none;position:fixed;inset:0;z-index:600;background:rgba(0,0,8,0.88);align-items:center;justify-content:center;backdrop-filter:blur(6px);}
+    .reg-overlay.open{display:flex;}
+    .reg-box{width:90%;max-width:340px;background:linear-gradient(160deg,#0e1230 0%,#141840 100%);border:1.5px solid rgba(255,200,80,0.5);border-radius:28px;padding:28px 22px 24px;text-align:center;box-shadow:0 0 60px rgba(255,180,0,0.25);animation:regPopIn 0.4s cubic-bezier(.34,1.56,.64,1);}
+    @keyframes regPopIn{from{opacity:0;transform:scale(0.75);}to{opacity:1;transform:scale(1);}}
+    .reg-icon{font-size:56px;margin-bottom:6px;display:inline-block;animation:regBob 2s ease-in-out infinite;}
+    @keyframes regBob{0%,100%{transform:translateY(0) rotate(-5deg);}50%{transform:translateY(-10px) rotate(5deg);}}
+    .reg-title{font-family:var(--title-font);font-size:21px;color:#FFD86E;margin-bottom:6px;text-shadow:0 0 16px rgba(255,200,0,0.5);}
+    .reg-desc{font-family:var(--main-font);font-size:13px;color:rgba(200,215,255,0.8);line-height:1.75;margin-bottom:16px;}
+    .reg-desc strong{color:#FFD86E;}
+    .reg-example{background:rgba(255,255,255,0.05);border:1px solid rgba(255,200,80,0.2);border-radius:14px;padding:12px 14px;margin-bottom:16px;text-align:left;}
+    .reg-example-title{font-family:var(--main-font);font-size:11px;color:rgba(255,200,120,0.55);margin-bottom:8px;}
+    .reg-example-row{display:flex;align-items:center;gap:8px;font-family:var(--main-font);font-size:13px;color:rgba(210,225,255,0.8);margin-bottom:6px;}
+    .reg-example-row:last-child{margin-bottom:0;}
+    .reg-tag{background:rgba(255,180,0,0.2);border:1px solid rgba(255,200,80,0.4);border-radius:8px;padding:3px 12px;font-size:15px;font-weight:700;color:#FFD86E;letter-spacing:3px;}
+    .reg-input{width:100%;padding:14px;background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,200,80,0.35);border-radius:14px;font-family:var(--main-font);font-size:24px;color:#fff;text-align:center;letter-spacing:6px;outline:none;margin-bottom:6px;}
+    .reg-input:focus{border-color:rgba(255,200,80,0.75);background:rgba(255,255,255,0.13);}
+    .reg-input::placeholder{color:rgba(180,195,235,0.3);letter-spacing:2px;font-size:15px;}
+    .reg-hint{font-family:var(--main-font);font-size:11px;color:rgba(180,195,235,0.4);margin-bottom:14px;}
+    .reg-err{font-family:var(--main-font);font-size:12px;color:rgba(255,120,120,0.9);min-height:18px;margin-bottom:8px;}
+    .reg-btn-row{display:flex;gap:8px;margin-top:4px;}
+    .reg-guest-btn{flex:1;padding:14px 0;background:rgba(255,255,255,0.07);border:1px solid rgba(200,210,255,0.2);border-radius:16px;font-family:var(--main-font);font-size:13px;color:rgba(180,195,235,0.65);cursor:pointer;transition:all 0.15s;}
+    .reg-guest-btn:active{transform:scale(0.96);}
+    .reg-confirm-btn{flex:2;padding:14px 0;background:linear-gradient(135deg,#FFB020,#FF7A00);color:#fff;border:none;border-radius:16px;font-family:var(--main-font);font-size:16px;font-weight:700;cursor:pointer;transition:transform 0.15s;box-shadow:0 4px 20px rgba(255,150,0,0.35);}
+    .reg-confirm-btn:active{transform:scale(0.96);}
   </style>
 </head>
 <body>
@@ -602,7 +630,7 @@
       </div>
       <div class="level-box-info">
         <div class="level-box-name"  id="level-name">🐱 초보 냥이</div>
-        <div class="level-box-stage" id="level-stage">1단계 · 0~200P</div>
+        <div class="level-box-stage" id="level-stage">1단계 · 0~2500P</div>
         <div class="level-box-badge">진행 중! ⭐</div>
       </div>
       <button class="admin-float-btn" onclick="openAdminLogin()" title="교사 대시보드">🔐</button>
@@ -687,15 +715,15 @@
 })();
 
 var LEVELS=[
-  {emoji:'🐱',name:'초보 냥이',                   stage:'1단계 · 0~500P'},
-  {emoji:'🐵',name:'재간둥이 원숭이',              stage:'2단계 · 501~1500P'},
-  {emoji:'🐶',name:'지구수호대 멍멍이',            stage:'3단계 · 1501~3000P'},
-  {emoji:'🐯',name:'우주를 누비는 무적의 호랑이',  stage:'4단계 · 3001P~'}
+  {emoji:'🐱',name:'초보 냥이',                   stage:'1단계 · 0~2500P'},
+  {emoji:'🐵',name:'재간둥이 원숭이',              stage:'2단계 · 2501~5000P'},
+  {emoji:'🐶',name:'지구수호대 멍멍이',            stage:'3단계 · 5001~7500P'},
+  {emoji:'🐯',name:'우주를 누비는 무적의 호랑이',  stage:'4단계 · 7501~10000P'}
 ];
 var curLv=0;
 try{
   var pts=parseInt(localStorage.getItem('tuntun_pts')||'0');
-  if(pts<=500)curLv=0;else if(pts<=1500)curLv=1;else if(pts<=3000)curLv=2;else curLv=3;
+  if(pts<=2500)curLv=0;else if(pts<=5000)curLv=1;else if(pts<=7500)curLv=2;else curLv=3;
 }catch(e){}
 
 function renderLevel(){
@@ -759,7 +787,7 @@ function renderDashStats(){
   var pts=parseInt(localStorage.getItem('tuntun_pts')||'0');
   var recs={}; try{ recs=JSON.parse(localStorage.getItem('tuntun_body_records_v2')||'{}'); }catch(e){}
   var recCount=Object.keys(recs).length;
-  var lv=pts<=500?'1단계':pts<=1500?'2단계':pts<=3000?'3단계':'4단계';
+  var lv=pts<=2500?'1단계':pts<=5000?'2단계':pts<=7500?'3단계':'4단계';
   document.getElementById('ds-total').textContent=pts+'P';
   document.getElementById('ds-records').textContent=recCount+'건';
   document.getElementById('ds-level').textContent=lv;
@@ -768,12 +796,12 @@ function renderDashStats(){
 function renderLvDist(){
   var pts=parseInt(localStorage.getItem('tuntun_pts')||'0');
   var levels=[
-    {name:'1단계 🌱',max:500,color:'#5DCAA5'},
-    {name:'2단계 🧭',max:1500,color:'#378ADD'},
-    {name:'3단계 🏅',max:3000,color:'#EF9F27'},
+    {name:'1단계 🌱',max:2500,color:'#5DCAA5'},
+    {name:'2단계 🧭',max:5000,color:'#378ADD'},
+    {name:'3단계 🏅',max:7500,color:'#EF9F27'},
     {name:'4단계 🦸',max:99999,color:'#D85A30'}
   ];
-  var curLvIdx=pts<=500?0:pts<=1500?1:pts<=3000?2:3;
+  var curLvIdx=pts<=2500?0:pts<=5000?1:pts<=7500?2:3;
   var prev=curLvIdx===0?0:levels[curLvIdx-1].max;
   var next=levels[curLvIdx].max===99999?prev+500:levels[curLvIdx].max;
   var pct=curLvIdx===3?100:Math.min(100,Math.round((pts-prev)/(next-prev)*100));
@@ -859,7 +887,7 @@ function grantPoint(){
     localStorage.setItem('tuntun_grant_log',JSON.stringify(history));
 
     /* 구글 시트 전송 */
-    var lv=newTotal<=500?'1단계':newTotal<=1500?'2단계':newTotal<=3000?'3단계':'4단계';
+    var lv=newTotal<=2500?'1단계':newTotal<=5000?'2단계':newTotal<=7500?'3단계':'4단계';
     fetch(SHEETS_URL,{
       method:'POST',mode:'no-cors',
       headers:{'Content-Type':'application/json'},
@@ -914,7 +942,7 @@ function toggleCheck(idx,val){
 
 function printDash(){
   var pts=localStorage.getItem('tuntun_pts')||'0';
-  var lv=parseInt(pts)<=500?'1단계':parseInt(pts)<=1500?'2단계':parseInt(pts)<=3000?'3단계':'4단계';
+  var lv=parseInt(pts)<=2500?'1단계':parseInt(pts)<=5000?'2단계':parseInt(pts)<=7500?'3단계':'4단계';
   var now=new Date();
   var dateStr=now.getFullYear()+'년 '+(now.getMonth()+1)+'월 '+now.getDate()+'일';
   var win=window.open('','_blank');
@@ -931,7 +959,43 @@ function printDash(){
   } else { win.document.write('<p>기록 없음</p>'); }
   var memo=localStorage.getItem('tuntun_teacher_memo')||'';
   if(memo){ win.document.write('<h3>📝 교사 메모</h3><pre style="background:#f9f9f9;padding:12px;border-radius:8px;">'+memo+'</pre>'); }
-  win.document.write('</body></html>');
+  win.document.write('
+<!-- ── 학번/이름 재입력 팝업 (GUEST 건너뛴 사람용) ── -->
+<div class="reg-overlay" id="reg-overlay">
+  <div class="reg-box">
+    <div class="reg-icon">🚀</div>
+    <div class="reg-title">잠깐! 학번을 입력해줘 👋</div>
+    <div class="reg-desc">
+      포인트를 제대로 기록하려면<br>
+      <strong>학년반번호</strong>가 필요해요!<br>
+      한 번만 입력하면 다음엔 자동 저장돼요 😊
+    </div>
+    <div class="reg-example">
+      <div class="reg-example-title">📌 이렇게 입력해줘!</div>
+      <div class="reg-example-row">
+        <span>1학년 2반 5번</span><span>→</span>
+        <span class="reg-tag">1205</span>
+      </div>
+      <div class="reg-example-row">
+        <span>3학년 1반 12번</span><span>→</span>
+        <span class="reg-tag">3112</span>
+      </div>
+    </div>
+    <input
+      class="reg-input" id="reg-input"
+      type="number" inputmode="numeric" pattern="[0-9]*"
+      placeholder="예) 1205" maxlength="6"
+    />
+    <div class="reg-hint">학년 + 반 + 번호 숫자만 입력해줘!</div>
+    <div class="reg-err" id="reg-err"></div>
+    <div class="reg-btn-row">
+      <button class="reg-guest-btn" onclick="guestReg()">교사 / 학부모</button>
+      <button class="reg-confirm-btn" onclick="confirmReg()">✅ 입력 완료!</button>
+    </div>
+  </div>
+</div>
+
+</body></html>');
   win.document.close();
   win.print();
 }
@@ -1028,7 +1092,7 @@ function sendBmiToSheets() {
 /* 포인트/레벨 → 시트 */
 function sendPointsToSheets(statusId, btnId) {
   var pts = parseInt(localStorage.getItem('tuntun_pts') || '0');
-  var lv  = pts <= 200 ? '1단계 🐱' : pts <= 600 ? '2단계 🐵' : pts <= 1200 ? '3단계 🐶' : '4단계 🐯';
+  var lv  = pts <= 2500 ? '1단계 🐱' : pts <= 5000 ? '2단계 🐵' : pts <= 7500 ? '3단계 🐶' : '4단계 🐯';
   var done = 0;
   try { var md = JSON.parse(localStorage.getItem('tuntun_missions') || '{}'); done = Object.keys(md).length; } catch(e) {}
 
@@ -1054,7 +1118,7 @@ function sendAllToSheets() {
       // BMI 완료 → 포인트 전송
       setSheetStatus('sheets-all-status', 'BMI 완료! 포인트 기록 전송 중...', false);
       var pts  = parseInt(localStorage.getItem('tuntun_pts') || '0');
-      var lv   = pts <= 200 ? '1단계 🐱' : pts <= 600 ? '2단계 🐵' : pts <= 1200 ? '3단계 🐶' : '4단계 🐯';
+      var lv   = pts <= 2500 ? '1단계 🐱' : pts <= 5000 ? '2단계 🐵' : pts <= 7500 ? '3단계 🐶' : '4단계 🐯';
       var done = 0;
       try { var md = JSON.parse(localStorage.getItem('tuntun_missions') || '{}'); done = Object.keys(md).length; } catch(e) {}
       fetch(SHEETS_URL, {
@@ -1087,7 +1151,7 @@ function sendAllToSheets() {
     // BMI 없으면 포인트만
     setSheetStatus('sheets-all-status', 'BMI 없음, 포인트만 전송...', false);
     var pts  = parseInt(localStorage.getItem('tuntun_pts') || '0');
-    var lv   = pts <= 200 ? '1단계 🐱' : pts <= 600 ? '2단계 🐵' : pts <= 1200 ? '3단계 🐶' : '4단계 🐯';
+    var lv   = pts <= 2500 ? '1단계 🐱' : pts <= 5000 ? '2단계 🐵' : pts <= 7500 ? '3단계 🐶' : '4단계 🐯';
     var done = 0;
     try { var md = JSON.parse(localStorage.getItem('tuntun_missions') || '{}'); done = Object.keys(md).length; } catch(e) {}
     fetch(SHEETS_URL, {
@@ -1110,6 +1174,51 @@ function sendAllToSheets() {
 
 var lt=0;
 document.addEventListener('touchend',function(e){var n=Date.now();if(n-lt<300)e.preventDefault();lt=n;},{passive:false});
+
+/* ══ 학번 재입력 팝업 (GUEST 건너뛴 사람용) ══ */
+(function(){
+  var sid = localStorage.getItem('tuntun_student_id');
+  // 미입력(null) 또는 GUEST(건너뛰기)면 팝업
+  if(!sid || sid === 'GUEST'){
+    var overlay = document.getElementById('reg-overlay');
+    if(overlay){
+      overlay.classList.add('open');
+      setTimeout(function(){
+        var inp = document.getElementById('reg-input');
+        if(inp) inp.focus();
+      }, 350);
+    }
+  }
+})();
+
+function confirmReg(){
+  var val = (document.getElementById('reg-input').value||'').trim();
+  var err = document.getElementById('reg-err');
+  if(!/^\d{3,6}$/.test(val)){
+    err.textContent = '❗ 숫자로만 입력해줘! (예: 1205)';
+    document.getElementById('reg-input').focus();
+    return;
+  }
+  localStorage.setItem('tuntun_student_id', val);
+  document.getElementById('reg-overlay').classList.remove('open');
+  /* 레벨박스 학번 표시 갱신 */
+  var badge = document.getElementById('my-id-badge');
+  if(badge){ badge.style.display='flex'; }
+  var text = document.getElementById('my-id-text');
+  if(text) text.textContent = '내 번호: '+val;
+}
+
+function guestReg(){
+  localStorage.setItem('tuntun_student_id', 'GUEST');
+  document.getElementById('reg-overlay').classList.remove('open');
+}
+
+document.addEventListener('keydown', function(e){
+  if(e.key==='Enter' && document.getElementById('reg-overlay').classList.contains('open')){
+    confirmReg();
+  }
+});
+
 </script>
 </body>
 </html>

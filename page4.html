@@ -506,13 +506,41 @@ function showToast(msg){
 }
 
 /* 미션 완료 — 날짜 기반 하루 제한 */
-var MISSION_KEY = 'tuntun_missions_daily';
-var SHEETS_URL  = 'https://script.google.com/macros/s/AKfycbzgBrjUH2rf1mUcyFp2GGWGvDaUnmIh0kV0rskcDB5j84Esu1IFbcJFHy4BQ93vUPc2/exec';
+var MISSION_KEY   = 'tuntun_missions_daily';
+var MONTHLY_KEY   = 'tuntun_monthly_pts';
+var MONTHLY_MONTH = 'tuntun_monthly_month';
+var SHEETS_URL    = 'https://script.google.com/macros/s/AKfycbzgBrjUH2rf1mUcyFp2GGWGvDaUnmIh0kV0rskcDB5j84Esu1IFbcJFHy4BQ93vUPc2/exec';
 
 function getTodayStr(){
   var d=new Date();
   return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
 }
+function getCurrentMonth(){
+  var d=new Date();
+  return d.getFullYear()+'-'+(d.getMonth()+1);
+}
+
+/* 자정 넘어가면 전날 포인트를 이번달에 합산 후 미션 초기화 */
+function rolloverIfNeeded(){
+  try{
+    var raw=localStorage.getItem(MISSION_KEY);
+    if(!raw) return;
+    var data=JSON.parse(raw);
+    if(data.date && data.date !== getTodayStr()){
+      var prevPts=parseInt(data.todayPts||'0');
+      if(prevPts>0){
+        var curMonth=getCurrentMonth();
+        var savedMonth=localStorage.getItem(MONTHLY_MONTH)||'';
+        var monthly=savedMonth===curMonth?parseInt(localStorage.getItem(MONTHLY_KEY)||'0'):0;
+        monthly+=prevPts;
+        localStorage.setItem(MONTHLY_KEY, monthly);
+        localStorage.setItem(MONTHLY_MONTH, curMonth);
+      }
+      localStorage.removeItem(MISSION_KEY);
+    }
+  }catch(e){}
+}
+rolloverIfNeeded();
 
 /* 오늘 날짜 키로 저장된 미션 데이터 로드 */
 function loadTodayMissions(){
@@ -520,16 +548,17 @@ function loadTodayMissions(){
     var raw=localStorage.getItem(MISSION_KEY);
     if(!raw) return {};
     var data=JSON.parse(raw);
-    if(data.date !== getTodayStr()) return {}; // 날짜 바뀌면 초기화
+    if(data.date !== getTodayStr()) return {};
     return data.missions||{};
   }catch(e){ return {}; }
 }
 
-function saveTodayMissions(missions){
+function saveTodayMissions(missions, pts){
   try{
     localStorage.setItem(MISSION_KEY, JSON.stringify({
       date: getTodayStr(),
-      missions: missions
+      missions: missions,
+      todayPts: pts
     }));
   }catch(e){}
 }
@@ -558,7 +587,7 @@ var MISSION_PTS = {m1:5, m2:5, m3:20, m4:5, m5:7};
 function doMission(id,pts){
   if(missionDone[id]) return;
   missionDone[id]=true;
-  saveTodayMissions(missionDone);
+  saveTodayMissions(missionDone, todayPts+pts);
   todayPts+=pts;
 
   var el=document.getElementById(id);
@@ -586,7 +615,7 @@ function doMission(id,pts){
 function autoSendPoints(total, missionId, pts){
   var studentId = localStorage.getItem('tuntun_student_id')||'미입력';
   if(studentId==='GUEST') return; // 게스트는 전송 안 함
-  var lv=total<=500?'1단계':total<=1500?'2단계':total<=3000?'3단계':'4단계';
+  var lv=total<=2500?'1단계':total<=5000?'2단계':total<=7500?'3단계':'4단계';
   var missionNames={m1:'물 마시기',m2:'채소 먹기',m3:'30분 운동',m4:'아침밥',m5:'스마트폰 2h이하'};
   fetch(SHEETS_URL,{
     method:'POST', mode:'no-cors',
