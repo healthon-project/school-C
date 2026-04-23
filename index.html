@@ -21,12 +21,13 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 .tagline-card{margin-top:18px;width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(127,119,221,.2);border-radius:20px;padding:16px 20px;text-align:center;animation:fadeUp .7s ease .5s both;}
 .tagline-card p{font-size:14px;color:rgba(255,255,255,.88);line-height:1.7;}
 .tagline-card strong{color:#fff;}
-.level-pills{margin-top:16px;display:flex;gap:7px;flex-wrap:wrap;justify-content:center;animation:fadeUp .7s ease .65s both;}
-.pill{padding:6px 13px;border-radius:100px;font-size:12px;display:flex;align-items:center;gap:4px;border:1.5px solid transparent;}
+.level-pills{margin-top:16px;display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:nowrap;animation:fadeUp .7s ease .65s both;}
+.pill{padding:5px 9px;border-radius:100px;font-size:11px;display:flex;align-items:center;gap:3px;border:1.5px solid transparent;white-space:nowrap;}
 .pill-1{background:rgba(29,158,117,.2);color:#7EECC8;border-color:rgba(93,202,165,.35);}
 .pill-2{background:rgba(55,138,221,.2);color:#9DCFFF;border-color:rgba(55,138,221,.35);}
 .pill-3{background:rgba(239,159,39,.2);color:#FFD580;border-color:rgba(239,159,39,.35);}
 .pill-4{background:rgba(216,90,48,.2);color:#FFB08A;border-color:rgba(216,90,48,.35);}
+.pill-arrow{font-size:13px;color:rgba(200,216,255,.35);flex-shrink:0;}
 .gift-banner{margin-top:16px;width:100%;background:rgba(239,159,39,.08);border:1.5px dashed rgba(239,159,39,.4);border-radius:16px;padding:13px 16px;display:flex;align-items:center;gap:12px;animation:fadeUp .7s ease .8s both;}
 .gift-icon{font-size:28px;}
 .gift-text{font-size:13px;color:rgba(255,255,255,.85);line-height:1.5;}
@@ -58,13 +59,16 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
   </div>
   <div class="level-pills">
     <span class="pill pill-1">🐱 초보 냥이</span>
+    <span class="pill-arrow">→</span>
     <span class="pill pill-2">🐵 재간둥이</span>
+    <span class="pill-arrow">→</span>
     <span class="pill pill-3">🐶 수호대</span>
+    <span class="pill-arrow">→</span>
     <span class="pill pill-4">🐯 무적 호랑이</span>
   </div>
   <div class="gift-banner">
     <div class="gift-icon">🎁</div>
-    <div class="gift-text"><strong>레벨이 올라가면 특별 선물이 나갑니다~!</strong>단계가 오를 때마다 선생님이 준비한 선물이 기다려요 🎁</div>
+    <div class="gift-text"><strong>레벨이 올라가면 특별 선물이 나갑니다~!</strong></div>
   </div>
   <div class="cta-wrap">
     <button class="cta-btn" onclick="go()">탐험 시작하기! <span class="cta-arrow">→</span></button>

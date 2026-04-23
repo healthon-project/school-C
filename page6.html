@@ -28,7 +28,6 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 .lv-bar-track{flex:1;height:5px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;}
 .lv-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--green),var(--green2));}
 .lv-bar-label{font-size:11px;color:#FFD86E;white-space:nowrap;}
-/* ── 포인트 직접 입력 ── */
 .lv-pts-input-wrap{margin-top:8px;display:flex;align-items:center;gap:8px;padding:0 2px;}
 .lv-pts-input-label{font-size:11px;color:rgba(200,220,255,.55);white-space:nowrap;flex-shrink:0;}
 .lv-pts-input{flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,216,110,.3);border-radius:10px;padding:7px 10px;font-family:var(--jua);font-size:15px;color:#FFD86E;outline:none;text-align:center;min-width:0;}
@@ -39,22 +38,15 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 
 /* ── 콘텐츠 ── */
 .content{position:relative;z-index:10;width:100%;max-width:430px;padding:0 16px 100px;}
-
-/* ── 설명글 (제목 없이) ── */
 .page-desc{margin-top:16px;text-align:center;animation:fadeDown .5s ease both;}
 .page-desc p{font-family:var(--hand);font-size:clamp(17px,4.5vw,21px);color:rgba(200,230,200,.9);line-height:1.6;}
 
-/* ── 카드들 ── */
+/* ── 카드 공통 ── */
 .card-wrap{margin-top:14px;display:flex;flex-direction:column;gap:12px;animation:fadeUp .5s ease .1s both;}
 .earn-card{border-radius:20px;overflow:hidden;border:1.5px solid;}
-
-/* TV 카드 */
 .card-tv{border-color:rgba(127,119,221,.25);background:linear-gradient(135deg,rgba(40,30,90,.88),rgba(20,15,60,.97));}
-/* 퀴즈 카드 */
 .card-quiz{border-color:rgba(130,180,255,.25);background:linear-gradient(135deg,rgba(30,50,110,.85),rgba(15,30,80,.95));}
-/* 챌린지 카드 */
 .card-challenge{border-color:rgba(60,220,120,.2);background:linear-gradient(135deg,rgba(10,50,30,.9),rgba(5,30,18,.95));}
-
 .earn-card-header{padding:16px 16px 12px;display:flex;align-items:center;gap:12px;}
 .earn-card-icon{font-size:34px;}
 .earn-card-info{flex:1;}
@@ -63,23 +55,35 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 .card-quiz .earn-tag{background:rgba(100,160,255,.15);border:1px solid rgba(100,160,255,.3);color:#92C8FF;}
 .card-challenge .earn-tag{background:rgba(40,220,120,.12);border:1px solid rgba(40,220,120,.25);color:#5AE0A0;}
 .earn-card-title{font-family:var(--hand);font-size:20px;color:#fff;line-height:1.2;}
-.earn-card-sub{font-size:11px;color:rgba(200,220,255,.65);margin-top:3px;line-height:1.5;}
+.earn-card-sub{font-size:11px;color:rgba(200,220,255,.65);margin-top:3px;line-height:1.6;}
 
-/* 버튼 */
+/* ── 버튼 ── */
 .btn-group{padding:0 16px 16px;display:flex;flex-direction:column;gap:8px;}
 .ext-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border-radius:14px;font-family:var(--jua);font-size:14px;text-decoration:none;cursor:pointer;transition:transform .15s;border:1.5px solid;}
 .ext-btn:active{transform:scale(.97);}
 .btn-tv{background:rgba(127,119,221,.15);border-color:rgba(127,119,221,.35);color:#C8B4FF;}
-.btn-quiz-low{background:rgba(255,200,60,.08);border-color:rgba(255,200,60,.3);color:#FFD060;}
-.btn-quiz-high{background:rgba(100,160,255,.08);border-color:rgba(100,160,255,.3);color:#92C8FF;}
 .btn-challenge{background:rgba(40,200,120,.1);border-color:rgba(60,220,130,.3);color:#5AE0A0;}
 
+/* ── 퀴즈 링크 입력칸 ── */
+.quiz-link-section{padding:0 16px 16px;display:flex;flex-direction:column;gap:8px;}
+.quiz-link-row{display:flex;align-items:center;gap:8px;}
+.quiz-link-label{font-size:12px;color:rgba(200,220,255,.6);white-space:nowrap;flex-shrink:0;width:52px;}
+.quiz-link-input{flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(100,160,255,.25);border-radius:10px;padding:9px 12px;font-family:var(--jua);font-size:12px;color:rgba(200,220,255,.9);outline:none;}
+.quiz-link-input::placeholder{color:rgba(150,180,255,.3);}
+.quiz-link-input:focus{border-color:rgba(100,160,255,.5);background:rgba(255,255,255,.1);}
+.quiz-link-save{padding:8px 12px;background:rgba(100,160,255,.15);border:1px solid rgba(100,160,255,.3);border-radius:10px;font-family:var(--jua);font-size:12px;color:#92C8FF;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+.quiz-link-save:active{transform:scale(.95);}
+
+/* ── 챌린지 포인트 뱃지 ── */
+.ch-header-right{display:flex;flex-direction:column;align-items:center;background:rgba(60,220,120,.1);border:1.5px solid rgba(60,220,120,.3);border-radius:14px;padding:8px 12px;min-width:56px;flex-shrink:0;}
+.ch-pt-num{font-family:var(--hand);font-size:22px;color:#4AE090;line-height:1;}
+.ch-pt-unit{font-size:10px;color:rgba(60,220,120,.7);margin-top:2px;}
 
 /* ── 네비 ── */
 .nav-bar{position:fixed;bottom:0;left:0;right:0;z-index:40;display:flex;justify-content:center;gap:12px;padding:12px 20px 22px;background:linear-gradient(to top,rgba(4,6,26,.95) 60%,transparent);}
 .nav-btn{flex:1;max-width:160px;display:flex;align-items:center;justify-content:center;gap:5px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:100px;padding:10px 0;font-family:var(--jua);font-size:14px;color:#fff;cursor:pointer;transition:transform .15s;}
 .nav-btn:active{transform:scale(.95);}
-.nav-btn.home{background:rgba(29,158,117,.3);border-color:rgba(93,202,165,.4);}
+.nav-btn.next{background:rgba(29,158,117,.35);border-color:rgba(93,202,165,.4);}
 
 @keyframes fadeDown{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
@@ -104,56 +108,73 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
     <div class="lv-bar-label" id="lv-bar-label">0P</div>
   </div>
   <div class="lv-pts-input-wrap">
-    <span class="lv-pts-input-label">내 포인트:</span>
+    <span class="lv-pts-input-label">이번달 내 포인트:</span>
     <input class="lv-pts-input" id="pts-input" type="number" min="0" placeholder="포인트 입력" inputmode="numeric">
     <button class="lv-pts-save-btn" onclick="savePtsInput()">저장</button>
   </div>
 </div>
 
 <div class="content">
-
-  <!-- 제목 없이 설명글만 -->
   <div class="page-desc">
     <p>🛝 재미있게 배우고<br>몸도 마음도 건강해져요!</p>
   </div>
 
   <div class="card-wrap">
 
-    <!-- TV 챌린지 카드 -->
+    <!-- 쏙쏙 건강TV 카드 -->
     <div class="earn-card card-tv">
       <div class="earn-card-header">
         <div class="earn-card-icon">📺</div>
         <div class="earn-card-info">
           <div class="earn-tag">🎬 건강 TV</div>
-          <div class="earn-card-title">쏙쏙 TV</div>
-          <div class="earn-card-sub">TV 영상 보고 함께 운동해봐요!</div>
+          <div class="earn-card-title">쏙쏙 건강TV</div>
+          <div class="earn-card-sub">유익하고 재미있는 건강 정보가 많이 있어요.</div>
         </div>
       </div>
       <div class="btn-group">
-        <a class="ext-btn btn-tv" id="btn-tv" href="https://padlet.com/a01067752602/tv-9ri47j3wo65y4rc7" target="_blank">📺 쏙쏙 TV 바로 가기 →</a>
+        <a class="ext-btn btn-tv" id="btn-tv" href="https://padlet.com/a01067752602/tv-9ri47j3wo65y4rc7" target="_blank">📺 쏙쏙 건강TV 바로 가기 →</a>
       </div>
     </div>
 
-    <!-- 퀴즈 카드 -->
+    <!-- 도전 골든벨 퀴즈 카드 -->
     <div class="earn-card card-quiz">
       <div class="earn-card-header">
-        <div class="earn-card-icon">❓</div>
+        <div class="earn-card-icon">🔔</div>
         <div class="earn-card-info">
           <div class="earn-tag">📚 건강 퀴즈</div>
-          <div class="earn-card-title">건강 퀴즈 도전!</div>
+          <div class="earn-card-title">도전 골든벨 퀴즈</div>
           <div class="earn-card-sub">건강 지식을 퀴즈로 확인해요.</div>
         </div>
       </div>
+      <!-- 퀴즈 링크 입력칸 -->
+      <div class="quiz-link-section">
+        <div class="quiz-link-row">
+          <span class="quiz-link-label">저학년</span>
+          <input class="quiz-link-input" id="inp-low" placeholder="링크를 붙여넣고 저장" onkeydown="if(event.key==='Enter')saveQuizLink('low')">
+          <button class="quiz-link-save" onclick="saveQuizLink('low')">저장</button>
+        </div>
+        <div class="quiz-link-row">
+          <span class="quiz-link-label">고학년</span>
+          <input class="quiz-link-input" id="inp-high" placeholder="링크를 붙여넣고 저장" onkeydown="if(event.key==='Enter')saveQuizLink('high')">
+          <button class="quiz-link-save" onclick="saveQuizLink('high')">저장</button>
+        </div>
+        <!-- 저장된 링크 버튼들 -->
+        <div id="quiz-btn-wrap" style="display:flex;flex-direction:column;gap:6px;margin-top:2px;"></div>
+      </div>
     </div>
 
-    <!-- 챌린지 카드 -->
+    <!-- 숏폼 챌린지 카드 -->
     <div class="earn-card card-challenge">
       <div class="earn-card-header">
         <div class="earn-card-icon">🏃</div>
         <div class="earn-card-info">
           <div class="earn-tag">💪 건강 챌린지</div>
-          <div class="earn-card-title">건강 챌린지 참여!</div>
+          <div class="earn-card-title">숏폼 챌린지</div>
           <div class="earn-card-sub">패들렛에 건강 챌린지를<br>인증하고 포인트를 받아요!</div>
+        </div>
+        <div class="ch-header-right">
+          <div class="ch-pt-num">+30</div>
+          <div class="ch-pt-unit">포인트</div>
         </div>
       </div>
       <div class="btn-group">
@@ -166,34 +187,63 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 
 <div class="nav-bar">
   <button class="nav-btn" onclick="goPrev()">← 이전</button>
-  <button class="nav-btn home" onclick="goHome()">🏠 홈으로</button>
+  <button class="nav-btn next" onclick="goNext()">이후 →</button>
 </div>
 </div>
 <script>
 var pts=0;try{pts=parseInt(localStorage.getItem('tuntun_pts')||'0');}catch(e){}
 var curLv=pts<=2500?0:pts<=5000?1:pts<=7500?2:3;
-(function(){for(var i=0;i<4;i++)document.getElementById('lv'+i).classList.toggle('active',i===curLv);var maxes=[2500,5000,7500,99999];var prev=curLv===0?0:maxes[curLv-1];var next=maxes[curLv]===99999?prev+2500:maxes[curLv];var pct=curLv===3?100:Math.min(100,Math.round((pts-prev)/(next-prev)*100));document.getElementById('lv-bar').style.width=pct+'%';document.getElementById('lv-bar-label').textContent=pts+'P';var pi=document.getElementById('pts-input');if(pi)pi.value=pts||'';})();
-
-(function loadLinks(){
-  var lTv=localStorage.getItem('tv_link')||'';
-  var lLow=localStorage.getItem('quiz_link_low')||'';
-  var lHigh=localStorage.getItem('quiz_link_high')||'';
-  var lPad=localStorage.getItem('padlet_link')||'';
+(function(){
+  for(var i=0;i<4;i++)document.getElementById('lv'+i).classList.toggle('active',i===curLv);
+  var maxes=[2500,5000,7500,99999];
+  var prev=curLv===0?0:maxes[curLv-1];
+  var next=maxes[curLv]===99999?prev+2500:maxes[curLv];
+  var pct=curLv===3?100:Math.min(100,Math.round((pts-prev)/(next-prev)*100));
+  document.getElementById('lv-bar').style.width=pct+'%';
+  document.getElementById('lv-bar-label').textContent=pts+'P';
+  var pi=document.getElementById('pts-input');if(pi)pi.value=pts||'';
 })();
 
-  else if(type==='padlet'){localStorage.setItem('padlet_link',val);document.getElementById('padlet-link').href=val;alert('챌린지 링크 저장!');}
-}
 function savePtsInput(){
   var v=parseInt(document.getElementById('pts-input').value);
-  if(isNaN(v)||v<0){return;}
+  if(isNaN(v)||v<0)return;
   localStorage.setItem('tuntun_pts',v);
   pts=v;curLv=pts<=2500?0:pts<=5000?1:pts<=7500?2:3;
-  (function(){for(var i=0;i<4;i++)document.getElementById('lv'+i).classList.toggle('active',i===curLv);var maxes=[2500,5000,7500,99999];var prev=curLv===0?0:maxes[curLv-1];var next=maxes[curLv]===99999?prev+2500:maxes[curLv];var pct=curLv===3?100:Math.min(100,Math.round((pts-prev)/(next-prev)*100));document.getElementById('lv-bar').style.width=pct+'%';document.getElementById('lv-bar-label').textContent=pts+'P';var pi=document.getElementById('pts-input');if(pi)pi.value=pts||'';})();
+  var maxes=[2500,5000,7500,99999];
+  var prev=curLv===0?0:maxes[curLv-1];
+  var next=maxes[curLv]===99999?prev+2500:maxes[curLv];
+  var pct=curLv===3?100:Math.min(100,Math.round((pts-prev)/(next-prev)*100));
+  document.getElementById('lv-bar').style.width=pct+'%';
+  document.getElementById('lv-bar-label').textContent=pts+'P';
   var btn=document.querySelector('.lv-pts-save-btn');
   if(btn){btn.textContent='✅ 저장!';setTimeout(function(){btn.textContent='저장';},1500);}
 }
+
+/* 퀴즈 링크 저장 & 렌더 */
+function saveQuizLink(grade){
+  var id=grade==='low'?'inp-low':'inp-high';
+  var val=document.getElementById(id).value.trim();
+  if(!val)return;
+  localStorage.setItem('quiz_link_'+grade, val);
+  renderQuizBtns();
+  var btn=document.querySelector('.quiz-link-save:nth-of-type('+(grade==='low'?'1':'2')+')');
+  alert((grade==='low'?'저학년':'고학년')+' 링크 저장 완료!');
+}
+function renderQuizBtns(){
+  var lLow=localStorage.getItem('quiz_link_low')||'';
+  var lHigh=localStorage.getItem('quiz_link_high')||'';
+  var wrap=document.getElementById('quiz-btn-wrap');
+  var html='';
+  if(lLow) html+='<a href="'+lLow+'" target="_blank" class="ext-btn" style="background:rgba(255,200,60,.1);border:1.5px solid rgba(255,200,60,.3);color:#FFD060;">🌟 저학년 퀴즈 →</a>';
+  if(lHigh) html+='<a href="'+lHigh+'" target="_blank" class="ext-btn" style="background:rgba(100,160,255,.1);border:1.5px solid rgba(100,160,255,.3);color:#92C8FF;">⭐ 고학년 퀴즈 →</a>';
+  wrap.innerHTML=html;
+  if(lLow) document.getElementById('inp-low').value=lLow;
+  if(lHigh) document.getElementById('inp-high').value=lHigh;
+}
+renderQuizBtns();
+
 function goPrev(){document.querySelector('.scene').classList.add('page-out');setTimeout(function(){window.location.href='page3.html';},400);}
-function goHome(){document.querySelector('.scene').classList.add('page-out');setTimeout(function(){window.location.href='page3.html';},400);}
+function goNext(){document.querySelector('.scene').classList.add('page-out');setTimeout(function(){window.location.href='page6_5.html';},400);}
 var lt=0;document.addEventListener('touchend',function(e){var n=Date.now();if(n-lt<300)e.preventDefault();lt=n;},{passive:false});
 </script>
 </body>
