@@ -94,7 +94,7 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
     <div class="lv-item" id="lv0"><div class="lv-emoji">🐱</div><div class="lv-name">초보 냥이</div><div class="lv-pts">0~2500P</div></div>
     <div class="lv-item" id="lv1"><div class="lv-emoji">🐵</div><div class="lv-name">재간둥이</div><div class="lv-pts">~5000P</div></div>
     <div class="lv-item" id="lv2"><div class="lv-emoji">🐶</div><div class="lv-name">수호대</div><div class="lv-pts">~7500P</div></div>
-    <div class="lv-item" id="lv3"><div class="lv-emoji">🐯</div><div class="lv-name">무적 호랑이</div><div class="lv-pts">7501P~</div></div>
+    <div class="lv-item" id="lv3"><div class="lv-emoji">🐯</div><div class="lv-name">무적 호랑이</div><div class="lv-pts">~10,000P</div></div>
   </div>
   <div class="lv-bar-wrap">
     <div class="lv-bar-track"><div class="lv-bar-fill" id="lv-bar" style="width:0%;"></div></div>
@@ -199,7 +199,7 @@ var pts=0;try{pts=parseInt(localStorage.getItem('tuntun_pts')||'0');}catch(e){}
 var curLv=pts<=2500?0:pts<=5000?1:pts<=7500?2:3;
 function renderLevel(){
   for(var i=0;i<4;i++) document.getElementById('lv'+i).classList.toggle('active',i===curLv);
-  var maxes=[2500,5000,7500,99999];var prev=curLv===0?0:maxes[curLv-1];var next=maxes[curLv]===99999?prev+2500:maxes[curLv];
+  var maxes=[2500,5000,7500,10000];var prev=curLv===0?0:maxes[curLv-1];var next=maxes[curLv]===10000?prev+2500:maxes[curLv];
   var pct=curLv===3?100:Math.min(100,Math.round((pts-prev)/(next-prev)*100));
   document.getElementById('lv-bar').style.width=pct+'%';
   document.getElementById('lv-bar-label').textContent=pts+'P';

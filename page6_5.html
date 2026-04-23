@@ -44,7 +44,17 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 .page-title{font-family:var(--hand);font-size:clamp(22px,6vw,28px);color:#fff;line-height:1.2;}
 .page-sub{font-size:12px;color:rgba(200,220,255,.65);margin-top:5px;}
 
-/* ── BMI 입력 카드 ── */
+/* ── 학번·이름 입력 ── */
+.student-card{margin-top:14px;background:rgba(127,119,221,.08);border:1.5px solid rgba(127,119,221,.25);border-radius:20px;padding:14px 16px;animation:fadeUp .5s ease .05s both;}
+.student-card-title{font-size:12px;color:rgba(200,220,255,.55);margin-bottom:10px;}
+.student-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.student-label{font-size:11px;color:rgba(200,220,255,.55);margin-bottom:4px;display:block;}
+.student-input{width:100%;padding:10px 12px;background:rgba(255,255,255,.08);border:1px solid rgba(127,119,221,.3);border-radius:12px;font-size:16px;color:#fff;outline:none;font-family:var(--jua);text-align:center;}
+.student-input:focus{border-color:rgba(127,119,221,.6);background:rgba(255,255,255,.12);}
+.student-input::placeholder{color:rgba(200,220,255,.25);font-size:13px;}
+.student-save-btn{margin-top:10px;width:100%;padding:10px;background:rgba(127,119,221,.2);border:1px solid rgba(127,119,221,.4);border-radius:12px;font-family:var(--jua);font-size:14px;color:#C8B4FF;cursor:pointer;transition:.15s;}
+.student-save-btn:active{transform:scale(.97);}
+.student-saved-badge{display:none;margin-top:8px;text-align:center;font-size:12px;color:#5DCAA5;}
 .bmi-input-card{margin-top:14px;background:rgba(55,138,221,.08);border:1.5px solid rgba(55,138,221,.25);border-radius:20px;padding:16px;animation:fadeUp .5s ease .1s both;}
 .bmi-month-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px;}
 .ci-month-btn{padding:5px 10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:100px;font-size:12px;color:rgba(200,220,255,.6);cursor:pointer;transition:.15s;font-family:var(--jua);}
@@ -100,7 +110,7 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
     <div class="lv-item" id="lv0"><div class="lv-emoji">🐱</div><div class="lv-name">초보 냥이</div><div class="lv-pts">0~2500P</div></div>
     <div class="lv-item" id="lv1"><div class="lv-emoji">🐵</div><div class="lv-name">재간둥이</div><div class="lv-pts">~5000P</div></div>
     <div class="lv-item" id="lv2"><div class="lv-emoji">🐶</div><div class="lv-name">수호대</div><div class="lv-pts">~7500P</div></div>
-    <div class="lv-item" id="lv3"><div class="lv-emoji">🐯</div><div class="lv-name">무적 호랑이</div><div class="lv-pts">7501P~</div></div>
+    <div class="lv-item" id="lv3"><div class="lv-emoji">🐯</div><div class="lv-name">무적 호랑이</div><div class="lv-pts">~10,000P</div></div>
   </div>
   <div class="lv-bar-wrap">
     <div class="lv-bar-track"><div class="lv-bar-fill" id="lv-bar" style="width:0%;"></div></div>
@@ -118,6 +128,23 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
     <div class="header-badge">⚖️ 건강 기록</div>
     <div class="page-title">오늘의 체크인 📊</div>
     <div class="page-sub">매월 키와 몸무게를 기록해요</div>
+  </div>
+
+  <!-- 학번·이름 입력 -->
+  <div class="student-card">
+    <div class="student-card-title">👤 내 정보를 먼저 입력해줘요 (한 번만!)</div>
+    <div class="student-row">
+      <div>
+        <span class="student-label">🔢 학번반번호 (4자리)</span>
+        <input class="student-input" id="student-id" type="number" inputmode="numeric" placeholder="예) 1205" maxlength="6">
+      </div>
+      <div>
+        <span class="student-label">✏️ 이름</span>
+        <input class="student-input" id="student-name" type="text" placeholder="예) 홍길동">
+      </div>
+    </div>
+    <button class="student-save-btn" onclick="saveStudentInfo()">✅ 저장하기</button>
+    <div class="student-saved-badge" id="student-saved-badge">저장됨 ✓ <span id="student-saved-text"></span></div>
   </div>
 
   <!-- BMI 입력 -->
@@ -165,11 +192,36 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 <script>
 var pts=0;try{pts=parseInt(localStorage.getItem('tuntun_pts')||'0');}catch(e){}
 var curLv=pts<=2500?0:pts<=5000?1:pts<=7500?2:3;
-(function(){for(var i=0;i<4;i++)document.getElementById('lv'+i).classList.toggle('active',i===curLv);var maxes=[2500,5000,7500,99999];var prev=curLv===0?0:maxes[curLv-1];var next=maxes[curLv]===99999?prev+2500:maxes[curLv];var pct=curLv===3?100:Math.min(100,Math.round((pts-prev)/(next-prev)*100));document.getElementById('lv-bar').style.width=pct+'%';document.getElementById('lv-bar-label').textContent=pts+'P';var pi=document.getElementById('pts-input');if(pi)pi.value=pts||'';})();
+(function(){for(var i=0;i<4;i++)document.getElementById('lv'+i).classList.toggle('active',i===curLv);var maxes=[2500,5000,7500,10000];var prev=curLv===0?0:maxes[curLv-1];var next=maxes[curLv]===10000?prev+2500:maxes[curLv];var pct=curLv===3?100:Math.min(100,Math.round((pts-prev)/(next-prev)*100));document.getElementById('lv-bar').style.width=pct+'%';document.getElementById('lv-bar-label').textContent=pts+'P';var pi=document.getElementById('pts-input');if(pi)pi.value=pts||'';})();
 
 var CI_STORAGE='tuntun_body_records_v2';
+var SHEETS_URL='https://script.google.com/macros/s/AKfycbzgBrjUH2rf1mUcyFp2GGWGvDaUnmIh0kV0rskcDB5j84Esu1IFbcJFHy4BQ93vUPc2/exec';
 var ciMonth=new Date().getMonth()+1;if(ciMonth<6)ciMonth=6;if(ciMonth>12)ciMonth=12;
 var recs={};try{recs=JSON.parse(localStorage.getItem(CI_STORAGE)||'{}');}catch(e){}
+
+/* 학번·이름 불러오기 */
+(function loadStudentInfo(){
+  var sid=localStorage.getItem('tuntun_student_id')||'';
+  var sname=localStorage.getItem('tuntun_student_name')||'';
+  if(sid){document.getElementById('student-id').value=sid;}
+  if(sname){document.getElementById('student-name').value=sname;}
+  if(sid||sname){
+    document.getElementById('student-saved-badge').style.display='block';
+    document.getElementById('student-saved-text').textContent=sid+' '+sname;
+  }
+})();
+
+function saveStudentInfo(){
+  var sid=document.getElementById('student-id').value.trim();
+  var sname=document.getElementById('student-name').value.trim();
+  if(!sid&&!sname){showToast('학번 또는 이름을 입력해 주세요!');return;}
+  if(sid) localStorage.setItem('tuntun_student_id',sid);
+  if(sname) localStorage.setItem('tuntun_student_name',sname);
+  var badge=document.getElementById('student-saved-badge');
+  badge.style.display='block';
+  document.getElementById('student-saved-text').textContent=sid+' '+sname;
+  showToast('✅ 정보가 저장됐어요!');
+}
 
 (function renderMonthBtns(){
   var wrap=document.getElementById('month-btns');
@@ -205,11 +257,15 @@ function ciCalcBMI(){
   if(!h||!w||h<80||h>220||w<10||w>200){showToast('키와 몸무게를 올바르게 입력해 주세요!');return;}
   var bmi=w/((h/100)*(h/100));
   var st=getBmiStatus(bmi);
-  recs[ciMonth]={h:h,w:w,bmi:Math.round(bmi*10)/10,status:st.text.replace(/ .*/,'')};
+  var sid=localStorage.getItem('tuntun_student_id')||'미입력';
+  var sname=localStorage.getItem('tuntun_student_name')||'미입력';
+  recs[ciMonth]={h:h,w:w,bmi:Math.round(bmi*10)/10,status:st.text.replace(/ .*/,''),number:sid,name:sname};
   try{localStorage.setItem(CI_STORAGE,JSON.stringify(recs));}catch(e){}
   ciShowResult(bmi);
   showToast(ciMonth+'월 기록 저장 완료! 🔒');
   renderHistory();
+  /* 구글 시트 전송 */
+  fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'bmi',number:sid,name:sname,month:ciMonth,height:h,weight:w,bmi:Math.round(bmi*10)/10,status:st.text.replace(/ .*/,'')})}).catch(function(){});
 }
 function renderHistory(){
   var keys=Object.keys(recs).map(Number).sort(function(a,b){return a-b;});
@@ -227,7 +283,7 @@ function savePtsInput(){
   if(isNaN(v)||v<0){return;}
   localStorage.setItem('tuntun_pts',v);
   pts=v;curLv=pts<=2500?0:pts<=5000?1:pts<=7500?2:3;
-  (function(){for(var i=0;i<4;i++)document.getElementById('lv'+i).classList.toggle('active',i===curLv);var maxes=[2500,5000,7500,99999];var prev=curLv===0?0:maxes[curLv-1];var next=maxes[curLv]===99999?prev+2500:maxes[curLv];var pct=curLv===3?100:Math.min(100,Math.round((pts-prev)/(next-prev)*100));document.getElementById('lv-bar').style.width=pct+'%';document.getElementById('lv-bar-label').textContent=pts+'P';var pi=document.getElementById('pts-input');if(pi)pi.value=pts||'';})();
+  (function(){for(var i=0;i<4;i++)document.getElementById('lv'+i).classList.toggle('active',i===curLv);var maxes=[2500,5000,7500,10000];var prev=curLv===0?0:maxes[curLv-1];var next=maxes[curLv]===10000?prev+2500:maxes[curLv];var pct=curLv===3?100:Math.min(100,Math.round((pts-prev)/(next-prev)*100));document.getElementById('lv-bar').style.width=pct+'%';document.getElementById('lv-bar-label').textContent=pts+'P';var pi=document.getElementById('pts-input');if(pi)pi.value=pts||'';})();
   var btn=document.querySelector('.lv-pts-save-btn');
   if(btn){btn.textContent='✅ 저장!';setTimeout(function(){btn.textContent='저장';},1500);}
 }
