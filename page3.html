@@ -214,7 +214,6 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
     <div class="dash-tabs">
       <button class="dash-tab active" onclick="switchTab('tab-overview',this)">📊 현황</button>
       <button class="dash-tab" onclick="switchTab('tab-grant',this)">🎁 지급</button>
-      <button class="dash-tab" onclick="switchTab('tab-memo',this)">📝 메모</button>
       <button class="dash-tab" onclick="switchTab('tab-settings',this)">⚙️ 설정</button>
     </div>
 
@@ -272,17 +271,7 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
           </div>
         </div>
 
-        <!-- 퀵 필터 -->
-        <div class="filter-row">
-          <button class="filter-btn active" onclick="setFilter('all',this)">전체</button>
-          <button class="filter-btn" onclick="setFilter('today',this)">✅ 오늘 참여</button>
-          <button class="filter-btn" onclick="setFilter('inactive',this)">⚠️ 미참여</button>
-          <button class="filter-btn" onclick="setFilter('pts',this)">🏆 포인트순</button>
-        </div>
-
-        <!-- 학생 그리드 -->
-        <div class="student-grid" id="student-grid"></div>
-        <div class="no-data" id="no-data" style="display:none;">검색 결과가 없어요</div>
+        <!-- 업데이트 시간 -->
         <div style="font-size:10px;color:rgba(200,220,255,.3);text-align:right;margin-top:8px;font-family:var(--jua);" id="dash-updated"></div>
       </div>
     </div>
@@ -290,9 +279,8 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
     <!-- 탭2: 포인트 지급 -->
     <div class="dash-tab-panel" id="tab-grant">
       <div class="dash-sec-title" style="margin-top:0;">🎁 포인트 수동 지급</div>
-      <input class="dash-input" id="grant-name" placeholder="학생 이름 (기록용)">
       <div class="dash-grant-row">
-        <input class="dash-input" id="grant-reason" placeholder="사유" style="flex:2;">
+        <input class="dash-input" id="grant-name" placeholder="이름" style="flex:2;">
         <input class="dash-input" id="grant-pt" type="number" value="5" min="1" style="flex:1;text-align:center;">
         <button class="dash-grant-btn" onclick="grantPoint()">지급</button>
       </div>
@@ -301,19 +289,7 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
       <button class="dash-danger-btn" style="background:rgba(136,136,136,.15);color:rgba(200,220,255,.5);border-color:rgba(136,136,136,.2);margin-top:8px;" onclick="clearGrantLog()">🗑️ 이력 초기화</button>
     </div>
 
-    <!-- 탭3: 메모 -->
-    <div class="dash-tab-panel" id="tab-memo">
-      <div class="dash-sec-title" style="margin-top:0;">📝 수업 메모</div>
-      <textarea class="dash-memo" id="teacher-memo" placeholder="수업 메모, 학생 관찰 내용 등을 자유롭게 적어보세요."></textarea>
-      <div style="display:flex;align-items:center;gap:8px;margin-top:8px;">
-        <button class="memo-save-btn" onclick="saveMemo()">저장</button>
-        <span class="memo-saved-msg" id="memo-msg"></span>
-      </div>
-      <div class="dash-sec-title" style="margin-top:14px;">📅 수업 체크리스트</div>
-      <div id="checklist-wrap" style="display:flex;flex-direction:column;gap:6px;"></div>
-    </div>
-
-    <!-- 탭4: 설정 -->
+    <!-- 탭3: 설정 -->
     <div class="dash-tab-panel" id="tab-settings">
       <div class="dash-sec-title" style="margin-top:0;">🔑 비밀번호 변경</div>
       <div style="display:flex;gap:8px;">
@@ -321,9 +297,6 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
         <button class="dash-grant-btn" onclick="changePw()" style="background:linear-gradient(135deg,#378ADD,#1a5fa8);">변경</button>
       </div>
       <div id="pw-msg" style="font-size:12px;color:#7ADCC8;margin-top:6px;font-family:var(--jua);min-height:18px;"></div>
-      <div class="dash-sec-title" style="margin-top:14px;">🗑️ 데이터 관리</div>
-      <button class="dash-danger-btn" onclick="resetAll()">⚠️ 전체 로컬 데이터 초기화</button>
-      <div style="font-size:10px;color:rgba(180,195,235,.4);margin-top:6px;font-family:var(--jua);">포인트·BMI·미션 완료 기록이 모두 삭제돼요.</div>
     </div>
 
     <button class="dash-close-btn" onclick="closeDash()">✕ 닫기</button>
@@ -545,14 +518,11 @@ function closePopup(){document.getElementById('popup-wrap').classList.remove('op
 /* ── 포인트 지급 ── */
 function grantPoint(){
   var name=document.getElementById('grant-name').value||'미입력';
-  var reason=document.getElementById('grant-reason').value||'수동 지급';
   var pt=parseInt(document.getElementById('grant-pt').value)||5;
 
-  /* 누적 포인트에 합산 */
   var cur=parseInt(localStorage.getItem('tuntun_pts')||'0');
   localStorage.setItem('tuntun_pts',cur+pt);
 
-  /* 이번달 월간 포인트에도 합산 */
   var now=new Date();
   var curMonth=now.getFullYear()+'-'+(now.getMonth()+1);
   var savedMonth=localStorage.getItem('tuntun_monthly_month')||'';
@@ -561,16 +531,15 @@ function grantPoint(){
   localStorage.setItem('tuntun_monthly_pts',monthly);
   localStorage.setItem('tuntun_monthly_month',curMonth);
 
-  /* 지급 이력 저장 */
   var log=[];try{log=JSON.parse(localStorage.getItem('tuntun_grant_log')||'[]');}catch(e){}
-  log.unshift({name:name,reason:reason,pt:pt,time:(now.getMonth()+1)+'/'+now.getDate()+' '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0')});
+  log.unshift({name:name,pt:pt,time:(now.getMonth()+1)+'/'+now.getDate()+' '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0')});
   localStorage.setItem('tuntun_grant_log',JSON.stringify(log.slice(0,50)));
   renderGrantLog();
-  alert('✅ '+pt+'P 지급 완료! (이번달 누적: '+monthly+'P)');
+  alert('✅ '+name+' '+pt+'P 지급 완료! (이번달 누적: '+monthly+'P)');
 }
 function renderGrantLog(){
   var log=[];try{log=JSON.parse(localStorage.getItem('tuntun_grant_log')||'[]');}catch(e){}
-  document.getElementById('grant-log').innerHTML=log.map(function(l){return '<div class="grant-log-item">'+l.time+' | '+l.name+' | '+l.reason+' | +'+l.pt+'P</div>';}).join('');
+  document.getElementById('grant-log').innerHTML=log.map(function(l){return '<div class="grant-log-item">'+l.time+' | '+l.name+' | +'+l.pt+'P</div>';}).join('');
 }
 function clearGrantLog(){if(!confirm('지급 이력을 초기화할까요?'))return;localStorage.removeItem('tuntun_grant_log');renderGrantLog();}
 
