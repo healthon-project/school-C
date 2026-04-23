@@ -1,487 +1,113 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>튼튼탐험대 — 대박선물 2탄 & 퍼즐</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
-  <style>
-    @font-face {
-      font-family: 'KyoboHand';
-      src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/KyoboHand.woff') format('woff');
-      font-weight: normal; font-style: normal;
-    }
-    :root { --title-font:'KyoboHand',sans-serif; --main-font:'Jua',sans-serif; }
-    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-    html,body{width:100%;height:100%;font-family:var(--main-font);background:#04061A;overflow-x:hidden;}
-
-    .scene{min-height:100vh;position:relative;display:flex;flex-direction:column;align-items:center;}
-
-    /* ── 별 ── */
-    #star-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
-
-    /* ── 유성 ── */
-    .shoot{position:fixed;width:80px;height:1.5px;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,0.8));border-radius:2px;left:-90px;z-index:1;pointer-events:none;}
-    .sh1{top:4%;animation:sh 7s linear 1s infinite;}
-    .sh2{top:11%;animation:sh 10s linear 5s infinite;}
-    @keyframes sh{from{transform:translateX(0) rotate(18deg);opacity:1;}to{transform:translateX(120vw) rotate(18deg);opacity:0;}}
-
-    /* ── 콘텐츠 ── */
-    .content{
-      position:relative;z-index:10;
-      width:100%;max-width:430px;
-      padding:0 18px 110px;
-      display:flex;flex-direction:column;align-items:center;
-    }
-
-    /* ════════════════════
-       1. 대박선물 2탄 헤더
-    ════════════════════ */
-    .gift-header{
-      margin-top:3vh;
-      width:100%;
-      display:flex;align-items:center;justify-content:space-between;
-      animation:fadeDown 0.5s ease both;
-    }
-    @keyframes fadeDown{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
-
-    .gift-lottie-area{
-      width:90px;height:90px;
-      border:2px dashed rgba(255,215,0,0.4);
-      border-radius:50%;
-      display:flex;flex-direction:column;
-      align-items:center;justify-content:center;
-      gap:2px;
-      background:rgba(255,215,0,0.06);
-      animation:giftSpin 3s ease-in-out infinite;
-    }
-    @keyframes giftSpin{0%,100%{transform:rotate(-4deg) scale(1);}50%{transform:rotate(4deg) scale(1.06);}}
-    .gift-lottie-icon{font-size:38px;animation:wiggle 2s ease-in-out infinite;display:inline-block;}
-    @keyframes wiggle{0%,100%{transform:rotate(-8deg);}50%{transform:rotate(8deg);}}
-    .gift-lottie-label{font-family:var(--main-font);font-size:10px;color:rgba(255,215,0,0.8);text-align:center;line-height:1.3;}
-
-    .gift-header-text{flex:1;padding:0 14px;}
-    .gift-header-badge{
-      display:inline-block;
-      background:rgba(255,200,60,0.15);
-      border:1px solid rgba(255,200,60,0.35);
-      color:#FFD700;font-size:11px;
-      padding:3px 12px;border-radius:100px;
-      margin-bottom:6px;
-    }
-    .gift-header-title{
-      font-family:var(--title-font);
-      font-size:clamp(18px,5vw,22px);
-      color:#fff;line-height:1.2;
-      text-shadow:0 0 16px rgba(255,200,60,0.4);
-    }
-    .gift-header-sub{
-      font-family:var(--main-font);
-      font-size:11px;color:rgba(255,220,150,0.75);
-      margin-top:4px;line-height:1.5;
-    }
-
-    /* ════════════════════
-       2. 퍼즐 설명 텍스트
-    ════════════════════ */
-    .puzzle-intro{
-      margin-top:2.5vh;
-      width:100%;
-      text-align:center;
-      animation:fadeUp 0.5s ease 0.1s both;
-    }
-    .puzzle-intro-title{
-      font-family:var(--title-font);
-      font-size:clamp(20px,5.5vw,24px);
-      color:#A8D8FF;
-      text-shadow:0 0 16px rgba(100,180,255,0.4);
-      margin-bottom:8px;
-    }
-    .puzzle-intro-desc{
-      font-family:var(--main-font);
-      font-size:13px;color:rgba(200,220,255,0.8);
-      line-height:1.8;
-    }
-    .puzzle-intro-desc em{
-      font-style:normal;
-      color:#7AEEBB;font-weight:bold;
-      text-decoration:underline;text-underline-offset:3px;
-    }
-
-    /* ════════════════════
-       3. 행성 버튼 (퍼즐)
-    ════════════════════ */
-    .planet-btn-area{
-      margin-top:2.5vh;
-      display:flex;align-items:center;justify-content:center;
-      animation:fadeUp 0.5s ease 0.15s both;
-    }
-    .puzzle-planet-wrap{
-      display:flex;flex-direction:column;align-items:center;gap:10px;
-      cursor:pointer;text-decoration:none;
-    }
-    .puzzle-planet{
-      width:130px;height:130px;border-radius:50%;
-      position:relative;
-      display:flex;align-items:center;justify-content:center;
-      flex-direction:column;gap:5px;
-      overflow:visible;
-      background:radial-gradient(circle at 32% 28%, #D0E8FF 0%, #7AB8F0 30%, #3A7ACC 60%, #12357A 100%);
-      box-shadow:0 0 0 2px rgba(120,180,240,0.2),0 0 28px rgba(58,122,204,0.6),0 0 55px rgba(58,122,204,0.2),inset -16px -12px 0 rgba(5,15,40,0.32);
-      animation:floatPlanet 4s ease-in-out infinite;
-    }
-    @keyframes floatPlanet{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
-    .puzzle-planet:active{animation:none;transform:scale(0.93);}
-
-    /* 고리 */
-    .pp-ring-back {position:absolute;border-radius:50%;top:50%;left:50%;width:196px;height:32px;border:10px solid transparent;border-top:10px solid rgba(130,190,255,0.28);transform:translate(-50%,-50%) rotateX(72deg);z-index:1;pointer-events:none;}
-    .pp-ring-front{position:absolute;border-radius:50%;top:50%;left:50%;width:196px;height:32px;border:10px solid transparent;border-bottom:10px solid rgba(130,190,255,0.52);transform:translate(-50%,-50%) rotateX(72deg);z-index:3;pointer-events:none;}
-    .pp-ring-back2 {position:absolute;border-radius:50%;top:50%;left:50%;width:168px;height:24px;border:5px solid transparent;border-top:5px solid rgba(160,210,255,0.18);transform:translate(-50%,-50%) rotateX(72deg);z-index:1;pointer-events:none;}
-    .pp-ring-front2{position:absolute;border-radius:50%;top:50%;left:50%;width:168px;height:24px;border:5px solid transparent;border-bottom:5px solid rgba(160,210,255,0.35);transform:translate(-50%,-50%) rotateX(72deg);z-index:3;pointer-events:none;}
-    .pp-glint{position:absolute;top:11%;left:17%;width:30%;height:22%;background:rgba(255,255,255,0.25);border-radius:50%;filter:blur(4px);pointer-events:none;z-index:2;}
-
-    .pp-icon{font-size:36px;position:relative;z-index:2;line-height:1;}
-    .pp-label{font-family:var(--main-font);font-size:14px;font-weight:900;color:#fff;position:relative;z-index:2;text-shadow:0 0 8px rgba(0,0,0,1),0 2px 4px rgba(0,0,0,1);}
-
-    .planet-desc{
-      font-family:var(--main-font);font-size:12px;
-      color:rgba(180,210,255,0.8);text-align:center;
-      line-height:1.6;max-width:200px;
-    }
-
-    /* ════════════════════
-       4. 퍼즐 액자
-    ════════════════════ */
-    .puzzle-frame-wrap{
-      margin-top:2.5vh;
-      width:100%;
-      display:flex;flex-direction:column;align-items:center;gap:10px;
-      animation:fadeUp 0.5s ease 0.2s both;
-    }
-    .puzzle-frame{
-      width:220px;height:220px;
-      border:4px solid rgba(100,140,255,0.35);
-      border-radius:18px;
-      background:rgba(255,255,255,0.04);
-      box-shadow:0 0 24px rgba(80,120,255,0.2),inset 0 0 20px rgba(0,0,0,0.3);
-      position:relative;
-      display:flex;align-items:center;justify-content:center;
-      overflow:hidden;
-    }
-    /* 액자 모서리 별 */
-    .fc{position:absolute;font-size:14px;color:rgba(180,200,255,0.5);}
-    .fc.tl{top:6px;left:8px;}
-    .fc.tr{top:6px;right:8px;}
-    .fc.bl{bottom:6px;left:8px;}
-    .fc.br{bottom:6px;right:8px;}
-
-    /* 퍼즐 그리드 - 이미지 조각 */
-    .puzzle-grid{width:100%;height:100%;position:absolute;inset:0;overflow:hidden;}
-    .puzzle-grid svg{display:block;}
-    .puzzle-complete{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;border-radius:14px;pointer-events:none;z-index:5;}
-    .puzzle-complete.show{display:flex;}
-    .complete-badge{background:linear-gradient(135deg,#FFD700,#FF8C00);border-radius:100px;padding:6px 18px;font-family:var(--main-font);font-size:14px;color:#fff;box-shadow:0 0 20px rgba(255,200,0,0.7);animation:completePop 0.5s ease;}
-    @keyframes completePop{0%{transform:scale(0.5);opacity:0;}80%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
-    .puzzle-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;border-radius:14px;z-index:4;}
-    .puzzle-overlay-text{background:rgba(8,12,40,0.75);backdrop-filter:blur(3px);border-radius:12px;padding:8px 14px;font-family:var(--main-font);font-size:13px;color:rgba(180,210,255,0.95);text-align:center;line-height:1.6;}
-
-    .puzzle-month-badge{
-      font-family:var(--main-font);font-size:12px;
-      color:rgba(180,210,255,0.7);
-      background:rgba(80,120,255,0.12);
-      border:1px solid rgba(100,150,255,0.2);
-      padding:3px 14px;border-radius:100px;
-    }
-
-    /* 진행바 */
-    .puzzle-prog-wrap{
-      width:100%;
-      background:rgba(255,255,255,0.05);
-      border:1px solid rgba(255,255,255,0.08);
-      border-radius:12px;padding:10px 14px;
-    }
-    .prog-top{display:flex;justify-content:space-between;font-family:var(--main-font);font-size:11px;color:rgba(200,220,255,0.65);margin-bottom:6px;}
-    .prog-track{background:rgba(255,255,255,0.08);border-radius:999px;height:8px;overflow:hidden;}
-    .prog-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#3A7ACC,#7AEEBB);transition:width 0.8s cubic-bezier(.4,0,.2,1);width:0%;}
-    .prog-pct{color:#7AEEBB;font-weight:bold;}
-
-    /* ════════════════════
-       5. 푸터 화살표 섹션
-    ════════════════════ */
-    .footer-teaser{
-      margin-top:3vh;
-      width:100%;
-      text-align:center;
-      padding:16px 14px;
-      border-top:1px solid rgba(255,255,255,0.08);
-      animation:fadeUp 0.5s ease 0.3s both;
-    }
-    .footer-arrow{font-size:22px;animation:bounce 1.2s ease-in-out infinite;display:inline-block;margin-bottom:10px;}
-    @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(6px);}}
-    .footer-q{
-      font-family:var(--main-font);
-      font-size:14px;color:rgba(220,230,255,0.9);
-      line-height:1.9;
-    }
-    .footer-q .highlight{color:#7AEEBB;font-weight:bold;}
-    .footer-q .highlight2{color:#FFD86E;font-weight:bold;}
-
-    .more-btn{
-      margin-top:12px;
-      display:inline-block;
-      background:rgba(100,140,255,0.12);
-      border:1px solid rgba(100,140,255,0.25);
-      border-radius:12px;padding:10px 20px;
-      font-family:var(--main-font);font-size:12px;
-      color:rgba(180,210,255,0.85);
-      cursor:pointer;transition:background 0.15s;
-    }
-    .more-btn:active{transform:scale(0.96);}
-
-    /* ── 네비 ── */
-    .nav-bar{
-      position:fixed;bottom:0;left:0;right:0;z-index:40;
-      display:flex;justify-content:center;gap:12px;
-      padding:12px 20px 20px;
-      background:linear-gradient(to top,rgba(4,6,26,0.97) 60%,transparent);
-    }
-    .nav-btn{
-      flex:1;max-width:160px;
-      display:flex;align-items:center;justify-content:center;gap:5px;
-      background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);
-      border:1px solid rgba(255,255,255,0.18);border-radius:100px;
-      padding:11px 0;font-family:var(--main-font);font-size:14px;color:#fff;
-      cursor:pointer;transition:transform 0.15s;
-    }
-    .nav-btn:active{transform:scale(0.95);}
-    .nav-btn.prev{background:rgba(255,255,255,0.08);}
-    .nav-btn.next{background:rgba(80,120,220,0.35);border-color:rgba(100,150,255,0.4);}
-
-    .page-out{animation:pageOut 0.4s ease forwards!important;}
-    @keyframes pageOut{to{opacity:0;transform:translateY(-14px);}}
-    @keyframes ptsBounce{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>튼튼탐험대 — 대박선물 2탄</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:'KH';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/KyoboHand.woff') format('woff');}
+:root{--jua:'Jua',sans-serif;--hand:'KH',sans-serif;--green:#1D9E75;--green2:#5DCAA5;--amber:#EF9F27;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden;min-height:100%;}
+.scene{min-height:100vh;background:radial-gradient(ellipse at 70% 20%,rgba(239,159,39,.06),transparent 50%),radial-gradient(ellipse at 20% 80%,rgba(127,119,221,.06),transparent 55%),linear-gradient(170deg,#04061A,#0B0E2A 50%,#0E1535);display:flex;flex-direction:column;align-items:center;}
+.stars{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(1px 1px at 10% 15%,rgba(255,255,255,.55),transparent),radial-gradient(1px 1px at 28% 8%,rgba(255,255,255,.45),transparent),radial-gradient(1.5px 1.5px at 45% 22%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 62% 6%,rgba(255,255,255,.7),transparent),radial-gradient(1px 1px at 78% 16%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 5% 38%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 52% 42%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 87% 36%,rgba(255,255,255,.65),transparent),radial-gradient(1px 1px at 16% 57%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 72% 54%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 37% 69%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 82% 72%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 9% 82%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 47% 89%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 94% 84%,rgba(255,255,255,.55),transparent),radial-gradient(1px 1px at 32% 94%,rgba(255,255,255,.4),transparent),radial-gradient(1.5px 1.5px at 67% 97%,rgba(255,255,255,.45),transparent),radial-gradient(1px 1px at 20% 4%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 55% 30%,rgba(255,255,255,.35),transparent),radial-gradient(1px 1px at 88% 25%,rgba(255,255,255,.5),transparent);}
+/* ── 레벨 배너 ── */
+.level-banner{position:relative;z-index:10;width:100%;max-width:430px;margin-top:10px;padding:0 14px;animation:fadeDown .5s ease both;}
+.lv-strip{background:rgba(255,255,255,.06);border:1px solid rgba(200,220,255,.15);border-radius:16px;padding:8px 12px;display:grid;grid-template-columns:repeat(4,1fr);gap:3px;}
+.lv-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 3px;border-radius:10px;}
+.lv-item.active{background:rgba(255,255,255,.1);}
+.lv-emoji{font-size:18px;line-height:1;}
+.lv-item.active .lv-emoji{font-size:24px;}
+.lv-name{font-size:9px;color:rgba(200,220,255,.5);text-align:center;line-height:1.2;}
+.lv-item.active .lv-name{color:rgba(255,255,255,.85);}
+.lv-pts{font-size:8px;color:rgba(200,220,255,.3);}
+.lv-item.active .lv-pts{color:#FFD86E;}
+.lv-bar-wrap{display:flex;align-items:center;gap:6px;margin-top:6px;padding:0 2px;}
+.lv-bar-track{flex:1;height:5px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;}
+.lv-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--green),var(--green2));transition:width .4s;}
+.lv-bar-label{font-size:11px;color:#FFD86E;white-space:nowrap;}
+/* ── 콘텐츠 ── */
+.content{position:relative;z-index:10;width:100%;max-width:430px;padding:0 16px 100px;display:flex;flex-direction:column;align-items:center;}
+/* ── 헤더 ── */
+.gift-header{margin-top:14px;width:100%;display:flex;align-items:center;gap:14px;animation:fadeDown .5s ease both;}
+.gift-icon-wrap{font-size:52px;width:72px;height:72px;background:rgba(255,215,0,.08);border:2px dashed rgba(255,215,0,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.gift-header-text{flex:1;}
+.gift-header-badge{display:inline-block;background:rgba(255,200,60,.12);border:1px solid rgba(255,200,60,.3);color:#FFD700;font-size:11px;padding:3px 10px;border-radius:100px;margin-bottom:5px;}
+.gift-header-title{font-family:var(--hand);font-size:clamp(20px,5.5vw,26px);color:#fff;line-height:1.2;}
+.gift-header-sub{font-size:11px;color:rgba(255,220,150,.75);margin-top:3px;line-height:1.5;}
+/* ── 퍼즐 소개 ── */
+.puzzle-box{margin-top:16px;width:100%;background:rgba(100,160,255,.06);border:1.5px solid rgba(100,160,255,.2);border-radius:20px;padding:20px 18px;text-align:center;animation:fadeUp .5s ease .1s both;}
+.puzzle-title{font-family:var(--hand);font-size:clamp(18px,5vw,22px);color:#A8D8FF;margin-bottom:10px;}
+.puzzle-desc{font-size:13px;color:rgba(200,220,255,.8);line-height:1.8;}
+.puzzle-desc em{font-style:normal;color:#7AEEBB;font-weight:700;text-decoration:underline;text-underline-offset:3px;}
+/* ── 퍼즐 버튼 ── */
+.puzzle-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;background:linear-gradient(135deg,rgba(58,122,204,.25),rgba(30,80,160,.35));border:2px solid rgba(100,160,255,.35);border-radius:16px;color:#A8D8FF;font-size:16px;font-family:var(--jua);text-decoration:none;cursor:pointer;margin-top:12px;transition:transform .15s;}
+.puzzle-btn:active{transform:scale(.97);}
+/* ── 네비 ── */
+.nav-bar{position:fixed;bottom:0;left:0;right:0;z-index:40;display:flex;justify-content:center;gap:12px;padding:12px 20px 22px;background:linear-gradient(to top,rgba(4,6,26,.95) 60%,transparent);}
+.nav-btn{flex:1;max-width:160px;display:flex;align-items:center;justify-content:center;gap:5px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:100px;padding:10px 0;font-family:var(--jua);font-size:14px;color:#fff;cursor:pointer;transition:transform .15s;}
+.nav-btn:active{transform:scale(.95);}
+.nav-btn.next{background:rgba(239,159,39,.3);border-color:rgba(239,159,39,.45);}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.page-out{animation:pageOut .4s ease forwards!important;}
+@keyframes pageOut{to{opacity:0;transform:translateY(-12px);}}
+</style>
 </head>
 <body>
 <div class="scene">
+<div class="stars"></div>
 
-  <canvas id="star-canvas"></canvas>
-  <div class="shoot sh1"></div>
-  <div class="shoot sh2"></div>
-
-  <div class="content">
-
-    <!-- ① 대박선물 2탄 헤더 -->
-    <div class="gift-header" style="flex-direction:column;align-items:center;text-align:center;">
-      <div style="margin-bottom:8px;">
-        <span style="display:inline-block;font-family:var(--main-font);font-size:13px;color:#fff;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.3);padding:5px 22px;border-radius:100px;letter-spacing:3px;">Step 3</span>
-      </div>
-      <div class="gift-lottie-area">
-        <span class="gift-lottie-icon">🎁</span>
-        <span class="gift-lottie-label">대박선물<br>2탄</span>
-      </div>
-      <div class="gift-header-text" style="padding:0;margin-top:8px;">
-        <div class="gift-header-title">대박선물 2탄</div>
-      </div>
-    </div>
-
-    <!-- ② 퍼즐 설명 -->
-    <div class="puzzle-intro">
-      <div class="puzzle-intro-title">🧩 이번 달 퍼즐 도전 🧩</div>
-      <div class="puzzle-intro-desc">
-        오늘의 미션을 수행하고 포인트를 모으면<br>
-        <em>퍼즐 조각</em>이 맞춰져요.<br>
-        퍼즐그림 완성한 사람<br>
-        선물 받을 준비 하세요~! 🎁<br>
-        <span style="font-size:11px;color:rgba(180,200,255,0.55);">(매월 퍼즐그림이 달라짐)</span>
-      </div>
-    </div>
-
-    <!-- ④ 퍼즐 액자 -->
-    <div class="puzzle-frame-wrap">
-      <div class="puzzle-frame">
-        <span class="fc tl">★</span><span class="fc tr">★</span>
-        <span class="fc bl">★</span><span class="fc br">★</span>
-        <div class="puzzle-grid" id="puzzle-grid"></div>
-        <div class="puzzle-overlay" id="puzzle-overlay">
-          <div class="puzzle-overlay-text" id="puzzle-overlay-text">포인트를 모아<br>퍼즐을 완성해요!</div>
-        </div>
-        <div class="puzzle-complete" id="puzzle-complete">
-          <div class="complete-badge">🎉 퍼즐 완성! 🎉</div>
-        </div>
-      </div>
-      <div class="puzzle-month-badge" id="puzzle-month-badge">6월의 퍼즐</div>
-
-      <!-- 진행바 -->
-      <div class="puzzle-prog-wrap">
-        <div class="prog-top">
-          <span>이번 달 달성률</span>
-          <span class="prog-pct" id="prog-pct">0%</span>
-        </div>
-        <div class="prog-track">
-          <div class="prog-fill" id="prog-fill"></div>
-        </div>
-        <div class="prog-top" style="margin-top:5px;margin-bottom:0">
-          <span>현재 <strong id="cur-pts" style="color:#7AEEBB">0</strong>P</span>
-          <span>목표 <strong style="color:#FFD86E">2500P</strong> · 매월 28일</span>
-        </div>
-      </div>
-
-      <!-- 이번달 포인트 강조 -->
-      <div style="margin-top:18px;width:100%;text-align:center;background:linear-gradient(135deg,rgba(255,180,0,0.12),rgba(255,100,0,0.08));border:2px solid rgba(255,200,0,0.4);border-radius:20px;padding:18px 24px;box-shadow:0 0 24px rgba(255,180,0,0.15);">
-        <div style="font-family:var(--title-font);font-size:18px;color:#FFD700;margin-bottom:4px;text-shadow:0 0 12px rgba(255,200,0,0.5);">✨ 이번 달 나의 포인트 ✨</div>
-        <div id="big-pts" style="font-family:var(--title-font);font-size:clamp(52px,14vw,72px);color:#FFD700;line-height:1;animation:ptsBounce 1.5s ease-in-out infinite;text-shadow:0 0 30px rgba(255,200,0,0.8),0 0 60px rgba(255,150,0,0.4);">0</div>
-        <div style="font-family:var(--main-font);font-size:18px;color:#FFD86E;margin-top:2px;">포인트 ⭐</div>
-        <div style="font-family:var(--main-font);font-size:11px;color:rgba(255,200,100,0.6);margin-top:8px;">미션 + 퀴즈 + 숏폼 + 교사 보너스 합계</div>
-        <div id="pts-student-id" style="font-family:var(--main-font);font-size:11px;color:rgba(255,200,100,0.5);margin-top:4px;"></div>
-      </div>
-
-    </div>
-
-  </div><!-- /.content -->
-
-  <!-- 네비 -->
-  <div class="nav-bar">
-    <button class="nav-btn prev" onclick="goPrev()">← 이전</button>
-    <button class="nav-btn next" onclick="goNext()">다음 →</button>
+<!-- 레벨 배너 -->
+<div class="level-banner">
+  <div class="lv-strip">
+    <div class="lv-item" id="lv0"><div class="lv-emoji">🐱</div><div class="lv-name">초보 냥이</div><div class="lv-pts">0~2500P</div></div>
+    <div class="lv-item" id="lv1"><div class="lv-emoji">🐵</div><div class="lv-name">재간둥이</div><div class="lv-pts">~5000P</div></div>
+    <div class="lv-item" id="lv2"><div class="lv-emoji">🐶</div><div class="lv-name">수호대</div><div class="lv-pts">~7500P</div></div>
+    <div class="lv-item" id="lv3"><div class="lv-emoji">🐯</div><div class="lv-name">무적 호랑이</div><div class="lv-pts">7501P~</div></div>
   </div>
-
+  <div class="lv-bar-wrap">
+    <div class="lv-bar-track"><div class="lv-bar-fill" id="lv-bar" style="width:0%;"></div></div>
+    <div class="lv-bar-label" id="lv-bar-label">0P</div>
+  </div>
 </div>
 
+<div class="content">
+  <div class="gift-header">
+    <div class="gift-icon-wrap">🎁</div>
+    <div class="gift-header-text">
+      <div class="gift-header-badge">🌟 대박선물 2탄</div>
+      <div class="gift-header-title">대박선물 2탄을<br>공개합니다!</div>
+      <div class="gift-header-sub">포인트를 모으면 특별한 선물이!</div>
+    </div>
+  </div>
+
+  <div class="puzzle-box">
+    <div class="puzzle-title">🧩 이번 달 퍼즐 도전 🧩</div>
+    <div class="puzzle-desc">
+      오늘의 미션을 수행하고 포인트를 모으면<br>
+      <em>퍼즐 조각</em>이 맞춰져요.<br>
+      퍼즐그림 완성한 사람<br>
+      선물 받을 준비 하세요~! 🎁<br>
+      <span style="font-size:11px;color:rgba(180,200,255,.5);">(매월 퍼즐그림이 달라짐)</span>
+    </div>
+    <a class="puzzle-btn" href="https://padlet.com/a01067752602/padlet-a1s7bft7ayd8chrj" target="_blank">🧩 퍼즐 패들렛 보러 가기 →</a>
+  </div>
+</div>
+
+<div class="nav-bar">
+  <button class="nav-btn" onclick="goPrev()">← 이전</button>
+  <button class="nav-btn next" onclick="goNext()">다음 →</button>
+</div>
+</div>
 <script>
-/* 별 */
-(function(){
-  var c=document.getElementById('star-canvas'),ctx=c.getContext('2d');
-  function resize(){c.width=window.innerWidth;c.height=window.innerHeight;draw();}
-  function draw(){
-    ctx.clearRect(0,0,c.width,c.height);
-    for(var i=0;i<180;i++){
-      var x=Math.random()*c.width,y=Math.random()*c.height;
-      var r=Math.random()*1.5+0.2,a=Math.random()*0.75+0.2;
-      ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
-      ctx.fillStyle='rgba(255,255,255,'+a+')';ctx.fill();
-    }
-  }
-  window.addEventListener('resize',resize);resize();
-})();
-
-/* 퍼즐 설정 */
-var GOAL=2500,COLS=4,ROWS=4,TOTAL_PIECES=16;
-var MONTHLY_KEY='tuntun_monthly_pts',MONTHLY_MONTH='tuntun_monthly_month';
-var PUZZLE_IMG='puzzle_img_june.png';
-function getCurrentMonth(){var d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1);}
-function getMonthlyPts(){
-  try{if(localStorage.getItem(MONTHLY_MONTH)===getCurrentMonth())
-    return parseInt(localStorage.getItem(MONTHLY_KEY)||'0');}catch(e){}
-  return 0;
-}
-function initPuzzle(){
-  var monthlyPts=getMonthlyPts();
-  var filled=Math.min(TOTAL_PIECES,Math.round((monthlyPts/GOAL)*TOTAL_PIECES));
-  var pct=Math.min(100,Math.round((monthlyPts/GOAL)*100));
-  document.getElementById('cur-pts').textContent=monthlyPts;
-  document.getElementById('prog-pct').textContent=pct+'%';
-  document.getElementById('prog-fill').style.width=pct+'%';
-  document.getElementById('puzzle-month-badge').textContent='6월의 퍼즐';
-  var bigPts=document.getElementById('big-pts');
-  if(bigPts) bigPts.textContent=monthlyPts;
-  var sid=localStorage.getItem('tuntun_student_id')||'';
-  var sidEl=document.getElementById('pts-student-id');
-  if(sidEl&&sid&&sid!=='GUEST') sidEl.textContent='👨‍🚀 학번: '+sid;
-  else if(sidEl&&sid==='GUEST') sidEl.textContent='👩‍🏫 교사/학부모 모드';
-  /* 결정론적 셔플로 조각 순서 고정 */
-  var order=[];for(var i=0;i<TOTAL_PIECES;i++) order.push(i);
-  var seed=42;
-  function rnd(n){seed=(seed*1664525+1013904223)&0x7fffffff;return seed%n;}
-  for(var i=TOTAL_PIECES-1;i>0;i--){var j=rnd(i+1);var t=order[i];order[i]=order[j];order[j]=t;}
-  var revealSet={};
-  for(var k=0;k<filled;k++) revealSet[order[k]]=true;
-  var grid=document.getElementById('puzzle-grid');
-  /* ── SVG 방식: 이미지 1장 + SVG clipPath로 조각별 마스킹 ── */
-  var GAP=2,FSIZE=220;
-  var cellW=Math.floor((FSIZE-(COLS-1)*GAP)/COLS);
-  var cellH=Math.floor((FSIZE-(ROWS-1)*GAP)/ROWS);
-  var ns='http://www.w3.org/2000/svg';
-  var svg=document.createElementNS(ns,'svg');
-  svg.setAttribute('width','100%');
-  svg.setAttribute('height','100%');
-  svg.setAttribute('viewBox','0 0 '+FSIZE+' '+FSIZE);
-  /* defs: clipPath 16개 정의 */
-  var defs=document.createElementNS(ns,'defs');
-  for(var ci=0;ci<TOTAL_PIECES;ci++){
-    var cr=Math.floor(ci/COLS),cc=ci%COLS;
-    var cp=document.createElementNS(ns,'clipPath');
-    cp.setAttribute('id','cp'+ci);
-    var rr=document.createElementNS(ns,'rect');
-    rr.setAttribute('x',cc*(cellW+GAP));
-    rr.setAttribute('y',cr*(cellH+GAP));
-    rr.setAttribute('width',cellW);
-    rr.setAttribute('height',cellH);
-    rr.setAttribute('rx','3');
-    cp.appendChild(rr);
-    defs.appendChild(cp);
-  }
-  svg.appendChild(defs);
-  /* 각 조각 렌더링 */
-  for(var idx=0;idx<TOTAL_PIECES;idx++){
-    var r2=Math.floor(idx/COLS),c2=idx%COLS;
-    var px=c2*(cellW+GAP),py=r2*(cellH+GAP);
-    if(revealSet[idx]){
-      /* 공개된 조각: SVG image + clipPath */
-      var g=document.createElementNS(ns,'g');
-      g.setAttribute('clip-path','url(#cp'+idx+')');
-      var im=document.createElementNS(ns,'image');
-      im.setAttribute('href',PUZZLE_IMG);
-      im.setAttribute('x','0');im.setAttribute('y','0');
-      im.setAttribute('width',FSIZE);im.setAttribute('height',FSIZE);
-      im.setAttribute('preserveAspectRatio','none');
-      g.appendChild(im);
-      svg.appendChild(g);
-    } else {
-      /* 잠긴 조각: 어두운 rect (SVG, 추가 이미지 없음) */
-      var bg=document.createElementNS(ns,'rect');
-      bg.setAttribute('x',px);bg.setAttribute('y',py);
-      bg.setAttribute('width',cellW);bg.setAttribute('height',cellH);
-      bg.setAttribute('rx','3');
-      bg.setAttribute('fill','rgba(10,15,45,0.9)');
-      bg.setAttribute('stroke','rgba(70,90,150,0.3)');
-      bg.setAttribute('stroke-width','0.5');
-      svg.appendChild(bg);
-      /* 잠금 표시: 작은 원 */
-      var dot=document.createElementNS(ns,'circle');
-      dot.setAttribute('cx',px+cellW/2);dot.setAttribute('cy',py+cellH/2);
-      dot.setAttribute('r','2.5');
-      dot.setAttribute('fill','rgba(100,130,200,0.4)');
-      svg.appendChild(dot);
-    }
-  }
-  grid.innerHTML='';
-  grid.appendChild(svg);
-  var ov=document.getElementById('puzzle-overlay');
-  var ovT=document.getElementById('puzzle-overlay-text');
-  var comp=document.getElementById('puzzle-complete');
-  if(filled>=TOTAL_PIECES){ov.style.display='none';comp.classList.add('show');}
-  else{
-    ov.style.display='flex';comp.classList.remove('show');
-    if(pct<20) ovT.innerHTML='🧩 포인트를 모아<br>퍼즐을 맞춰봐요!';
-    else if(pct<50) ovT.innerHTML='✨ '+pct+'% 완성!<br>계속 모아봐요!';
-    else if(pct<80) ovT.innerHTML='🌟 절반 넘었어요!<br>'+pct+'% 달성!';
-    else ovT.innerHTML='🔥 거의 다 왔어요!<br>'+pct+'% 달성!';
-  }
-}
-initPuzzle();
-
-function openPuzzle(){
-  document.querySelector('.puzzle-frame-wrap').scrollIntoView({behavior:'smooth',block:'center'});
-}
-
+var pts=0;try{pts=parseInt(localStorage.getItem('tuntun_pts')||'0');}catch(e){}
+var curLv=pts<=2500?0:pts<=5000?1:pts<=7500?2:3;
+(function(){for(var i=0;i<4;i++)document.getElementById('lv'+i).classList.toggle('active',i===curLv);var maxes=[2500,5000,7500,99999];var prev=curLv===0?0:maxes[curLv-1];var next=maxes[curLv]===99999?prev+2500:maxes[curLv];var pct=curLv===3?100:Math.min(100,Math.round((pts-prev)/(next-prev)*100));document.getElementById('lv-bar').style.width=pct+'%';document.getElementById('lv-bar-label').textContent=pts+'P';})();
 function goPrev(){document.querySelector('.scene').classList.add('page-out');setTimeout(function(){window.location.href='page4.html';},400);}
 function goNext(){document.querySelector('.scene').classList.add('page-out');setTimeout(function(){window.location.href='page6.html';},400);}
-
-var lt=0;
-document.addEventListener('touchend',function(e){var n=Date.now();if(n-lt<300)e.preventDefault();lt=n;},{passive:false});
+var lt=0;document.addEventListener('touchend',function(e){var n=Date.now();if(n-lt<300)e.preventDefault();lt=n;},{passive:false});
 </script>
 </body>
 </html>

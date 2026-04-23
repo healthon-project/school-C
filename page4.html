@@ -1,667 +1,243 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>튼튼탐험대 — 오늘의 미션</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
-  <style>
-    @font-face {
-      font-family: 'KyoboHand';
-      src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/KyoboHand.woff') format('woff');
-      font-weight: normal; font-style: normal;
-    }
-    :root { --title-font:'KyoboHand',sans-serif; --main-font:'Jua',sans-serif; }
-
-    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-
-    html, body {
-      width:100%; height:100%;
-      font-family: var(--main-font);
-      background: #04061A;
-      overflow-x: hidden;
-    }
-
-    .scene {
-      min-height: 100vh;
-      position: relative;
-      display: flex; flex-direction: column;
-      align-items: center;
-    }
-
-    /* ── 별 ── */
-    #star-canvas { position:fixed; inset:0; z-index:0; pointer-events:none; }
-
-    /* ── 유성 ── */
-    .shoot { position:fixed; width:80px; height:1.5px; background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,0.8)); border-radius:2px; left:-90px; z-index:1; pointer-events:none; }
-    .sh1{top:5%; animation:sh 7s linear 1s infinite;}
-    .sh2{top:12%;animation:sh 10s linear 6s infinite;}
-    @keyframes sh{from{transform:translateX(0) rotate(18deg);opacity:1;}to{transform:translateX(120vw) rotate(18deg);opacity:0;}}
-
-    /* ── 화성 표면 ── */
-    .mars-surface {
-      position: fixed; bottom:0;
-      left:50%; transform:translateX(-50%);
-      width: 160vw; height: 28vh;
-      z-index: 2; pointer-events: none;
-    }
-
-    /* ── 콘텐츠 ── */
-    .content {
-      position: relative; z-index: 10;
-      width: 100%; max-width: 430px;
-      padding: 0 16px 120px;
-    }
-
-    /* ── 헤더 ── */
-    .page-header {
-      margin-top: 3vh;
-      text-align: center;
-      animation: fadeDown 0.5s ease both;
-    }
-    @keyframes fadeDown{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
-    .header-badge {
-      display: inline-block;
-      background: rgba(216,90,48,0.2);
-      border: 1px solid rgba(216,90,48,0.4);
-      color: #FFB89A; font-family: var(--main-font);
-      font-size: 13px; padding: 5px 16px; border-radius: 100px;
-      margin-bottom: 10px;
-    }
-    .page-title {
-      font-family: var(--title-font);
-      font-size: clamp(24px, 6vw, 30px);
-      color: #fff; line-height: 1.2;
-      text-shadow: 0 0 20px rgba(255,150,100,0.5);
-    }
-    .page-sub {
-      font-family: var(--main-font);
-      font-size: 13px; color: rgba(255,200,180,0.8);
-      margin-top: 6px;
-    }
-
-    /* ── 포인트 안내 배너 ── */
-    .point-banner {
-      margin-top: 2vh;
-      background: rgba(216,90,48,0.12);
-      border: 1px solid rgba(216,90,48,0.3);
-      border-radius: 14px; padding: 10px 16px;
-      display: flex; align-items: center; gap: 10px;
-      animation: fadeUp 0.5s ease 0.1s both;
-    }
-    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
-    .point-banner-icon { font-size: 22px; }
-    .point-banner-text { font-family: var(--main-font); font-size: 13px; color: rgba(255,210,190,0.9); line-height: 1.5; }
-    .point-banner-text strong { color: #FFB060; }
-
-    /* ── 필수 안내 박스 ── */
-    .padlet-notice {
-      margin-top: 12px;
-      background: rgba(255, 220, 60, 0.13);
-      border: 2px solid rgba(255, 200, 50, 0.45);
-      border-radius: 16px;
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      animation: fadeUp 0.5s ease 0.3s both;
-    }
-    .notice-badge-img {
-      width: 52px;
-      height: 52px;
-      object-fit: contain;
-      flex-shrink: 0;
-      filter: drop-shadow(0 2px 6px rgba(255,80,80,0.4));
-    }
-    .notice-text { flex: 1; }
-    .notice-line1 {
-      font-family: var(--title-font);
-      font-size: 18px;
-      color: #fff;
-      font-weight: bold;
-      line-height: 1.3;
-    }
-    .notice-line2 {
-      font-family: var(--main-font);
-      font-size: 12px;
-      color: rgba(255,230,150,0.85);
-      margin-top: 4px;
-      line-height: 1.5;
-    }
-
-    /* ── 미션 리스트 ── */
-    .mission-list {
-      margin-top: 2vh;
-      display: flex; flex-direction: column; gap: 10px;
-      animation: fadeUp 0.5s ease 0.15s both;
-    }
-
-    .mission-item {
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 16px; padding: 14px 16px;
-      display: flex; align-items: center; gap: 12px;
-      transition: background 0.2s;
-      backdrop-filter: blur(6px);
-    }
-    .mission-item.done {
-      background: rgba(29,158,117,0.15);
-      border-color: rgba(93,202,165,0.3);
-    }
-
-    .mi-icon { font-size: 28px; flex-shrink: 0; }
-    .mi-text { flex: 1; }
-    .mi-title {
-      font-family: var(--main-font);
-      font-size: 15px; color: #fff; line-height: 1.2;
-    }
-    .mi-sub {
-      font-family: var(--main-font);
-      font-size: 11px; color: rgba(200,220,255,0.55);
-      margin-top: 2px;
-    }
-    .mi-right {
-      display: flex; flex-direction: column;
-      align-items: center; gap: 5px; flex-shrink: 0;
-    }
-    .mi-btn-row { display: flex; gap: 5px; }
-    .mi-pt {
-      font-family: var(--main-font);
-      font-size: 13px; font-weight: bold;
-      color: #FFD86E;
-      background: rgba(255,216,110,0.15);
-      border: 1px solid rgba(255,216,110,0.3);
-      border-radius: 100px; padding: 2px 10px;
-    }
-    .m-btn {
-      font-family: var(--main-font); font-size: 12px;
-      background: rgba(29,158,117,0.35);
-      border: 1px solid rgba(93,202,165,0.4);
-      color: #fff; border-radius: 100px;
-      padding: 5px 14px; cursor: pointer;
-      transition: background 0.15s, transform 0.15s;
-      white-space: nowrap;
-    }
-    .m-btn:active { transform: scale(0.95); }
-    .m-btn.done {
-      background: rgba(93,202,165,0.2);
-      border-color: rgba(93,202,165,0.3);
-      color: rgba(255,255,255,0.6);
-      pointer-events: none;
-    }
-    .c-btn {
-      font-family: var(--main-font); font-size: 12px;
-      background: rgba(226,75,74,0.25);
-      border: 1px solid rgba(226,75,74,0.4);
-      color: #fff; border-radius: 100px;
-      padding: 5px 10px; cursor: pointer;
-      transition: background 0.15s, transform 0.15s;
-      white-space: nowrap;
-      display: block;
-    }
-    .c-btn:active { transform: scale(0.95); }
-    .c-btn:disabled { opacity: 0.3; cursor: default; pointer-events: none; }
-
-    /* ── 총 포인트 표시 ── */
-    .total-pts {
-      margin-top: 16px;
-      text-align: center;
-      font-family: var(--main-font);
-      font-size: 15px; color: rgba(200,220,255,0.8);
-      animation: fadeUp 0.5s ease 0.2s both;
-      padding: 18px 20px;
-      background: rgba(255,216,110,0.08);
-      border: 1px solid rgba(255,216,110,0.2);
-      border-radius: 18px;
-      backdrop-filter: blur(6px);
-    }
-    .total-pts-label { margin-bottom: 6px; }
-    .total-pts-num {
-      font-size: 52px;
-      color: #FFD86E;
-      text-shadow: 0 0 20px rgba(255,216,110,0.7), 0 0 40px rgba(255,180,0,0.4);
-      animation: ptsPulse 2s ease-in-out infinite;
-      display: block; line-height: 1.1;
-    }
-    @keyframes ptsPulse {
-      0%,100% { transform: scale(1); text-shadow: 0 0 20px rgba(255,216,110,0.7), 0 0 40px rgba(255,180,0,0.4); }
-      50%      { transform: scale(1.08); text-shadow: 0 0 30px rgba(255,216,110,1), 0 0 60px rgba(255,180,0,0.7); }
-    }
-    .total-pts-p { font-size: 22px; color: rgba(255,216,110,0.8); }
-
-    /* ── Padlet 인증 카드 ── */
-    .padlet-card {
-      margin-top: 2.5vh;
-      background: rgba(29,158,117,0.12);
-      border: 1.5px solid rgba(93,202,165,0.3);
-      border-radius: 18px; padding: 18px 16px;
-      display: flex; flex-direction: column;
-      align-items: center; gap: 8px;
-      animation: fadeUp 0.5s ease 0.25s both;
-    }
-    .padlet-card-top {
-      display: flex; align-items: center; gap: 10px; width: 100%;
-    }
-    .padlet-icon { font-size: 28px; }
-    .padlet-info { flex: 1; }
-    .padlet-title {
-      font-family: var(--title-font);
-      font-size: 17px; color: #fff;
-    }
-    .padlet-sub {
-      font-family: var(--main-font);
-      font-size: 11px; color: rgba(200,220,255,0.7);
-      margin-top: 3px; line-height: 1.4;
-    }
-    .padlet-btn {
-      display: block; width: 100%;
-      background: linear-gradient(135deg, #1D9E75, #0F6E56);
-      color: #fff; text-decoration: none;
-      text-align: center; border-radius: 12px;
-      padding: 13px; font-family: var(--main-font);
-      font-size: 16px;
-      box-shadow: 0 6px 20px rgba(29,158,117,0.4);
-      transition: transform 0.15s;
-      position: relative; overflow: hidden;
-    }
-    .padlet-btn::before {
-      content: '';
-      position: absolute; top:0; left:-100%; width:100%; height:100%;
-      background: linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);
-      animation: shimmer 2.5s ease infinite;
-    }
-    @keyframes shimmer{from{left:-100%;}to{left:200%;}}
-    .padlet-btn:active { transform: scale(0.97); }
-
-    /* ── 네비 ── */
-    .nav-bar {
-      position: fixed; bottom:0; left:0; right:0;
-      z-index: 40;
-      display: flex; justify-content: center; gap: 12px;
-      padding: 12px 20px 20px;
-      background: linear-gradient(to top, rgba(4,6,26,0.97) 60%, transparent);
-    }
-    .nav-btn {
-      flex:1; max-width:160px;
-      display:flex; align-items:center; justify-content:center; gap:5px;
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.18);
-      border-radius: 100px; padding: 11px 0;
-      font-family: var(--main-font); font-size: 14px; color: #fff;
-      cursor: pointer; transition: transform 0.15s;
-    }
-    .nav-btn:active { transform: scale(0.95); }
-    .nav-btn.prev { background: rgba(255,255,255,0.08); }
-    .nav-btn.next { background: rgba(216,90,48,0.35); border-color: rgba(216,90,48,0.5); }
-
-    /* ── 토스트 ── */
-    .toast {
-      position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
-      background: #1D9E75; color: #fff;
-      font-family: var(--main-font); font-size: 14px;
-      padding: 10px 22px; border-radius: 100px;
-      z-index: 100; display: none;
-      box-shadow: 0 4px 16px rgba(29,158,117,0.4);
-      white-space: nowrap;
-    }
-
-    .page-out { animation: pageOut 0.4s ease forwards !important; }
-    @keyframes pageOut { to{opacity:0;transform:translateY(-14px);} }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>튼튼탐험대 — 오늘의 미션</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:'KH';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/KyoboHand.woff') format('woff');}
+:root{--jua:'Jua',sans-serif;--hand:'KH',sans-serif;--green:#1D9E75;--green2:#5DCAA5;--amber:#EF9F27;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden;min-height:100%;}
+.scene{min-height:100vh;background:radial-gradient(ellipse at 30% 20%,rgba(216,90,48,.06),transparent 55%),radial-gradient(ellipse at 80% 80%,rgba(29,158,117,.06),transparent 50%),linear-gradient(170deg,#04061A,#0B0E2A 50%,#0E1535);display:flex;flex-direction:column;align-items:center;}
+.stars{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(1px 1px at 10% 15%,rgba(255,255,255,.55),transparent),radial-gradient(1px 1px at 28% 8%,rgba(255,255,255,.45),transparent),radial-gradient(1.5px 1.5px at 45% 22%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 62% 6%,rgba(255,255,255,.7),transparent),radial-gradient(1px 1px at 78% 16%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 5% 38%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 52% 42%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 87% 36%,rgba(255,255,255,.65),transparent),radial-gradient(1px 1px at 16% 57%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 72% 54%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 37% 69%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 82% 72%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 9% 82%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 47% 89%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 94% 84%,rgba(255,255,255,.55),transparent),radial-gradient(1px 1px at 32% 94%,rgba(255,255,255,.4),transparent),radial-gradient(1.5px 1.5px at 67% 97%,rgba(255,255,255,.45),transparent),radial-gradient(1px 1px at 20% 4%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 55% 30%,rgba(255,255,255,.35),transparent),radial-gradient(1px 1px at 88% 25%,rgba(255,255,255,.5),transparent);}
+/* ── 레벨 배너 ── */
+.level-banner{position:relative;z-index:10;width:100%;max-width:430px;margin-top:10px;padding:0 14px;animation:fadeDown .5s ease both;}
+.lv-strip{background:rgba(255,255,255,.06);border:1px solid rgba(200,220,255,.15);border-radius:16px;padding:8px 12px;display:grid;grid-template-columns:repeat(4,1fr);gap:3px;}
+.lv-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 3px;border-radius:10px;}
+.lv-item.active{background:rgba(255,255,255,.1);}
+.lv-emoji{font-size:18px;line-height:1;}
+.lv-item.active .lv-emoji{font-size:24px;}
+.lv-name{font-size:9px;color:rgba(200,220,255,.5);text-align:center;line-height:1.2;}
+.lv-item.active .lv-name{color:rgba(255,255,255,.85);}
+.lv-pts{font-size:8px;color:rgba(200,220,255,.3);}
+.lv-item.active .lv-pts{color:#FFD86E;}
+.lv-bar-wrap{display:flex;align-items:center;gap:6px;margin-top:6px;padding:0 2px;}
+.lv-bar-track{flex:1;height:5px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;}
+.lv-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--green),var(--green2));transition:width .4s;}
+.lv-bar-label{font-size:11px;color:#FFD86E;white-space:nowrap;}
+/* ── 포인트 직접 입력 ── */
+.lv-pts-input-wrap{margin-top:8px;display:flex;align-items:center;gap:8px;padding:0 2px;}
+.lv-pts-input-label{font-size:11px;color:rgba(200,220,255,.55);white-space:nowrap;flex-shrink:0;}
+.lv-pts-input{flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,216,110,.3);border-radius:10px;padding:7px 10px;font-family:var(--jua);font-size:15px;color:#FFD86E;outline:none;text-align:center;min-width:0;}
+.lv-pts-input:focus{border-color:rgba(255,216,110,.65);background:rgba(255,255,255,.14);}
+.lv-pts-input::placeholder{color:rgba(255,216,110,.3);font-size:13px;}
+.lv-pts-save-btn{padding:7px 14px;background:rgba(255,216,110,.15);border:1px solid rgba(255,216,110,.35);border-radius:10px;font-family:var(--jua);font-size:13px;color:#FFD86E;cursor:pointer;white-space:nowrap;transition:.15s;flex-shrink:0;}
+.lv-pts-save-btn:active{transform:scale(.95);background:rgba(255,216,110,.25);}
+/* ── 콘텐츠 ── */
+.content{position:relative;z-index:10;width:100%;max-width:430px;padding:0 16px 100px;}
+.page-header{margin-top:14px;text-align:center;animation:fadeDown .5s ease both;}
+.header-badge{display:inline-block;background:rgba(216,90,48,.18);border:1px solid rgba(216,90,48,.35);color:#FFB89A;font-size:13px;padding:4px 14px;border-radius:100px;margin-bottom:8px;}
+.page-title{font-family:var(--hand);font-size:clamp(22px,6vw,28px);color:#fff;line-height:1.2;}
+/* ── 포인트 총합 ── */
+.total-pts{margin-top:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:12px 16px;display:flex;align-items:center;gap:8px;animation:fadeUp .5s ease .1s both;}
+.total-pts-label{font-size:13px;color:rgba(255,255,255,.7);flex:1;}
+.total-pts-num{font-size:28px;font-weight:700;color:#FFD86E;}
+.total-pts-p{font-size:14px;color:rgba(255,216,110,.7);margin-top:4px;}
+/* ── 패들렛 인증 카드 ── */
+.padlet-card{margin-top:10px;background:rgba(29,158,117,.1);border:1.5px solid rgba(93,202,165,.25);border-radius:16px;padding:12px 14px;animation:fadeUp .5s ease .15s both;}
+.padlet-notice{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.padlet-badge{font-size:28px;}
+.padlet-notice-text{}
+.padlet-notice-title{font-size:15px;color:#fff;font-weight:700;}
+.padlet-notice-sub{font-size:11px;color:rgba(93,202,165,.8);margin-top:2px;line-height:1.5;}
+.padlet-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:11px;background:rgba(29,158,117,.25);border:1px solid rgba(93,202,165,.35);border-radius:12px;color:#7EECC8;font-size:14px;font-family:var(--jua);text-decoration:none;cursor:pointer;transition:transform .15s;}
+.padlet-btn:active{transform:scale(.97);}
+/* ── 미션 리스트 ── */
+.mission-list{margin-top:12px;display:flex;flex-direction:column;gap:8px;animation:fadeUp .5s ease .2s both;}
+.mission-item{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px;transition:background .2s;}
+.mission-item.done{background:rgba(29,158,117,.12);border-color:rgba(93,202,165,.25);}
+.mi-icon{font-size:26px;flex-shrink:0;}
+.mi-text{flex:1;}
+.mi-title{font-size:14px;color:#fff;line-height:1.2;}
+.mi-sub{font-size:10px;color:rgba(200,220,255,.5);margin-top:2px;}
+.mi-right{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;}
+.mi-pt{font-size:12px;font-weight:700;color:#FFD86E;background:rgba(255,216,110,.12);border:1px solid rgba(255,216,110,.25);border-radius:100px;padding:2px 8px;}
+.mi-btn-row{display:flex;gap:4px;}
+.m-btn{font-size:12px;background:rgba(29,158,117,.3);border:1px solid rgba(93,202,165,.35);color:#fff;border-radius:100px;padding:5px 12px;cursor:pointer;transition:.15s;white-space:nowrap;}
+.m-btn:active{transform:scale(.95);}
+.m-btn.done{background:rgba(93,202,165,.15);border-color:rgba(93,202,165,.2);color:rgba(255,255,255,.5);pointer-events:none;}
+.c-btn{font-size:12px;background:rgba(226,75,74,.2);border:1px solid rgba(226,75,74,.3);color:#fff;border-radius:100px;padding:5px 8px;cursor:pointer;transition:.15s;white-space:nowrap;}
+.c-btn:active{transform:scale(.95);}
+/* ── 토스트 ── */
+.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:#1D9E75;color:#fff;font-size:14px;padding:9px 20px;border-radius:100px;z-index:100;display:none;box-shadow:0 4px 16px rgba(29,158,117,.4);white-space:nowrap;}
+/* ── 네비 ── */
+.nav-bar{position:fixed;bottom:0;left:0;right:0;z-index:40;display:flex;justify-content:center;gap:12px;padding:12px 20px 22px;background:linear-gradient(to top,rgba(4,6,26,.95) 60%,transparent);}
+.nav-btn{flex:1;max-width:160px;display:flex;align-items:center;justify-content:center;gap:5px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:100px;padding:10px 0;font-family:var(--jua);font-size:14px;color:#fff;cursor:pointer;transition:transform .15s;}
+.nav-btn:active{transform:scale(.95);}
+.nav-btn.next{background:rgba(216,90,48,.3);border-color:rgba(216,90,48,.45);}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.page-out{animation:pageOut .4s ease forwards!important;}
+@keyframes pageOut{to{opacity:0;transform:translateY(-12px);}}
+</style>
 </head>
 <body>
 <div class="scene">
+<div class="stars"></div>
+<div class="toast" id="toast"></div>
 
-  <canvas id="star-canvas"></canvas>
-  <div class="shoot sh1"></div>
-  <div class="shoot sh2"></div>
-  <div class="toast" id="toast"></div>
+<!-- 레벨 배너 -->
+<div class="level-banner">
+  <div class="lv-strip">
+    <div class="lv-item" id="lv0"><div class="lv-emoji">🐱</div><div class="lv-name">초보 냥이</div><div class="lv-pts">0~2500P</div></div>
+    <div class="lv-item" id="lv1"><div class="lv-emoji">🐵</div><div class="lv-name">재간둥이</div><div class="lv-pts">~5000P</div></div>
+    <div class="lv-item" id="lv2"><div class="lv-emoji">🐶</div><div class="lv-name">수호대</div><div class="lv-pts">~7500P</div></div>
+    <div class="lv-item" id="lv3"><div class="lv-emoji">🐯</div><div class="lv-name">무적 호랑이</div><div class="lv-pts">7501P~</div></div>
+  </div>
+  <div class="lv-bar-wrap">
+    <div class="lv-bar-track"><div class="lv-bar-fill" id="lv-bar" style="width:0%;"></div></div>
+    <div class="lv-bar-label" id="lv-bar-label">0P</div>
+  </div>
+  <div class="lv-pts-input-wrap">
+    <span class="lv-pts-input-label">내 포인트:</span>
+    <input class="lv-pts-input" id="pts-input" type="number" min="0" placeholder="포인트 입력" inputmode="numeric">
+    <button class="lv-pts-save-btn" onclick="savePtsInput()">저장</button>
+  </div>
+</div>
 
-  <!-- 화성 표면 -->
-  <svg class="mars-surface" viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax meet">
-    <defs>
-      <radialGradient id="marsGrad" cx="50%" cy="5%" r="95%">
-        <stop offset="0%"   stop-color="#C06040"/>
-        <stop offset="25%"  stop-color="#A04828"/>
-        <stop offset="60%"  stop-color="#7A3018"/>
-        <stop offset="100%" stop-color="#4A1808"/>
-      </radialGradient>
-      <radialGradient id="mc1" cx="38%" cy="32%" r="62%">
-        <stop offset="0%"   stop-color="rgba(40,15,5,0.8)"/>
-        <stop offset="100%" stop-color="rgba(40,15,5,0)"/>
-      </radialGradient>
-      <radialGradient id="mc2" cx="38%" cy="32%" r="62%">
-        <stop offset="0%"   stop-color="rgba(35,12,4,0.65)"/>
-        <stop offset="100%" stop-color="rgba(35,12,4,0)"/>
-      </radialGradient>
-      <filter id="marsRough" x="-5%" y="-5%" width="110%" height="110%">
-        <feTurbulence type="turbulence" baseFrequency="0.025 0.045" numOctaves="4" seed="5"/>
-        <feDisplacementMap in="SourceGraphic" scale="10" xChannelSelector="R" yChannelSelector="G"/>
-      </filter>
-      <filter id="mb"><feGaussianBlur stdDeviation="1.5"/></filter>
-    </defs>
-    <!-- 화성 본체 -->
-    <ellipse cx="400" cy="450" rx="780" ry="420" fill="url(#marsGrad)" filter="url(#marsRough)"/>
-    <!-- 어두운 패치 -->
-    <ellipse cx="150" cy="230" rx="90" ry="30" fill="rgba(50,18,6,0.45)" filter="url(#mb)" transform="rotate(-6,150,230)"/>
-    <ellipse cx="580" cy="215" rx="70" ry="25" fill="rgba(45,15,5,0.38)" filter="url(#mb)" transform="rotate(5,580,215)"/>
-    <!-- 크레이터 -->
-    <ellipse cx="100" cy="218" rx="48" ry="18" fill="url(#mc1)"/>
-    <ellipse cx="100" cy="210" rx="48" ry="11" fill="none" stroke="rgba(220,140,100,0.45)" stroke-width="2"/>
-    <ellipse cx="580" cy="205" rx="38" ry="14" fill="url(#mc1)"/>
-    <ellipse cx="580" cy="198" rx="38" ry="9"  fill="none" stroke="rgba(215,130,90,0.4)"  stroke-width="1.8"/>
-    <ellipse cx="310" cy="255" rx="24" ry="9"  fill="url(#mc2)"/>
-    <ellipse cx="460" cy="248" rx="18" ry="7"  fill="url(#mc2)"/>
-    <circle  cx="200" cy="242" r="4"  fill="rgba(40,14,4,0.55)"/>
-    <circle  cx="500" cy="235" r="3"  fill="rgba(38,12,3,0.48)"/>
-    <circle  cx="680" cy="225" r="3.5" fill="rgba(40,14,4,0.5)"/>
-    <!-- 지평선 능선 -->
-    <ellipse cx="400" cy="455" rx="760" ry="415" fill="none" stroke="rgba(200,110,70,0.2)" stroke-width="3"/>
-  </svg>
-
-  <!-- 콘텐츠 -->
-  <div class="content">
-
-    <!-- 헤더 -->
-    <div class="page-header">
-      <div class="header-badge" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.3);color:#fff;letter-spacing:3px;">Step 2</div>
-      <div class="page-title">오늘의 미션 🚀</div>
-    </div>
-
-    <!-- 오늘 획득 포인트 + 패들렛 인증 (맨 위) -->
-    <div class="total-pts" style="margin-top:2vh;">
-      <div class="total-pts-label">⭐ 오늘 획득 포인트 <span style="font-size:10px;opacity:0.6;">(하루 1회)</span></div>
-      <span class="total-pts-num" id="today-pts">0</span><span class="total-pts-p">P</span>
-    </div>
-
-    <!-- 운동 미션 인증 + 필수 안내 합친 박스 -->
-    <div class="padlet-card">
-      <div class="padlet-notice" style="margin-top:0; background:none; border:none; padding:0; animation:none; flex-direction:row; align-items:center; width:100%;">
-      <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAeAB4AAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCACMAIMDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9U6KKKACiiigAooooAKK5H4g/Frwh8LNNa+8Ua9aaVGAdscj7pZCBnCRjLMfoK+UPiN/wUosLZmtvAvhuTUZDkLeasTGmc9o0O4/iRXn4nH4bCfxZpPt1+4+vyXhLO+INcvw0pR/mekf/AAJ2X3an27SEgdSBX5sJ8SP2pPjlLv0e31ezsn+6NOtVsLcA5/5avgn8WNX0/Y1/aB8WOtzrfiaO2lIGRe61LK68Dj5Aw49j2rzVm86utDDyku+y/U+2l4eYbBe7m2b0KMusU+eS9V7p+i4dScBgT9adX53Wv7A/xg0qSS6svGdhBd7SQ0V/cIzN6Fgv61l3nwp/ak+D22602/1fUraPknTdQF6vBPBiYliOM/dxg/UUPNMRDWrhpJeWpMeBcoxT5MFnlGUuiknC79W3+p+ktFfn34D/AOChni/wherpXxI8NC+MZ2yXMEJtLteerRn5T+AWvsv4V/Grwh8ZdHGoeF9WivCoBmtHOy4gPo8Z5H15B7E134XMcNjHy05e92ej/r0PlM+4Mzrh2PtcZRvSe04vmg/mtr9LpHc0UUV6Z8OFFFFABRRRQAUUV43+0T+014e/Z/0VTcj+0/ENyhNnpUbYLf7bt/CgP4nsKxrVqdCDqVXZI9HLsuxebYmGDwVNzqS2S/rRLq3oup6P4z8caF8PdCn1jxDqUGl6fCCWlmbBPso6sfYZNfC/xS/b08XfEPV5PDnwo0i4s0mJiivBB597OO5RMEJ+pHqK47wh8L/in+294n/4SPxFqL2PhuOUoLyVT5EK55jtos8kdM/mTX3h8IfgB4L+CVgYfDWlrHdyLsm1G4IkuZh6M+OB7DA9q+dVXGZp/B/d0u/2n6dj9keB4c4EVsySxuOX/Ltfwqb/ALz+0/Kz9FufHPwz/YG8Z/ES6OufE3XLjS1mYSG3aX7TezZ5JdiSE/U+wr68+GX7NPw7+E9osei+HLWW7DbjqF+guLktjHDsCVHsuB7V6hRXp4XLMNhdYRvLu9WfD55xxnmfXp163JS6Qh7sEu1lv82xFUIoVQAo4AHaloor1T4IKKKKAOM+JPwe8IfFrSJNP8T6JbagjfcuNuyeI9ikg+ZT+OD3zXwX8Zv2YPGn7LWsx+Ovh/q95daJasJGuoTtuLTn7syjh4zxk9DyGA7/AKT1Fc20V5by288STQSoUkjkUMrqRggg9QRXlYzLqOMXM/dmtpLdH3vDfGWY8Oz9lF+0w8vipS1jJPeyd7PzXzTWh4P+yr+1HY/H3QXs79YtP8XWK5urRWG2dP8AntGOuOxHY+xr32vzS/aH+G2o/slfHXSPHHhMNb6Bd3P2m0ihyiwn/lrasRxtIJx/snHav0Q8C+MLDx/4P0fxFpkiyWWpWyXKbXDbNwyUJHG5TlSOxBrHLsVUqOeGxH8SG/mujPS4zyHBYSNDOsm/3TEq6X8kl8UH6dPRrpc3aKKK9s/MAoormviP4+0z4YeCdW8Tau5Wy0+EylV+9I38KL7scAfWplJQi5SdkjahRqYmrGjRjzSk0klu29EjzP8Aal/aWsPgB4UC24ivfFV+pWwsnOQg6GaQDnaPTuePXHy9+zH+zNq3x/8AEs3xL+JRkvdEupZJVguSyvqLnI3DaQVjU9Ox2gDjNc38GfAGtftpfHLU/FfitpV8P2siy3gQnaFH+qtYyegwOfbJ6mv0usLC20uxt7OzgS2tbdBFFDEu1UUDAAHYAV8vQpyzer9Zrfwov3V383/Xl6/uua4ul4eZf/YuWyX1+rFOtUW8E1dQg+j8167tcrNL0qz0PTrew0+1isrK3QRxW8CBERR0AA6VbopksqQRPJI6xxoCzOxwFA6kmvqdErI/Bm5Tk23dsfRVLSdb07Xrb7Rpl/bajb52+bazLKucZxlSR0Iq7QmnqglGUG4yVmgoqjrmqw6Dot/qVwcQWdvJcSEf3VUsf0FfKH7Evx+8afGXxr44h166+3aPCFu7ZnQKbZnfasQwPulQTjPBU+prkq4qnSrU6Et53t8j6HA5Diswy7F5nSaVPD8vNd6vmdkl3ffY+vaKKK7D5wK+eviZ+2Bpfw0+OGm/D+40S5v0uFgSW8tnBeOaZgEUJ3AByec88CvoWvzj02wPxM/4KITNJsnt7DWGnJQh1C2yfLyMj7yL9K8bMsRVoKlGi7SlJL5H6TwTk+BzSpja2ZR5qVCjOeja95WtqvmfVf7Znw9h+IPwA8RL5Ya+0mP+1LR+6tFy4/FN4/Eeleaf8E2/F76v8K9d0GWTcdI1APGpPKxyru/Lcr19PePbZLzwN4hgkUMkmn3CkEZBBjavhz/gmTfPF4s8d2G793JZ2823tlJHXP8A4/XLiUqWaUJr7Safy1PeyaUsdwHmeGqaqhUp1I+XM1F2+Sf3s/QGiiivoz8YCvgP9v8A+Kuo+L/GmkfCfQALlUlhmuoYcmSW6fIii+gDg49WHpX3br2sQeHtD1DVLlgtvZW73EhJ6Kqlj/Kvzu/Yw8OXvxq/aT1zx/q4FxFpzy6jLIw4+0ysREo+g3kemwV89m85VPZ4Om9aj19FufsPh7hqODeM4kxcU4YOF4p9aktIf13aZ7rp/wAYPht+xT4U0z4e3r3N/r0NsLy9XT7fPmzuOWZiQATgADJwAteOeMv+Ci/jXxTqa6f4E8M2unLMfLh+0I15dyE/3VXCg+2Gr7A8efs1fDf4meKYvEXiTw1FqOrIixmYzyxrIq52h1VgrYz3HTjpXw58ItHstJ/4KCHTrK2gsrG01vUY4LeNAqRosMwVVA6dBivPx313Dyp0YTUacpKK5d7ed/0Pr+Fnwzm9DGZlisNOvi6VKVao6jXI5K7aiovZv+ZaLoch4Z1v4vftJ/EpPB194y1Gy1F/ME1veTyW0UJjGXVokA+YY6YzkV+lmteCrm8+D194UuNTmuLuTRH059RGRI7mEp5nUnJPPU18KfDBf7C/4KH6tBECqy63qK4XsHEjf1r9HXZUXLEAHjk+tdGS0uaFV1G3LmcW2+i/4c8jxMx7pYrL6eEpxp0lThVjGMUrSk9dl5LQ+Bf+Ca3iWbTvF/jXwjM3yNAt6i+jxyeW/wCe9fyr78r82PgMrfD39vXUNI5SGXUtRscdMoyyOn6hDX6T10ZHJ/VXTf2JNfr+p43ilRh/bscbT2xFKnU+9cv/ALaeDftt+Pz4E/Z819YZAl7rG3S4eecSH94f+/Yf8SK/Pv4ba38UPgR4e0/4i+HVubPw3qc7W7TFfMtbho2I2yr253AE4PDYNe7/APBQzxxJ4z+JXhf4d6UWnms9sk0anIa4nIWNfqFwf+B19ew/BHQ7n4GWvw3vLdW0xdNSzY4yVkC580f7W/LZ9a87EUJ5ljajpScfZKya/m/q6Z9llGaYXgrhjBU8dQVRY2bnUjJX/dKyul3+GUb6av1V/wCC3xZ0z41fD7T/ABRpiNCs+Y57ZzloJV4ZD/Q+hFd1XiH7K/7PN7+zx4c1vTLzW49ZOoXguE8mNo0jAXb0JPJ7/QV7fX1GFlVlRi66tO2p+FZ7SwFHM68Mrnz0Ob3Hrs9ba66ba72uZ3iLWYPDugalqtywW3sbaS5kJ7Kilj/Kvz+/4JzaRL4k+MHi7xPcsXktbIlmJOTJPKTn06I1fWX7XHiM+GP2d/Gl0snlyTWn2RD7ysEx+TGvH/8Agmr4VGm/C7xFrzqBLqepiFTjkxwoMc/70j/lXj4r99mdCl0inL/L8j9IyC2X8EZtjftVp06S+Wr/AAkz6j8dzLb+CfEErttRNPuGJPb921fDn/BMiyMvivx7eg/LHaW0XT+/JIf/AGSvrn9o7Wx4e+BHjq+LBCmkzopP9512L+rCvm//AIJj6S0PhTxvqRXAnvLe3U467EYn/wBGUYr38zw8eyk/wFkN8PwNnFZ/bnSgvVSTf4M+16KKK+iPxs8p/aq1NtI/Z38eXCKzsdNeEBOo8xgmfw3Z/CvFP+CaeiRWnwu8S6mEAmvNTETPnOVjjG0e2C7fnXuP7T2mz6t+z948trYsJjpcrjaeSFwxH4hSPxrwf/gmhr63fw78VaOW/eWWopOB/syx4H6xtXz1b/kbUr/yu3rr+h+xZZd+H+Yez3Venzf4bRt/5MfYzusSM7sERRksxwAPU1+evjTxD8K/g7+1Df8AxJtfFr+JJRLNdLoWj24lK3ciFHDTsdmz5mbI+YE4xxX1n+038LPEXxg+F9z4e8N6ymkXkkqySeaWVLmMA5iZlPAOQehBxXjfwl/4J1+E/DUcd542vpfE+o5z9kgJhtE9jj5n/Ege1PMYYnEVYU6NNe7Z8zeifov+D6EcHYrJMowWIxuZYyadVSpujTj70ou17yask+6cWtbS6HxuvxT8Sa38ftS8e+C9MuU1y8vpry0s0iN3JH5mRjAX5sA+lezWvwH/AGkPjvrdpfeKtSvdKtkkVxLql59nSEZBzHDEOG4H8I5xk19w61qfgH9nnwS+oXEWn+F9EtV8tFgiCtIeSERQMux5OOe59a+RfiL/AMFItV1C5ex+H3hmOJSdq3uqAzSt7rChAH4k/SvFqYPD4JNYyu2278sdLv0/4Y/TsFxJnHE04y4aymEI04qmq1W0nGK2Sk7bLdLm31ucp4vtR4F/4KDaYoMl3jUNP3PKSGkaS2jVnJzknJJyepzX6R1+Pfivx948h+K2jfEjxppFymqvPDdQ/a7JrSO5WHaAFG0cYAGRmvuP9p74U/EH9oTR/CF34H1tNM0OayM91ZzXbwCQyKjoWCj5sDjB6eldGWYrlWJlSg5Pmuo7OzPF43yBV6mTUcfiYU4+x9nKrfmgpU1ra1r66LbX0OGsvgZZ+E/2rdW+Inj3xd4fs9ChvpL+wS71GNZ55SP3YKMflEec/VVxXumsfth/CHRc+Z40s7hgSCtojzf+grXy/wCHv+CZev3LxvrnjOws1JBdLO2edsdxliozVD9pH9ivwv8ABD4O3Piew1vVtT1WC5hhIuDEsBDvgnYEyOCP4qUKmOwdKpUpUFFayd3d/oXicHwtxFj8Jg8bms69RKFKCp0+SKS0W6ktXu7/AIaH0Dqv/BQX4R6bJKkV3q2olBwbWwOH6cAuV9f0rK0f/gor8O9Z8SWGlxaR4gghu5Vh+1zwQhUZjgEqJScZI5/SuE/Y/wD2X/ht8T/g5YeI/EGiSahqslzPDI7XUiKQr4GFVgOmK+k/Df7MPwt8J6jbX+m+DNNivbdg0U0imRkYHIYbieR613YeWaYmEKvNBRdns9j5bN6HAmS4ivl7oYipVpuUbuUUuZaX06X8vkecf8FA9L1rWvgLHDotlcX6jVYJbtLaMuywBJPmIHOA+yu1/ZG8D3vw/wDgF4Z0zUrSSx1B0e6nt5V2ujSOWAYdjgjivY6ZHKkwJjdXAJUlTnBHUV6ywkVinir6tWsfn1TiCtPIIZCqaUI1HUcurbVkn00119O2vzP/AMFCPGLeG/gHJpkUm2bW76G0I4yY1zK/6oo/Gr37Avhl9A/Z30y5li8qTVLue85GCybtik/gmR7GvBf+Cjni2TxH8RvCfgiwfzpLWDz5Il5xNO21FPvtUH/gQr7o8A+GbfwZ4I0HQrWJYIdPsobcInQFUAP5nJ/GvLof7RmlWp0glH5vX/M+7zb/AISeBMBgmrTxVSVV/wCGK5V965Wjfooor6M/GCpq2mw6zpd5YXC7re6heCQeqsCD+hr83v2XdWuf2d/2sNT8G6xKYbW9ml0aQkYR23hreX6HAx7SV+llfFn7f37PtzrVpF8S/D0TG/06MR6nFCuHaJfuzgjnKdD7YPavAzalNRhi6SvKm7+q6n634fZhhpVcTkGPly0cZHkv/LNfA/vf32PtOivm/wDY/wD2oLP4z+GYdB1m5WLxpp8W2VHOPtka9JU9Tj7w7Hnoa+kK9bD4iniqaq03dM/Pc4yjF5HjamAxsOWcH8mujXdPdM8P/aw+Cvh34ueBoLnxDrr+G7bQpGvH1HlkSLH7wFM4JOBg4JBGB1IPyI/7Vfhz4eSroXwX+HmnxuoEEWtajama8umAA8wIOcnGcE/gOlfUX7dvgzxH41+Bslv4cgmvZLW+iurqztlZpZoVDAhVXlsMytj29q+H/gz+0VqvwesBpXhXwLo0/iOV2SXVLi3lnvZGJwEAz8oHHyj05FfJZrWVHGWXuXSvK12/Jf0j+huAsueZcOOdS+K9nOSjQdRQpwvZuU+rTeqTUl2Wra7nRvgr8a/2qfG2man49S+stEjP7y/1CJLZIIc5KwwgAkn/AHcepr9INIutNMIsdPubaVbNFiMMEit5QAwoIHTgV+c1/wCGP2of2gQ6aimsafpk3Bt7h/7NtsZ7x/KWH1Br6K/ZJ/ZM1n4DatqGva94iS81C+tvszadYFjbqNwbc7NguwxgcDGTyc10ZXKcKr9nSk1LectH93/BPH47o4fE4KLxmPoQlQTVPD0E5RV2r3kno/PlS089fp+vnb9vhHf9mvW9qM+Lu0J2jOB5y8n2r6JqlrWi2PiLSbvTNStkvLC7iaGeCT7rowwQa+lxNL29GdJO3MmvvPxLJMwWU5nhsfKPMqU4yt35WnY+ef8Agn0279nOwGc41C6/D56+k6yvDPhbSPBmi2+kaFpttpWmW4xFbWsYRF9TgdSe5PJ71q0sLReHoQpN3cUkXn2YwzfNcTmFOLjGrOUknuk3fU5P4reE9T8c/D7WtC0bWH0HUr2Axw38ecxnIPbkA4xkc815r+zD8Fdc/Z+8G62nirxR/bD3Mpu3jWR2t7UKGLsrPg5bOWOB90ele7V8z/t6/Fv/AIV/8HpdCtJxHq3iQtZqob51twP3zY9CCF/4FXPi1RoXxs94J21/Q9nh+eY5ry8M4Vr2eInFv3U2rbvmtdJJXav083f5q+B+ny/tK/tk33ii5LNpdndvq7huR5URC28f5+Xx6A1+ltfLP/BP/wCEg8C/Cd/FF9GY9T8RsJgHABjtkJEY/wCBct9CK+j/AA74v0PxdFcy6Hq9jq8dtKYZnsrhZRG46qSpODXJlFJ0sOp1PjqNyfzPoPETMI5hm8sNg1fD4SMaUbbLl0f3u6XeyNeiiivdPykKZNDHcwyRSossUilXRxlWB4II7in0UDTtqj8/f2kf2QvEHwx8RyfEH4Ufao7OFjcy2FgxW4sW6s0WOWj6/KMkDI5Fdv8AAP8A4KA6Pq9nb6L8ScaLq8ZEP9qpGxgnOSMyKBmMjjJ6Z546D7KIyK8D+OX7Gngf4yu1/HF/wjev8k3+nRqFmJ7ypjDn34PvXzlTAVsLUdfL3a+8Xs/TsfsuC4tyzPsJTyvi6m5cmkK8f4kV2lvzL7/NN6nuOk6zp+v2MV7pl9bajZygNHcWsqyxuD0IZSQadBpdlbTvPDZwRTOctIkShmPqSBk1+dmufsvfHP8AZ6uI77wDrd7rFmF8yVtGk2bWyeGt2Y7xgA9D1xVzRf2+fin4Ak+x+OfCsN+6fKXuLZ7GYn3wNp/BRTWcRpPlxlNwfpdfehT8Oq2Oi63DmNp4qD6KXJP5xf6teh+iNFfIvhb/AIKTeAtSjhTXND1rRp2H7xokjuIVOexDBiMc/dr1DSv2yvg5q5xF41tYG54u4Jof1ZAK9GnmODq/DVX32/M+NxnBnEWAdq+Bqeqi5L743X4ntVFecW37R3wvvIy8XjvQ2UdSbxR/M06f9ov4Y20Ilk8daGqHOD9sQ9Ovf3rp+sUd+dfejxP7GzO/L9WqX/wS/wAj0WivGtQ/bD+D2nRSSP43spdnBW3jllY8E8BVOen8vWvKfF3/AAUl8CaXuj0DQ9Y12UdJJVS2iP4klv8Ax0VzVMxwlJXlVX33/I9rBcG8RY+XLQwNT5xcV98rL8T61vLyDT7Sa6upkt7aFDJLLIwVUUDJJJ6ACvyf+MfxR0j48/tDy6vreqPY+DLWUQRS7Sz/AGKIkny0xnfJyQPVxngV0Pxo/bk8Z/GDQ7jw3YafbeH9Jvh5U8VsTLPOCR8m89AfQDmur+C3/BPHxF4oFtqfju8Hh3THAYafbsHvHBHGTgrH29T6gV8tjsXPNpxoYKPNFO7vovK/kfvHCvD+G8PsPWzXiWsqNapFxgk1KSX2nFK95bbXSW71Mr4i/tH+Ov2ib+D4f/DLRbrSvDJRbWKyslPnzRjABmkHEaADpkDGck19c/smfs5S/s++Eb6PUL/7drmrPHNeLET5MO0EKi+pG5st3/CvSfhv8KvC/wAJ9Ci0rwzpMGnQKoEkqqDLOQPvSP1Y+5rra97CZfKnU+s4mfNU/BeSR+TcRcYUcZg3kuS4dUMJe7vrOo07qU3662u/W1kiiiivcPy4KKKKACiiigArO1vw7pXiaxey1fTLPVbN/vQXsCzIfqrAitGik0mrMuE5U5KcHZrqjxLxF+xj8IPEcxlfwhBYSHr/AGdK8Cn/AICp2j8BXnur/wDBN/4b3xzZ6nrumnHRJ45B/wCPIa+r6K8+eXYOp8VJfcfX4XjLiLBpKjjqiS6OTa+53Pi2X/gmR4aKP5XjXVUY/dL2kTAc9xkZ4+n9KZb/APBMbw8v+v8AHGpyf9c7KNP5sa+1aK5/7GwH/Ppfe/8AM9j/AIiRxZa316X/AIDD/wCRPkvSf+Cbfw7syDe6zruoeoMscYP/AHymf1rO+Mvwi+Bv7MHgabWp/C8Osa3OrRaZZ6lM8/nTY6lSdu1c5JI9upr6c+JnxI0X4T+DdQ8S6/ceRY2i52qMvK5+7Gg7sTx/Pivzw8MeHfFn7d3xuutX1GSSx8L2Ui+YCxMdpbZ4hj7GRscn3JPavNxtLC4S1DDUk6sttL289T7bhjHZ7xA6maZ5mFSGAoazfM4qT6QXLa7el7dHbdo3f2If2fZfif4xm+I3iS0iGh2Vy0lpAsYRLi7DZyqjgJH6YxnAHSv0brM8M+GtN8H6BY6Lo9pHY6bZRCGCCIYCqP5nuT3JJrTr2cBgo4Giqa1e7fdn5pxbxNX4pzKWLmuWmvdhH+WK2Xq935+SQUUUV6R8UFFFFABRRRQAUUUUAFFFFABRRRQAUjMEUsxAUDJJ7UtQXtnDqNnPaXMYlt542ikjboysMEfiDQNWvrsfCvxb0rxj+2j8YBoXh55bT4Z6FOYX1Yg/ZpZAcSSr2lbqqgcY7jJNfYfwt+F2gfCDwfaeHfD1oLe0h+aSQ8yTyH70jt3Y/oMAcAV0Oi6Jp/hzSrbTNKsoNP0+2QRw2ttGEjjUdAFHAq7Xm4bBRo1JV5vmnLd9vJeR9nnXEtbMsLRyvDR9lhaPwwXV9ZzfWT37K+ndlFFFekfFhRRRQAUUUUAf/9k=" alt="필수" class="notice-badge-img">
-      <div class="notice-text">
-        <div class="notice-line1">운동 미션 인증</div>
-        <div class="notice-line2">매일 운동 후 패들렛에 인증해요.<br>인증샷 올린 사람만 포인트 모을 수 있어요!</div>
-      </div>
-      </div>
-      <a class="padlet-btn"
-         href="https://padlet.com/a01067752602/padlet-il6qwpw58h6dyssw"
-         target="_blank">
-        📌 운동 인증하러 가기 →
-      </a>
-    </div>
-
-    <!-- 미션 목록 -->
-    <div class="mission-list">
-
-      <div class="mission-item" id="m3">
-        <div class="mi-icon">🚶</div>
-        <div class="mi-text">
-          <div class="mi-title">30분 이상의 운동</div>
-        </div>
-        <div class="mi-right">
-          <div class="mi-pt">+20P</div>
-          <div class="mi-btn-row">
-            <button class="m-btn" onclick="doMission('m3',20)">완료!</button>
-            <button class="c-btn" id="c-m3" disabled onclick="cancelMission('m3',20)">취소</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="mission-item" id="m1">
-        <div class="mi-icon">💧</div>
-        <div class="mi-text">
-          <div class="mi-title">물 6컵 마시기</div>
-          <div class="mi-sub">건강한 수분 섭취</div>
-        </div>
-        <div class="mi-right">
-          <div class="mi-pt">+5P</div>
-          <div class="mi-btn-row">
-            <button class="m-btn" onclick="doMission('m1',5)">완료!</button>
-            <button class="c-btn" id="c-m1" disabled onclick="cancelMission('m1',5)">취소</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="mission-item" id="m2">
-        <div class="mi-icon">🥗</div>
-        <div class="mi-text">
-          <div class="mi-title">채소 반찬 먹기</div>
-          <div class="mi-sub">오늘 식사에 채소 포함</div>
-        </div>
-        <div class="mi-right">
-          <div class="mi-pt">+5P</div>
-          <div class="mi-btn-row">
-            <button class="m-btn" onclick="doMission('m2',5)">완료!</button>
-            <button class="c-btn" id="c-m2" disabled onclick="cancelMission('m2',5)">취소</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="mission-item" id="m4">
-        <div class="mi-icon">🍚</div>
-        <div class="mi-text">
-          <div class="mi-title">아침밥 먹기</div>
-          <div class="mi-sub">하루를 건강하게 시작</div>
-        </div>
-        <div class="mi-right">
-          <div class="mi-pt">+5P</div>
-          <div class="mi-btn-row">
-            <button class="m-btn" onclick="doMission('m4',5)">완료!</button>
-            <button class="c-btn" id="c-m4" disabled onclick="cancelMission('m4',5)">취소</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="mission-item" id="m5">
-        <div class="mi-icon">📵</div>
-        <div class="mi-text">
-          <div class="mi-title">스마트폰 2시간 이하</div>
-          <div class="mi-sub">활동적인 생활 유지</div>
-        </div>
-        <div class="mi-right">
-          <div class="mi-pt">+7P</div>
-          <div class="mi-btn-row">
-            <button class="m-btn" onclick="doMission('m5',7)">완료!</button>
-            <button class="c-btn" id="c-m5" disabled onclick="cancelMission('m5',7)">취소</button>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /.mission-list -->
-
-  </div><!-- /.content -->
-
-  <!-- 네비 -->
-  <div class="nav-bar">
-    <button class="nav-btn prev" onclick="goPrev()">← 이전</button>
-    <button class="nav-btn next" onclick="goNext()">다음 →</button>
+<div class="content">
+  <div class="page-header">
+    <div class="header-badge">Step 2</div>
+    <div class="page-title">오늘의 미션 🚀</div>
   </div>
 
-</div><!-- /.scene -->
+  <div class="total-pts">
+    <div class="total-pts-label">⭐ 오늘 획득 포인트 <span style="font-size:10px;opacity:.6;">(하루 1회)</span></div>
+    <span class="total-pts-num" id="today-pts">0</span><span class="total-pts-p">P</span>
+  </div>
 
+  <div class="padlet-card">
+    <div class="padlet-notice">
+      <div class="padlet-badge">🏃</div>
+      <div class="padlet-notice-text">
+        <div class="padlet-notice-title">운동 미션 인증</div>
+        <div class="padlet-notice-sub">매일 운동 후 패들렛에 인증해요.<br>인증샷 올린 사람만 포인트를 모을 수 있어요!</div>
+      </div>
+    </div>
+    <a class="padlet-btn" href="https://padlet.com/a01067752602/padlet-il6qwpw58h6dyssw" target="_blank">📌 운동 인증하러 가기 →</a>
+  </div>
+
+  <div class="mission-list">
+    <div class="mission-item" id="m3">
+      <div class="mi-icon">🚶</div>
+      <div class="mi-text"><div class="mi-title">30분 이상의 운동</div></div>
+      <div class="mi-right">
+        <div class="mi-pt">+20P</div>
+        <div class="mi-btn-row">
+          <button class="m-btn" onclick="doMission('m3',20)">완료!</button>
+          <button class="c-btn" id="c-m3" disabled onclick="cancelMission('m3',20)">취소</button>
+        </div>
+      </div>
+    </div>
+    <div class="mission-item" id="m1">
+      <div class="mi-icon">💧</div>
+      <div class="mi-text"><div class="mi-title">물 6컵 마시기</div><div class="mi-sub">건강한 수분 섭취</div></div>
+      <div class="mi-right">
+        <div class="mi-pt">+5P</div>
+        <div class="mi-btn-row">
+          <button class="m-btn" onclick="doMission('m1',5)">완료!</button>
+          <button class="c-btn" id="c-m1" disabled onclick="cancelMission('m1',5)">취소</button>
+        </div>
+      </div>
+    </div>
+    <div class="mission-item" id="m2">
+      <div class="mi-icon">🥗</div>
+      <div class="mi-text"><div class="mi-title">채소 반찬 먹기</div><div class="mi-sub">오늘 식사에 채소 포함</div></div>
+      <div class="mi-right">
+        <div class="mi-pt">+5P</div>
+        <div class="mi-btn-row">
+          <button class="m-btn" onclick="doMission('m2',5)">완료!</button>
+          <button class="c-btn" id="c-m2" disabled onclick="cancelMission('m2',5)">취소</button>
+        </div>
+      </div>
+    </div>
+    <div class="mission-item" id="m4">
+      <div class="mi-icon">🍚</div>
+      <div class="mi-text"><div class="mi-title">아침밥 먹기</div><div class="mi-sub">하루를 건강하게 시작</div></div>
+      <div class="mi-right">
+        <div class="mi-pt">+5P</div>
+        <div class="mi-btn-row">
+          <button class="m-btn" onclick="doMission('m4',5)">완료!</button>
+          <button class="c-btn" id="c-m4" disabled onclick="cancelMission('m4',5)">취소</button>
+        </div>
+      </div>
+    </div>
+    <div class="mission-item" id="m5">
+      <div class="mi-icon">📵</div>
+      <div class="mi-text"><div class="mi-title">스마트폰 2시간 이하</div><div class="mi-sub">활동적인 생활 유지</div></div>
+      <div class="mi-right">
+        <div class="mi-pt">+7P</div>
+        <div class="mi-btn-row">
+          <button class="m-btn" onclick="doMission('m5',7)">완료!</button>
+          <button class="c-btn" id="c-m5" disabled onclick="cancelMission('m5',7)">취소</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="nav-bar">
+  <button class="nav-btn" onclick="goPrev()">← 이전</button>
+  <button class="nav-btn next" onclick="goNext()">다음 →</button>
+</div>
+</div>
 <script>
-/* 별 */
-(function(){
-  var c=document.getElementById('star-canvas'),ctx=c.getContext('2d');
-  function resize(){c.width=window.innerWidth;c.height=window.innerHeight;draw();}
-  function draw(){
-    ctx.clearRect(0,0,c.width,c.height);
-    for(var i=0;i<180;i++){
-      var x=Math.random()*c.width, y=Math.random()*c.height;
-      var r=Math.random()*1.5+0.2, a=Math.random()*0.75+0.2;
-      ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
-      ctx.fillStyle='rgba(255,255,255,'+a+')';ctx.fill();
-    }
-  }
-  window.addEventListener('resize',resize); resize();
-})();
-
-/* 토스트 */
-function showToast(msg){
-  var t=document.getElementById('toast');
-  t.textContent=msg; t.style.display='block';
-  setTimeout(function(){t.style.display='none';},2200);
+/* ── 레벨 ── */
+var pts=0;try{pts=parseInt(localStorage.getItem('tuntun_pts')||'0');}catch(e){}
+var curLv=pts<=2500?0:pts<=5000?1:pts<=7500?2:3;
+function renderLevel(){
+  for(var i=0;i<4;i++) document.getElementById('lv'+i).classList.toggle('active',i===curLv);
+  var maxes=[2500,5000,7500,99999];var prev=curLv===0?0:maxes[curLv-1];var next=maxes[curLv]===99999?prev+2500:maxes[curLv];
+  var pct=curLv===3?100:Math.min(100,Math.round((pts-prev)/(next-prev)*100));
+  document.getElementById('lv-bar').style.width=pct+'%';
+  document.getElementById('lv-bar-label').textContent=pts+'P';
+  var pi=document.getElementById('pts-input');if(pi&&!pi.value)pi.value=pts||'';
+}
+renderLevel();
+function savePtsInput(){
+  var v=parseInt(document.getElementById('pts-input').value);
+  if(isNaN(v)||v<0){return;}
+  localStorage.setItem('tuntun_pts',v);
+  pts=v;curLv=pts<=2500?0:pts<=5000?1:pts<=7500?2:3;
+  renderLevel();
+  var btn=document.querySelector('.lv-pts-save-btn');
+  if(btn){btn.textContent='✅ 저장!';setTimeout(function(){btn.textContent='저장';},1500);}
 }
 
-/* 미션 설정 */
-var MISSION_KEY   = 'tuntun_missions_daily';
-var MONTHLY_KEY   = 'tuntun_monthly_pts';
-var MONTHLY_MONTH = 'tuntun_monthly_month';
-var SHEETS_URL    = 'https://script.google.com/macros/s/AKfycbzgBrjUH2rf1mUcyFp2GGWGvDaUnmIh0kV0rskcDB5j84Esu1IFbcJFHy4BQ93vUPc2/exec';
-var MISSION_PTS   = {m1:5, m2:5, m3:20, m4:5, m5:7};
-
-function getTodayStr(){
-  var d=new Date();
-  return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
-}
-function getCurrentMonth(){
-  var d=new Date();
-  return d.getFullYear()+'-'+(d.getMonth()+1);
-}
-
-/* 자정 롤오버: 전날 포인트 → 이번달 합산 후 미션 초기화 */
-function rolloverIfNeeded(){
-  try{
-    var raw=localStorage.getItem(MISSION_KEY);
-    if(!raw) return;
-    var data=JSON.parse(raw);
-    if(data.date && data.date !== getTodayStr()){
-      var prevPts=parseInt(data.todayPts||'0');
-      if(prevPts>0){
-        var curMonth=getCurrentMonth();
-        var savedMonth=localStorage.getItem(MONTHLY_MONTH)||'';
-        var monthly=savedMonth===curMonth?parseInt(localStorage.getItem(MONTHLY_KEY)||'0'):0;
-        monthly+=prevPts;
-        localStorage.setItem(MONTHLY_KEY, monthly);
-        localStorage.setItem(MONTHLY_MONTH, curMonth);
-      }
-      localStorage.removeItem(MISSION_KEY);
-    }
-  }catch(e){}
-}
+/* ── 미션 ── */
+var MISSION_KEY='tuntun_missions_daily';
+var MONTHLY_KEY='tuntun_monthly_pts';
+var MONTHLY_MONTH='tuntun_monthly_month';
+var SHEETS_URL='https://script.google.com/macros/s/AKfycbzgBrjUH2rf1mUcyFp2GGWGvDaUnmIh0kV0rskcDB5j84Esu1IFbcJFHy4BQ93vUPc2/exec';
+var MISSION_PTS={m1:5,m2:5,m3:20,m4:5,m5:7};
+function getTodayStr(){var d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
+function getCurrentMonth(){var d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1);}
+function rolloverIfNeeded(){try{var raw=localStorage.getItem(MISSION_KEY);if(!raw)return;var data=JSON.parse(raw);if(data.date&&data.date!==getTodayStr()){var pp=parseInt(data.todayPts||'0');if(pp>0){var cm=getCurrentMonth(),sm=localStorage.getItem(MONTHLY_MONTH)||'',monthly=sm===cm?parseInt(localStorage.getItem(MONTHLY_KEY)||'0'):0;monthly+=pp;localStorage.setItem(MONTHLY_KEY,monthly);localStorage.setItem(MONTHLY_MONTH,cm);}localStorage.removeItem(MISSION_KEY);}}catch(e){}}
 rolloverIfNeeded();
-
-function loadTodayMissions(){
-  try{
-    var raw=localStorage.getItem(MISSION_KEY);
-    if(!raw) return {};
-    var data=JSON.parse(raw);
-    if(data.date !== getTodayStr()) return {};
-    return data.missions||{};
-  }catch(e){ return {}; }
-}
-
-function saveTodayMissions(missions, pts){
-  try{
-    localStorage.setItem(MISSION_KEY, JSON.stringify({
-      date: getTodayStr(),
-      missions: missions,
-      todayPts: pts
-    }));
-  }catch(e){}
-}
-
-var missionDone = loadTodayMissions();
-var todayPts = 0;
-
-/* 초기 렌더링 */
-(function restoreMissions(){
-  Object.keys(missionDone).forEach(function(id){
-    if(missionDone[id]){
-      todayPts += MISSION_PTS[id]||0;
-      var el=document.getElementById(id);
-      if(!el) return;
-      el.classList.add('done');
-      var btn=el.querySelector('.m-btn');
-      if(btn){ btn.textContent='완료 ✓'; btn.classList.add('done'); btn.disabled=true; }
-      var cbtn=document.getElementById('c-'+id);
-      if(cbtn){ cbtn.disabled=false; }  // 취소 버튼 활성
-    }
-  });
-  document.getElementById('today-pts').textContent=todayPts;
-})();
-
-function doMission(id,pts){
-  if(missionDone[id]) return;
-  missionDone[id]=true;
-  todayPts+=pts;
-  saveTodayMissions(missionDone, todayPts);
-
-  var el=document.getElementById(id);
-  el.classList.add('done');
-  var btn=el.querySelector('.m-btn');
-  btn.textContent='완료 ✓'; btn.classList.add('done'); btn.disabled=true;
-  var cbtn=document.getElementById('c-'+id);
-  if(cbtn){ cbtn.disabled=false; }  // 취소 버튼 활성
-
-  document.getElementById('today-pts').textContent=todayPts;
-  showToast('⭐ +'+pts+'P 획득! 대단해요!');
-
-  try{
-    var cur=parseInt(localStorage.getItem('tuntun_pts')||'0');
-    var newPts=cur+pts;
-    localStorage.setItem('tuntun_pts', newPts);
-    autoSendPoints(newPts, id, pts);
-  }catch(e){}
-}
-
-function cancelMission(id,pts){
-  if(!missionDone[id]) return;
-  missionDone[id]=false;
-  todayPts=Math.max(0, todayPts-pts);
-  saveTodayMissions(missionDone, todayPts);
-
-  var el=document.getElementById(id);
-  el.classList.remove('done');
-  var btn=el.querySelector('.m-btn');
-  btn.textContent='완료!'; btn.classList.remove('done'); btn.disabled=false;
-  var cbtn=document.getElementById('c-'+id);
-  if(cbtn){ cbtn.disabled=true; }  // 취소 버튼 비활성 (완료 전)
-
-  document.getElementById('today-pts').textContent=todayPts;
-  showToast('↩️ 미션 취소됐어요');
-
-  try{
-    var cur=parseInt(localStorage.getItem('tuntun_pts')||'0');
-    localStorage.setItem('tuntun_pts', Math.max(0, cur-pts));
-  }catch(e){}
-}
-
-/* 포인트 → 시트 자동 전송 */
-function autoSendPoints(total, missionId, pts){
-  var studentId = localStorage.getItem('tuntun_student_id')||'미입력';
-  if(studentId==='GUEST') return;
-  var lv=total<=2500?'1단계':total<=5000?'2단계':total<=7500?'3단계':'4단계';
-  var missionNames={m1:'물 마시기',m2:'채소 먹기',m3:'30분 운동',m4:'아침밥',m5:'스마트폰 2h이하'};
-  fetch(SHEETS_URL,{
-    method:'POST', mode:'no-cors',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({
-      type:'mission',
-      number: studentId,
-      name: studentId,
-      mission: missionNames[missionId]||missionId,
-      pts: pts,
-      total: total,
-      level: lv
-    })
-  }).catch(function(){});
-}
-
-/* 네비 */
-function goPrev(){
-  document.querySelector('.scene').classList.add('page-out');
-  setTimeout(function(){window.location.href='page3.html';},400);
-}
-function goNext(){
-  document.querySelector('.scene').classList.add('page-out');
-  setTimeout(function(){window.location.href='page5.html';},400);
-}
-
-var lt=0;
-document.addEventListener('touchend',function(e){var n=Date.now();if(n-lt<300)e.preventDefault();lt=n;},{passive:false});
+function loadTodayMissions(){try{var raw=localStorage.getItem(MISSION_KEY);if(!raw)return{};var data=JSON.parse(raw);if(data.date!==getTodayStr())return{};return data.missions||{};}catch(e){return{};}}
+function saveTodayMissions(m,p){try{localStorage.setItem(MISSION_KEY,JSON.stringify({date:getTodayStr(),missions:m,todayPts:p}));}catch(e){}}
+var missionDone=loadTodayMissions();
+var todayPts=0;
+(function restoreMissions(){Object.keys(missionDone).forEach(function(id){if(missionDone[id]){todayPts+=MISSION_PTS[id]||0;var el=document.getElementById(id);if(!el)return;el.classList.add('done');var btn=el.querySelector('.m-btn');if(btn){btn.textContent='완료 ✓';btn.classList.add('done');btn.disabled=true;}var cbtn=document.getElementById('c-'+id);if(cbtn)cbtn.disabled=false;}});document.getElementById('today-pts').textContent=todayPts;})();
+function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(function(){t.style.display='none';},2200);}
+function doMission(id,p){if(missionDone[id])return;missionDone[id]=true;todayPts+=p;saveTodayMissions(missionDone,todayPts);var el=document.getElementById(id);el.classList.add('done');var btn=el.querySelector('.m-btn');btn.textContent='완료 ✓';btn.classList.add('done');btn.disabled=true;var cbtn=document.getElementById('c-'+id);if(cbtn)cbtn.disabled=false;document.getElementById('today-pts').textContent=todayPts;showToast('⭐ +'+p+'P 획득! 대단해요!');try{var cur=parseInt(localStorage.getItem('tuntun_pts')||'0');var newPts=cur+p;localStorage.setItem('tuntun_pts',newPts);pts=newPts;curLv=pts<=2500?0:pts<=5000?1:pts<=7500?2:3;renderLevel();autoSendPoints(newPts,id,p);}catch(e){}}
+function cancelMission(id,p){if(!missionDone[id])return;missionDone[id]=false;todayPts=Math.max(0,todayPts-p);saveTodayMissions(missionDone,todayPts);var el=document.getElementById(id);el.classList.remove('done');var btn=el.querySelector('.m-btn');btn.textContent='완료!';btn.classList.remove('done');btn.disabled=false;var cbtn=document.getElementById('c-'+id);if(cbtn)cbtn.disabled=true;document.getElementById('today-pts').textContent=todayPts;showToast('↩️ 미션 취소됐어요');try{var cur=parseInt(localStorage.getItem('tuntun_pts')||'0');localStorage.setItem('tuntun_pts',Math.max(0,cur-p));pts=Math.max(0,cur-p);curLv=pts<=2500?0:pts<=5000?1:pts<=7500?2:3;renderLevel();}catch(e){}}
+function autoSendPoints(total,missionId,p){var sid=localStorage.getItem('tuntun_student_id')||'미입력';if(sid==='GUEST')return;var lv=total<=2500?'1단계':total<=5000?'2단계':total<=7500?'3단계':'4단계';var mNames={m1:'물 마시기',m2:'채소 먹기',m3:'30분 운동',m4:'아침밥',m5:'스마트폰 2h이하'};fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'mission',number:sid,name:sid,mission:mNames[missionId]||missionId,pts:p,total:total,level:lv})}).catch(function(){});}
+function goPrev(){document.querySelector('.scene').classList.add('page-out');setTimeout(function(){window.location.href='page3.html';},400);}
+function goNext(){document.querySelector('.scene').classList.add('page-out');setTimeout(function(){window.location.href='page5.html';},400);}
+var lt=0;document.addEventListener('touchend',function(e){var n=Date.now();if(n-lt<300)e.preventDefault();lt=n;},{passive:false});
 </script>
 </body>
 </html>
