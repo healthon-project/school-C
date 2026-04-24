@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>튼튼탐험대 — 오늘의 미션</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:'KH';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/KyoboHand.woff') format('woff');}
+:root{--jua:'Jua',sans-serif;--hand:'KH',sans-serif;--green:#1D9E75;--green2:#5DCAA5;--amber:#EF9F27;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden;min-height:100%;}
+.scene{min-height:100vh;background:radial-gradient(ellipse at 30% 20%,rgba(216,90,48,.06),transparent 55%),radial-gradient(ellipse at 80% 80%,rgba(29,158,117,.06),transparent 50%),linear-gradient(170deg,#04061A,#0B0E2A 50%,#0E1535);display:flex;flex-direction:column;align-items:center;}
+.stars{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(1px 1px at 10% 15%,rgba(255,255,255,.55),transparent),radial-gradient(1px 1px at 28% 8%,rgba(255,255,255,.45),transparent),radial-gradient(1.5px 1.5px at 45% 22%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 62% 6%,rgba(255,255,255,.7),transparent),radial-gradient(1px 1px at 78% 16%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 5% 38%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 52% 42%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 87% 36%,rgba(255,255,255,.65),transparent),radial-gradient(1px 1px at 16% 57%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 72% 54%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 37% 69%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 82% 72%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 9% 82%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 47% 89%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 94% 84%,rgba(255,255,255,.55),transparent),radial-gradient(1px 1px at 32% 94%,rgba(255,255,255,.4),transparent),radial-gradient(1.5px 1.5px at 67% 97%,rgba(255,255,255,.45),transparent),radial-gradient(1px 1px at 20% 4%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 55% 30%,rgba(255,255,255,.35),transparent),radial-gradient(1px 1px at 88% 25%,rgba(255,255,255,.5),transparent);}
+/* ── 레벨 배너 ── */
+.level-banner{position:relative;z-index:10;width:100%;max-width:430px;margin-top:10px;padding:0 14px;animation:fadeDown .5s ease both;}
+.lv-strip{background:rgba(255,255,255,.06);border:1px solid rgba(200,220,255,.15);border-radius:16px;padding:8px 12px;display:grid;grid-template-columns:repeat(4,1fr);gap:3px;}
+.lv-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 3px;border-radius:10px;}
+.lv-item.active{background:rgba(255,255,255,.1);}
+.lv-emoji{font-size:18px;line-height:1;}
+.lv-item.active .lv-emoji{font-size:24px;}
+.lv-name{font-size:9px;color:rgba(200,220,255,.5);text-align:center;line-height:1.2;}
+.lv-item.active .lv-name{color:rgba(255,255,255,.85);}
+.lv-pts{font-size:8px;color:rgba(200,220,255,.3);}
+.lv-item.active .lv-pts{color:#FFD86E;}
+.lv-bar-wrap{display:flex;align-items:center;gap:6px;margin-top:6px;padding:0 2px;}
+.lv-bar-track{flex:1;height:5px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;}
+.lv-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--green),var(--green2));transition:width .4s;}
+.lv-bar-label{font-size:11px;color:#FFD86E;white-space:nowrap;}
+/* ── 포인트 직접 입력 ── */
+.lv-pts-input-wrap{margin-top:8px;display:flex;align-items:center;gap:8px;padding:0 2px;}
+.lv-pts-input-label{font-size:11px;color:rgba(200,220,255,.55);white-space:nowrap;flex-shrink:0;}
+.lv-pts-input{flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,216,110,.3);border-radius:10px;padding:7px 10px;font-family:var(--jua);font-size:15px;color:#FFD86E;outline:none;text-align:center;min-width:0;}
+.lv-pts-input:focus{border-color:rgba(255,216,110,.65);background:rgba(255,255,255,.14);}
+.lv-pts-input::placeholder{color:rgba(255,216,110,.3);font-size:13px;}
+.lv-pts-save-btn{padding:7px 14px;background:rgba(255,216,110,.15);border:1px solid rgba(255,216,110,.35);border-radius:10px;font-family:var(--jua);font-size:13px;color:#FFD86E;cursor:pointer;white-space:nowrap;transition:.15s;flex-shrink:0;}
+.lv-pts-save-btn:active{transform:scale(.95);background:rgba(255,216,110,.25);}
+/* ── 콘텐츠 ── */
+.content{position:relative;z-index:10;width:100%;max-width:430px;padding:0 16px 100px;}
+.page-header{margin-top:14px;text-align:center;animation:fadeDown .5s ease both;}
+.header-badge{display:inline-block;background:rgba(216,90,48,.18);border:1px solid rgba(216,90,48,.35);color:#FFB89A;font-size:13px;padding:4px 14px;border-radius:100px;margin-bottom:8px;}
+.page-title{font-family:var(--hand);font-size:clamp(22px,6vw,28px);color:#fff;line-height:1.2;}
+/* ── 포인트 총합 ── */
+.total-pts{margin-top:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:12px 16px;display:flex;align-items:center;gap:8px;animation:fadeUp .5s ease .1s both;}
+.total-pts-label{font-size:13px;color:rgba(255,255,255,.7);flex:1;}
+.total-pts-num{font-size:28px;font-weight:700;color:#FFD86E;}
+.total-pts-p{font-size:14px;color:rgba(255,216,110,.7);margin-top:4px;}
+/* ── 패들렛 인증 카드 ── */
+.padlet-card{margin-top:10px;background:rgba(29,158,117,.1);border:1.5px solid rgba(93,202,165,.25);border-radius:16px;padding:12px 14px;animation:fadeUp .5s ease .15s both;}
+.padlet-notice{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.padlet-badge{font-size:28px;}
+.padlet-notice-text{}
+.padlet-notice-title{font-size:15px;color:#fff;font-weight:700;}
+.padlet-notice-sub{font-size:11px;color:rgba(93,202,165,.8);margin-top:2px;line-height:1.5;}
+.padlet-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:11px;background:rgba(29,158,117,.25);border:1px solid rgba(93,202,165,.35);border-radius:12px;color:#7EECC8;font-size:14px;font-family:var(--jua);text-decoration:none;cursor:pointer;transition:transform .15s;}
+.padlet-btn:active{transform:scale(.97);}
+/* ── 미션 리스트 ── */
+.mission-list{margin-top:12px;display:flex;flex-direction:column;gap:8px;animation:fadeUp .5s ease .2s both;}
+.mission-item{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px;transition:background .2s;}
+.mission-item.done{background:rgba(29,158,117,.12);border-color:rgba(93,202,165,.25);}
+.mi-icon{font-size:26px;flex-shrink:0;}
+.mi-text{flex:1;}
+.mi-title{font-size:14px;color:#fff;line-height:1.2;}
+.mi-sub{font-size:10px;color:rgba(200,220,255,.5);margin-top:2px;}
+.mi-right{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;}
+.mi-pt{font-size:12px;font-weight:700;color:#FFD86E;background:rgba(255,216,110,.12);border:1px solid rgba(255,216,110,.25);border-radius:100px;padding:2px 8px;}
+.mi-btn-row{display:flex;gap:4px;}
+.m-btn{font-size:12px;background:rgba(29,158,117,.3);border:1px solid rgba(93,202,165,.35);color:#fff;border-radius:100px;padding:5px 12px;cursor:pointer;transition:.15s;white-space:nowrap;}
+.m-btn:active{transform:scale(.95);}
+.m-btn.done{background:rgba(93,202,165,.15);border-color:rgba(93,202,165,.2);color:rgba(255,255,255,.5);pointer-events:none;}
+.c-btn{font-size:12px;background:rgba(226,75,74,.2);border:1px solid rgba(226,75,74,.3);color:#fff;border-radius:100px;padding:5px 8px;cursor:pointer;transition:.15s;white-space:nowrap;}
+.c-btn:active{transform:scale(.95);}
+/* ── 토스트 ── */
+.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:#1D9E75;color:#fff;font-size:14px;padding:9px 20px;border-radius:100px;z-index:100;display:none;box-shadow:0 4px 16px rgba(29,158,117,.4);white-space:nowrap;}
+/* ── 네비 ── */
+.nav-bar{position:fixed;bottom:0;left:0;right:0;z-index:40;display:flex;justify-content:center;gap:12px;padding:12px 20px 22px;background:linear-gradient(to top,rgba(4,6,26,.95) 60%,transparent);}
+.nav-btn{flex:1;max-width:160px;display:flex;align-items:center;justify-content:center;gap:5px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:100px;padding:10px 0;font-family:var(--jua);font-size:14px;color:#fff;cursor:pointer;transition:transform .15s;}
+.nav-btn:active{transform:scale(.95);}
+.nav-btn.next{background:rgba(216,90,48,.3);border-color:rgba(216,90,48,.45);}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.page-out{animation:pageOut .4s ease forwards!important;}
+@keyframes pageOut{to{opacity:0;transform:translateY(-12px);}}
+</style>
+
+<!-- ✅ Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+var _fbApp = firebase.initializeApp({
+  apiKey: "AIzaSyA8DcrxX0l_94zkBTs-TtDSVoY5slUNbNk",
+  authDomain: "healthon-project02.firebaseapp.com",
+  projectId: "healthon-project02",
+  storageBucket: "healthon-project02.firebasestorage.app",
+  messagingSenderId: "188732634434",
+  appId: "1:188732634434:web:bd0aab6f7e10f5b912c4db",
+  measurementId: "G-Y0XPXJTFXM"
+});
+var _db = firebase.firestore();
+
+/* ── Firebase 헬퍼 ────────────────────────────────────
+   학번(student_id)을 키로 Firestore에 데이터 저장/읽기
+   컬렉션: students / document: {student_id}
+──────────────────────────────────────────────────── */
+function _getSid(){return localStorage.getItem('tuntun_student_id')||'guest_'+((navigator.userAgent+screen.width).hashCode?'x':Math.abs(Array.from(navigator.userAgent).reduce(function(a,c){return a+c.charCodeAt(0);},0)%90000+10000));}
+
+function fbSave(field, value){
+  var sid=_getSid();
+  if(!sid) return; // 학번 없으면 저장 안 함
+  var doc={};
+  doc[field]=value;
+  doc['name']=localStorage.getItem('tuntun_student_name')||'';
+  doc['updatedAt']=firebase.firestore.FieldValue.serverTimestamp();
+  _db.collection('students').doc(sid).set(doc,{merge:true}).catch(function(e){console.warn('FB save err',e);});
+}
+
+function fbLoad(sid, callback){
+  if(!sid){callback({});return;}
+  _db.collection('students').doc(sid).get().then(function(snap){
+    callback(snap.exists?snap.data():{});
+  }).catch(function(){callback({});});
+}
+</script>
+</head>
+<body>
+<div class="scene">
+<div class="stars"></div>
+<div class="toast" id="toast"></div>
+
+<!-- 레벨 배너 -->
+<div class="level-banner">
+  <div class="lv-strip">
+    <div class="lv-item" id="lv0"><div class="lv-emoji">🐱</div><div class="lv-name">초보 냥이</div><div class="lv-pts">0~450P</div></div>
+    <div class="lv-item" id="lv1"><div class="lv-emoji">🐵</div><div class="lv-name">재간둥이</div><div class="lv-pts">~1200P</div></div>
+    <div class="lv-item" id="lv2"><div class="lv-emoji">🐶</div><div class="lv-name">수호대</div><div class="lv-pts">~2200P</div></div>
+    <div class="lv-item" id="lv3"><div class="lv-emoji">🐯</div><div class="lv-name">무적 호랑이</div><div class="lv-pts">3000P~</div></div>
+  </div>
+  <div class="lv-bar-wrap">
+    <div class="lv-bar-track"><div class="lv-bar-fill" id="lv-bar" style="width:0%;"></div></div>
+    <div class="lv-bar-label" id="lv-bar-label">0P</div>
+  </div>
+  <div class="lv-pts-input-wrap">
+    <span class="lv-pts-input-label">이번달 내 포인트:</span>
+    <input class="lv-pts-input" id="pts-input" type="number" min="0" placeholder="포인트 입력" inputmode="numeric">
+    <button class="lv-pts-save-btn" onclick="savePtsInput()">저장</button>
+  </div>
+</div>
+
+<div class="content">
+  <div class="page-header">
+    <div class="header-badge">Step 2</div>
+    <div class="page-title">오늘의 미션 🚀</div>
+  </div>
+
+  <div class="total-pts">
+    <div class="total-pts-label">⭐ 오늘 획득 포인트 <span style="font-size:10px;opacity:.6;">(하루 1회)</span></div>
+    <span class="total-pts-num" id="today-pts">0</span><span class="total-pts-p">P</span>
+  </div>
+
+  <div class="padlet-card">
+    <div class="padlet-notice">
+      <div class="padlet-badge">🏃</div>
+      <div class="padlet-notice-text">
+        <div class="padlet-notice-title">운동 미션 인증</div>
+        <div class="padlet-notice-sub">매일 운동 후 패들렛에 인증해요.<br>인증샷 올린 사람만 포인트를 모을 수 있어요!</div>
+      </div>
+    </div>
+    <a class="padlet-btn" href="https://padlet.com/a01067752602/padlet-il6qwpw58h6dyssw" target="_blank">📌 운동 인증하러 가기 →</a>
+  </div>
+
+  <div class="mission-list">
+    <div class="mission-item" id="m3">
+      <div class="mi-icon">🚶</div>
+      <div class="mi-text"><div class="mi-title">30분 이상의 운동</div></div>
+      <div class="mi-right">
+        <div class="mi-pt">+20P</div>
+        <div class="mi-btn-row">
+          <button class="m-btn" onclick="doMission('m3',20)">완료!</button>
+          <button class="c-btn" id="c-m3" disabled onclick="cancelMission('m3',20)">취소</button>
+        </div>
+      </div>
+    </div>
+    <div class="mission-item" id="m1">
+      <div class="mi-icon">💧</div>
+      <div class="mi-text"><div class="mi-title">물 6컵 마시기</div><div class="mi-sub">건강한 수분 섭취</div></div>
+      <div class="mi-right">
+        <div class="mi-pt">+5P</div>
+        <div class="mi-btn-row">
+          <button class="m-btn" onclick="doMission('m1',5)">완료!</button>
+          <button class="c-btn" id="c-m1" disabled onclick="cancelMission('m1',5)">취소</button>
+        </div>
+      </div>
+    </div>
+    <div class="mission-item" id="m2">
+      <div class="mi-icon">🥗</div>
+      <div class="mi-text"><div class="mi-title">채소 반찬 먹기</div><div class="mi-sub">오늘 식사에 채소 포함</div></div>
+      <div class="mi-right">
+        <div class="mi-pt">+5P</div>
+        <div class="mi-btn-row">
+          <button class="m-btn" onclick="doMission('m2',5)">완료!</button>
+          <button class="c-btn" id="c-m2" disabled onclick="cancelMission('m2',5)">취소</button>
+        </div>
+      </div>
+    </div>
+    <div class="mission-item" id="m4">
+      <div class="mi-icon">🍚</div>
+      <div class="mi-text"><div class="mi-title">아침밥 먹기</div><div class="mi-sub">하루를 건강하게 시작</div></div>
+      <div class="mi-right">
+        <div class="mi-pt">+5P</div>
+        <div class="mi-btn-row">
+          <button class="m-btn" onclick="doMission('m4',5)">완료!</button>
+          <button class="c-btn" id="c-m4" disabled onclick="cancelMission('m4',5)">취소</button>
+        </div>
+      </div>
+    </div>
+    <div class="mission-item" id="m5">
+      <div class="mi-icon">📵</div>
+      <div class="mi-text"><div class="mi-title">스마트폰 2시간 이하</div><div class="mi-sub">활동적인 생활 유지</div></div>
+      <div class="mi-right">
+        <div class="mi-pt">+7P</div>
+        <div class="mi-btn-row">
+          <button class="m-btn" onclick="doMission('m5',7)">완료!</button>
+          <button class="c-btn" id="c-m5" disabled onclick="cancelMission('m5',7)">취소</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="nav-bar">
+  <button class="nav-btn" onclick="goPrev()">← 이전</button>
+  <button class="nav-btn next" onclick="goNext()">다음 →</button>
+</div>
+</div>
+<script>
+/* ── 레벨 ── */
+var pts=0;try{pts=parseInt(localStorage.getItem('tuntun_pts')||'0');}catch(e){}
+var curLv=pts<=450?0:pts<=1200?1:pts<=2200?2:3;
+function renderLevel(){
+  for(var i=0;i<4;i++) document.getElementById('lv'+i).classList.toggle('active',i===curLv);
+  var maxes=[450,1200,2200,3000];var prev=curLv===0?0:maxes[curLv-1];var next=maxes[curLv]===3000?prev+800:maxes[curLv];
+  var pct=curLv===3?100:Math.min(100,Math.round((pts-prev)/(next-prev)*100));
+  document.getElementById('lv-bar').style.width=pct+'%';
+  document.getElementById('lv-bar-label').textContent=pts+'P';
+  var pi=document.getElementById('pts-input');if(pi&&!pi.value)pi.value=pts||'';
+}
+renderLevel();
+function savePtsInput(){
+  var v=parseInt(document.getElementById('pts-input').value);
+  if(isNaN(v)||v<0){return;}
+  localStorage.setItem('tuntun_pts',v);fbSave('totalPts',v);
+  pts=v;curLv=pts<=450?0:pts<=1200?1:pts<=2200?2:3;
+  renderLevel();
+  var btn=document.querySelector('.lv-pts-save-btn');
+  if(btn){btn.textContent='✅ 저장!';setTimeout(function(){btn.textContent='저장';},1500);}
+}
+
+/* ── 미션 ── */
+var MISSION_KEY='tuntun_missions_daily';
+var MONTHLY_KEY='tuntun_monthly_pts';
+var MONTHLY_MONTH='tuntun_monthly_month';
+var SHEETS_URL='https://script.google.com/macros/s/AKfycbxIMa_RHfLoHQyyPu-i5K6XNtbqhnUBlBDEhvegHpTi2d6LnyD8Vu9ZwSBKfQ_wsvBu/exec';
+var MISSION_PTS={m1:5,m2:5,m3:20,m4:5,m5:7};
+function getTodayStr(){var d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
+function getCurrentMonth(){var d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1);}
+function rolloverIfNeeded(){
+  try{
+    var raw=localStorage.getItem(MISSION_KEY);
+    if(!raw)return;
+    var data=JSON.parse(raw);
+    if(data.date&&data.date!==getTodayStr()){
+      var pp=parseInt(data.todayPts||'0');
+      if(pp>0){
+        var cm=getCurrentMonth(),sm=localStorage.getItem(MONTHLY_MONTH)||'',monthly=sm===cm?parseInt(localStorage.getItem(MONTHLY_KEY)||'0'):0;
+        monthly+=pp;
+        localStorage.setItem(MONTHLY_KEY,monthly);
+        localStorage.setItem(MONTHLY_MONTH,cm);
+
+        /* 하루 포인트 1행만 시트에 전송 */
+        var sid=localStorage.getItem('tuntun_student_id')||'미입력';
+        var sname=localStorage.getItem('tuntun_student_name')||'';
+        fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({type:'daily',number:sid,name:sname,date:data.date,pts:pp})
+        }).catch(function(){});
+      }
+      localStorage.removeItem(MISSION_KEY);
+
+      /* 28일이면 월별 합산 신호 전송 */
+      var now=new Date();
+      if(now.getDate()===28){
+        fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({type:'monthly_summary',month:now.getMonth()+1})
+        }).catch(function(){});
+      }
+    }
+  }catch(e){}
+}
+rolloverIfNeeded();
+function loadTodayMissions(){try{var raw=localStorage.getItem(MISSION_KEY);if(!raw)return{};var data=JSON.parse(raw);if(data.date!==getTodayStr())return{};return data.missions||{};}catch(e){return{};}}
+function saveTodayMissions(m,p){var d={date:getTodayStr(),missions:m,todayPts:p};try{localStorage.setItem(MISSION_KEY,JSON.stringify(d));}catch(e){}fbSave('todayMissions',d);}
+var missionDone=loadTodayMissions();
+var todayPts=0;
+(function restoreMissions(){Object.keys(missionDone).forEach(function(id){if(missionDone[id]){todayPts+=MISSION_PTS[id]||0;var el=document.getElementById(id);if(!el)return;el.classList.add('done');var btn=el.querySelector('.m-btn');if(btn){btn.textContent='완료 ✓';btn.classList.add('done');btn.disabled=true;}var cbtn=document.getElementById('c-'+id);if(cbtn)cbtn.disabled=false;}});document.getElementById('today-pts').textContent=todayPts;})();
+function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(function(){t.style.display='none';},2200);}
+function doMission(id,p){if(missionDone[id])return;missionDone[id]=true;todayPts+=p;saveTodayMissions(missionDone,todayPts);var el=document.getElementById(id);el.classList.add('done');var btn=el.querySelector('.m-btn');btn.textContent='완료 ✓';btn.classList.add('done');btn.disabled=true;var cbtn=document.getElementById('c-'+id);if(cbtn)cbtn.disabled=false;document.getElementById('today-pts').textContent=todayPts;showToast('⭐ +'+p+'P 획득! 대단해요!');try{var cur=parseInt(localStorage.getItem('tuntun_pts')||'0');var newPts=cur+p;localStorage.setItem('tuntun_pts',newPts);fbSave('totalPts',newPts);pts=newPts;curLv=pts<=450?0:pts<=1200?1:pts<=2200?2:3;renderLevel();}catch(e){}}
+function cancelMission(id,p){if(!missionDone[id])return;missionDone[id]=false;todayPts=Math.max(0,todayPts-p);saveTodayMissions(missionDone,todayPts);var el=document.getElementById(id);el.classList.remove('done');var btn=el.querySelector('.m-btn');btn.textContent='완료!';btn.classList.remove('done');btn.disabled=false;var cbtn=document.getElementById('c-'+id);if(cbtn)cbtn.disabled=true;document.getElementById('today-pts').textContent=todayPts;showToast('↩️ 미션 취소됐어요');try{var cur=parseInt(localStorage.getItem('tuntun_pts')||'0');localStorage.setItem('tuntun_pts',Math.max(0,cur-p));fbSave('totalPts',Math.max(0,cur-p));pts=Math.max(0,cur-p);curLv=pts<=450?0:pts<=1200?1:pts<=2200?2:3;renderLevel();}catch(e){}}
+function goPrev(){document.querySelector('.scene').classList.add('page-out');setTimeout(function(){window.location.href='page3.html';},400);}
+function goNext(){document.querySelector('.scene').classList.add('page-out');setTimeout(function(){window.location.href='page6.html';},400);}
+var lt=0;document.addEventListener('touchend',function(e){var n=Date.now();if(n-lt<300)e.preventDefault();lt=n;},{passive:false});
+</script>
+</body>
+</html>
