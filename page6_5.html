@@ -107,10 +107,10 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 <!-- 레벨 배너 -->
 <div class="level-banner">
   <div class="lv-strip">
-    <div class="lv-item" id="lv0"><div class="lv-emoji">🐱</div><div class="lv-name">초보 냥이</div><div class="lv-pts">0~2500P</div></div>
-    <div class="lv-item" id="lv1"><div class="lv-emoji">🐵</div><div class="lv-name">재간둥이</div><div class="lv-pts">~5000P</div></div>
-    <div class="lv-item" id="lv2"><div class="lv-emoji">🐶</div><div class="lv-name">수호대</div><div class="lv-pts">~7500P</div></div>
-    <div class="lv-item" id="lv3"><div class="lv-emoji">🐯</div><div class="lv-name">무적 호랑이</div><div class="lv-pts">~10,000P</div></div>
+    <div class="lv-item" id="lv0"><div class="lv-emoji">🐱</div><div class="lv-name">초보 냥이</div><div class="lv-pts">0~450P</div></div>
+    <div class="lv-item" id="lv1"><div class="lv-emoji">🐵</div><div class="lv-name">재간둥이</div><div class="lv-pts">~1200P</div></div>
+    <div class="lv-item" id="lv2"><div class="lv-emoji">🐶</div><div class="lv-name">수호대</div><div class="lv-pts">~2200P</div></div>
+    <div class="lv-item" id="lv3"><div class="lv-emoji">🐯</div><div class="lv-name">무적 호랑이</div><div class="lv-pts">3000P~</div></div>
   </div>
   <div class="lv-bar-wrap">
     <div class="lv-bar-track"><div class="lv-bar-fill" id="lv-bar" style="width:0%;"></div></div>
@@ -192,8 +192,8 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 </div>
 <script>
 var pts=0;try{pts=parseInt(localStorage.getItem('tuntun_pts')||'0');}catch(e){}
-var curLv=pts<=2500?0:pts<=5000?1:pts<=7500?2:3;
-(function(){for(var i=0;i<4;i++)document.getElementById('lv'+i).classList.toggle('active',i===curLv);var maxes=[2500,5000,7500,10000];var prev=curLv===0?0:maxes[curLv-1];var next=maxes[curLv]===10000?prev+2500:maxes[curLv];var pct=curLv===3?100:Math.min(100,Math.round((pts-prev)/(next-prev)*100));document.getElementById('lv-bar').style.width=pct+'%';document.getElementById('lv-bar-label').textContent=pts+'P';var pi=document.getElementById('pts-input');if(pi)pi.value=pts||'';})();
+var curLv=pts<=450?0:pts<=1200?1:pts<=2200?2:3;
+(function(){for(var i=0;i<4;i++)document.getElementById('lv'+i).classList.toggle('active',i===curLv);var maxes=[450,1200,2200,3000];var prev=curLv===0?0:maxes[curLv-1];var next=maxes[curLv]===3000?prev+800:maxes[curLv];var pct=curLv===3?100:Math.min(100,Math.round((pts-prev)/(next-prev)*100));document.getElementById('lv-bar').style.width=pct+'%';document.getElementById('lv-bar-label').textContent=pts+'P';var pi=document.getElementById('pts-input');if(pi)pi.value=pts||'';})();
 
 var CI_STORAGE='tuntun_body_records_v2';
 var SHEETS_URL='https://script.google.com/macros/s/AKfycbxIMa_RHfLoHQyyPu-i5K6XNtbqhnUBlBDEhvegHpTi2d6LnyD8Vu9ZwSBKfQ_wsvBu/exec';
@@ -306,8 +306,8 @@ function savePtsInput(){
   var v=parseInt(document.getElementById('pts-input').value);
   if(isNaN(v)||v<0){return;}
   localStorage.setItem('tuntun_pts',v);
-  pts=v;curLv=pts<=2500?0:pts<=5000?1:pts<=7500?2:3;
-  (function(){for(var i=0;i<4;i++)document.getElementById('lv'+i).classList.toggle('active',i===curLv);var maxes=[2500,5000,7500,10000];var prev=curLv===0?0:maxes[curLv-1];var next=maxes[curLv]===10000?prev+2500:maxes[curLv];var pct=curLv===3?100:Math.min(100,Math.round((pts-prev)/(next-prev)*100));document.getElementById('lv-bar').style.width=pct+'%';document.getElementById('lv-bar-label').textContent=pts+'P';var pi=document.getElementById('pts-input');if(pi)pi.value=pts||'';})();
+  pts=v;curLv=pts<=450?0:pts<=1200?1:pts<=2200?2:3;
+  (function(){for(var i=0;i<4;i++)document.getElementById('lv'+i).classList.toggle('active',i===curLv);var maxes=[450,1200,2200,3000];var prev=curLv===0?0:maxes[curLv-1];var next=maxes[curLv]===3000?prev+800:maxes[curLv];var pct=curLv===3?100:Math.min(100,Math.round((pts-prev)/(next-prev)*100));document.getElementById('lv-bar').style.width=pct+'%';document.getElementById('lv-bar-label').textContent=pts+'P';var pi=document.getElementById('pts-input');if(pi)pi.value=pts||'';})();
   var btn=document.querySelector('.lv-pts-save-btn');
   if(btn){btn.textContent='✅ 저장!';setTimeout(function(){btn.textContent='저장';},1500);}
 }
