@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>튼튼탐험대 출발!</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:'KH';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/KyoboHand.woff') format('woff');}
+:root{--jua:'Jua',sans-serif;--hand:'KH',sans-serif;--green:#1D9E75;--amber:#EF9F27;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden;min-height:100%;}
+.scene{min-height:100vh;background:radial-gradient(ellipse at 20% 50%,rgba(127,119,221,.06),transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(55,138,221,.06),transparent 50%),linear-gradient(170deg,#04061A,#0B0E2A 50%,#0E1535);display:flex;flex-direction:column;align-items:center;position:relative;overflow:hidden;}
+.stars{position:absolute;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(1px 1px at 10% 15%,rgba(255,255,255,.7),transparent),radial-gradient(1px 1px at 25% 8%,rgba(255,255,255,.5),transparent),radial-gradient(1.5px 1.5px at 40% 22%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 60% 5%,rgba(255,255,255,.8),transparent),radial-gradient(1px 1px at 75% 18%,rgba(255,255,255,.4),transparent),radial-gradient(1.5px 1.5px at 90% 10%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 5% 35%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 50% 40%,rgba(255,255,255,.3),transparent),radial-gradient(1.5px 1.5px at 85% 35%,rgba(255,255,255,.7),transparent),radial-gradient(1px 1px at 15% 55%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 70% 52%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 35% 68%,rgba(255,255,255,.3),transparent),radial-gradient(1.5px 1.5px at 55% 75%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 80% 70%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 8% 80%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 45% 88%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 92% 82%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 30% 92%,rgba(255,255,255,.4),transparent),radial-gradient(1.5px 1.5px at 65% 95%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 18% 3%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 22% 28%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 48% 13%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 68% 30%,rgba(255,255,255,.3),transparent),radial-gradient(1.5px 1.5px at 88% 48%,rgba(255,255,255,.7),transparent),radial-gradient(1px 1px at 3% 62%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 42% 58%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 77% 85%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 12% 90%,rgba(255,255,255,.6),transparent),radial-gradient(1.5px 1.5px at 58% 44%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 95% 25%,rgba(255,255,255,.5),transparent);}
+.content{position:relative;z-index:10;width:100%;max-width:420px;padding:0 20px 44px;display:flex;flex-direction:column;align-items:center;}
+.top-badge{margin-top:28px;background:rgba(29,158,117,.2);color:#fff;border:1px solid rgba(93,202,165,.35);font-size:13px;padding:5px 18px;border-radius:100px;animation:fadeDown .6s ease both;}
+.mascot-wrap{margin-top:14px;width:155px;height:155px;background:linear-gradient(135deg,#1A2050,#2A3080);border:2px solid rgba(127,119,221,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:76px;box-shadow:0 8px 36px rgba(127,119,221,.22);animation:bounceIn .8s cubic-bezier(.34,1.56,.64,1) .2s both;}
+.title-block{margin-top:14px;text-align:center;animation:fadeUp .7s ease .35s both;}
+.title-sub{font-family:var(--hand);font-size:14px;color:rgba(200,216,255,.8);margin-bottom:6px;}
+.title-brand{font-family:var(--hand);font-size:clamp(27px,8vw,35px);line-height:1.15;color:#fff;}
+.tagline-card{margin-top:18px;width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(127,119,221,.2);border-radius:20px;padding:16px 20px;text-align:center;animation:fadeUp .7s ease .5s both;}
+.tagline-card p{font-size:14px;color:rgba(255,255,255,.88);line-height:1.7;}
+.tagline-card strong{color:#fff;}
+.level-pills{margin-top:16px;display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:nowrap;animation:fadeUp .7s ease .65s both;}
+.pill{padding:5px 9px;border-radius:100px;font-size:11px;display:flex;align-items:center;gap:3px;border:1.5px solid transparent;white-space:nowrap;}
+.pill-1{background:rgba(29,158,117,.2);color:#7EECC8;border-color:rgba(93,202,165,.35);}
+.pill-2{background:rgba(55,138,221,.2);color:#9DCFFF;border-color:rgba(55,138,221,.35);}
+.pill-3{background:rgba(239,159,39,.2);color:#FFD580;border-color:rgba(239,159,39,.35);}
+.pill-4{background:rgba(216,90,48,.2);color:#FFB08A;border-color:rgba(216,90,48,.35);}
+.pill-arrow{font-size:13px;color:rgba(200,216,255,.35);flex-shrink:0;}
+.gift-banner{margin-top:16px;width:100%;background:rgba(239,159,39,.08);border:1.5px dashed rgba(239,159,39,.4);border-radius:16px;padding:13px 16px;display:flex;align-items:center;gap:12px;animation:fadeUp .7s ease .8s both;}
+.gift-icon{font-size:28px;}
+.gift-text{font-size:13px;color:rgba(255,255,255,.85);line-height:1.5;}
+.gift-text strong{display:block;font-size:14px;color:#fff;}
+.cta-wrap{margin-top:22px;width:100%;animation:fadeUp .7s ease .95s both;}
+.cta-btn{width:100%;padding:17px;background:var(--green);color:#fff;border:none;border-radius:18px;font-family:var(--jua);font-size:21px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 6px 24px rgba(29,158,117,.35);transition:transform .15s,box-shadow .15s;}
+.cta-btn:active{transform:scale(.97);}
+.cta-arrow{animation:arrowBounce 1s ease-in-out infinite;}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-12px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+@keyframes bounceIn{from{opacity:0;transform:scale(.5);}to{opacity:1;transform:scale(1);}}
+@keyframes arrowBounce{0%,100%{transform:translateX(0);}50%{transform:translateX(5px);}}
+.page-out{animation:pageOut .45s ease forwards!important;}
+@keyframes pageOut{to{opacity:0;transform:scale(1.03);}}
+</style>
+</head>
+<body>
+<div class="scene">
+<div class="stars"></div>
+<div class="content">
+  <div class="top-badge">🚀 2026 건강 탐험 시작!</div>
+  <div class="mascot-wrap">🚀</div>
+  <div class="title-block">
+    <p class="title-sub">튼튼하고 건강한 '나' 만들기 프로젝트</p>
+    <div class="title-brand">튼튼탐험대 출발!</div>
+  </div>
+  <div class="tagline-card">
+    <p>미션을 완료하고, 포인트를 모아서<br><strong>레벨을 올려봐요!</strong><br>매일 꾸준히 도전하면 몸도 마음도 튼튼해져요 💪</p>
+  </div>
+  <div class="level-pills">
+    <span class="pill pill-1">🐱 초보 냥이</span>
+    <span class="pill-arrow">→</span>
+    <span class="pill pill-2">🐵 재간둥이</span>
+    <span class="pill-arrow">→</span>
+    <span class="pill pill-3">🐶 수호대</span>
+    <span class="pill-arrow">→</span>
+    <span class="pill pill-4">🐯 무적 호랑이</span>
+  </div>
+  <div class="gift-banner">
+    <div class="gift-icon">🎁</div>
+    <div class="gift-text"><strong>레벨이 올라가면 특별 선물이 나갑니다~!</strong></div>
+  </div>
+  <div class="cta-wrap">
+    <button class="cta-btn" onclick="go()">탐험 시작하기! <span class="cta-arrow">→</span></button>
+  </div>
+</div>
+</div>
+<script>
+function go(){document.querySelector('.scene').classList.add('page-out');setTimeout(function(){window.location.href='page3.html';},440);}
+var lt=0;document.addEventListener('touchend',function(e){var n=Date.now();if(n-lt<300)e.preventDefault();lt=n;},{passive:false});
+</script>
+</body>
+</html>

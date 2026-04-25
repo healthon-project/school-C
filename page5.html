@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>튼튼탐험대 — 대박선물 2탄</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:'KH';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/KyoboHand.woff') format('woff');}
+:root{--jua:'Jua',sans-serif;--hand:'KH',sans-serif;--green:#1D9E75;--green2:#5DCAA5;--amber:#EF9F27;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden;min-height:100%;}
+.scene{min-height:100vh;background:radial-gradient(ellipse at 70% 20%,rgba(239,159,39,.06),transparent 50%),radial-gradient(ellipse at 20% 80%,rgba(127,119,221,.06),transparent 55%),linear-gradient(170deg,#04061A,#0B0E2A 50%,#0E1535);display:flex;flex-direction:column;align-items:center;}
+.stars{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(1px 1px at 10% 15%,rgba(255,255,255,.55),transparent),radial-gradient(1px 1px at 28% 8%,rgba(255,255,255,.45),transparent),radial-gradient(1.5px 1.5px at 45% 22%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 62% 6%,rgba(255,255,255,.7),transparent),radial-gradient(1px 1px at 78% 16%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 5% 38%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 52% 42%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 87% 36%,rgba(255,255,255,.65),transparent),radial-gradient(1px 1px at 16% 57%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 72% 54%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 37% 69%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 82% 72%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 9% 82%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 47% 89%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 94% 84%,rgba(255,255,255,.55),transparent),radial-gradient(1px 1px at 32% 94%,rgba(255,255,255,.4),transparent),radial-gradient(1.5px 1.5px at 67% 97%,rgba(255,255,255,.45),transparent),radial-gradient(1px 1px at 20% 4%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 55% 30%,rgba(255,255,255,.35),transparent),radial-gradient(1px 1px at 88% 25%,rgba(255,255,255,.5),transparent);}
+/* ── 레벨 배너 ── */
+.level-banner{position:relative;z-index:10;width:100%;max-width:430px;margin-top:10px;padding:0 14px;animation:fadeDown .5s ease both;}
+.lv-strip{background:rgba(255,255,255,.06);border:1px solid rgba(200,220,255,.15);border-radius:16px;padding:8px 12px;display:grid;grid-template-columns:repeat(4,1fr);gap:3px;}
+.lv-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 3px;border-radius:10px;}
+.lv-item.active{background:rgba(255,255,255,.1);}
+.lv-emoji{font-size:18px;line-height:1;}
+.lv-item.active .lv-emoji{font-size:24px;}
+.lv-name{font-size:9px;color:rgba(200,220,255,.5);text-align:center;line-height:1.2;}
+.lv-item.active .lv-name{color:rgba(255,255,255,.85);}
+.lv-pts{font-size:8px;color:rgba(200,220,255,.3);}
+.lv-item.active .lv-pts{color:#FFD86E;}
+.lv-bar-wrap{display:flex;align-items:center;gap:6px;margin-top:6px;padding:0 2px;}
+.lv-bar-track{flex:1;height:5px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;}
+.lv-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--green),var(--green2));transition:width .4s;}
+.lv-bar-label{font-size:11px;color:#FFD86E;white-space:nowrap;}
+/* ── 콘텐츠 ── */
+.content{position:relative;z-index:10;width:100%;max-width:430px;padding:0 16px 100px;display:flex;flex-direction:column;align-items:center;}
+/* ── 헤더 ── */
+.gift-header{margin-top:14px;width:100%;display:flex;align-items:center;gap:14px;animation:fadeDown .5s ease both;}
+.gift-icon-wrap{font-size:52px;width:72px;height:72px;background:rgba(255,215,0,.08);border:2px dashed rgba(255,215,0,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.gift-header-text{flex:1;}
+.gift-header-badge{display:inline-block;background:rgba(255,200,60,.12);border:1px solid rgba(255,200,60,.3);color:#FFD700;font-size:11px;padding:3px 10px;border-radius:100px;margin-bottom:5px;}
+.gift-header-title{font-family:var(--hand);font-size:clamp(20px,5.5vw,26px);color:#fff;line-height:1.2;}
+.gift-header-sub{font-size:11px;color:rgba(255,220,150,.75);margin-top:3px;line-height:1.5;}
+/* ── 퍼즐 소개 ── */
+.puzzle-box{margin-top:16px;width:100%;background:rgba(100,160,255,.06);border:1.5px solid rgba(100,160,255,.2);border-radius:20px;padding:20px 18px;text-align:center;animation:fadeUp .5s ease .1s both;}
+.puzzle-title{font-family:var(--hand);font-size:clamp(18px,5vw,22px);color:#A8D8FF;margin-bottom:10px;}
+.puzzle-desc{font-size:13px;color:rgba(200,220,255,.8);line-height:1.8;}
+.puzzle-desc em{font-style:normal;color:#7AEEBB;font-weight:700;text-decoration:underline;text-underline-offset:3px;}
+/* ── 퍼즐 버튼 ── */
+.puzzle-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;background:linear-gradient(135deg,rgba(58,122,204,.25),rgba(30,80,160,.35));border:2px solid rgba(100,160,255,.35);border-radius:16px;color:#A8D8FF;font-size:16px;font-family:var(--jua);text-decoration:none;cursor:pointer;margin-top:12px;transition:transform .15s;}
+.puzzle-btn:active{transform:scale(.97);}
+/* ── 네비 ── */
+.nav-bar{position:fixed;bottom:0;left:0;right:0;z-index:40;display:flex;justify-content:center;gap:12px;padding:12px 20px 22px;background:linear-gradient(to top,rgba(4,6,26,.95) 60%,transparent);}
+.nav-btn{flex:1;max-width:160px;display:flex;align-items:center;justify-content:center;gap:5px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:100px;padding:10px 0;font-family:var(--jua);font-size:14px;color:#fff;cursor:pointer;transition:transform .15s;}
+.nav-btn:active{transform:scale(.95);}
+.nav-btn.next{background:rgba(239,159,39,.3);border-color:rgba(239,159,39,.45);}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.page-out{animation:pageOut .4s ease forwards!important;}
+@keyframes pageOut{to{opacity:0;transform:translateY(-12px);}}
+</style>
+
+<!-- ✅ Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+var _fbApp = firebase.initializeApp({
+  apiKey: "AIzaSyA8DcrxX0l_94zkBTs-TtDSVoY5slUNbNk",
+  authDomain: "healthon-project02.firebaseapp.com",
+  projectId: "healthon-project02",
+  storageBucket: "healthon-project02.firebasestorage.app",
+  messagingSenderId: "188732634434",
+  appId: "1:188732634434:web:bd0aab6f7e10f5b912c4db",
+  measurementId: "G-Y0XPXJTFXM"
+});
+var _db = firebase.firestore();
+
+/* ── Firebase 헬퍼 ────────────────────────────────────
+   학번(student_id)을 키로 Firestore에 데이터 저장/읽기
+   컬렉션: students / document: {student_id}
+──────────────────────────────────────────────────── */
+function _getSid(){return localStorage.getItem('tuntun_student_id')||'guest_'+((navigator.userAgent+screen.width).hashCode?'x':Math.abs(Array.from(navigator.userAgent).reduce(function(a,c){return a+c.charCodeAt(0);},0)%90000+10000));}
+
+function fbSave(field, value){
+  var sid=_getSid();
+  if(!sid) return; // 학번 없으면 저장 안 함
+  var doc={};
+  doc[field]=value;
+  doc['name']=localStorage.getItem('tuntun_student_name')||'';
+  doc['updatedAt']=firebase.firestore.FieldValue.serverTimestamp();
+  _db.collection('students').doc(sid).set(doc,{merge:true}).catch(function(e){console.warn('FB save err',e);});
+}
+
+function fbLoad(sid, callback){
+  if(!sid){callback({});return;}
+  _db.collection('students').doc(sid).get().then(function(snap){
+    callback(snap.exists?snap.data():{});
+  }).catch(function(){callback({});});
+}
+</script>
+</head>
+<body>
+<div class="scene">
+<div class="stars"></div>
+
+<!-- 레벨 배너 -->
+<div class="level-banner">
+  <div class="lv-strip">
+    <div class="lv-item" id="lv0"><div class="lv-emoji">🐱</div><div class="lv-name">초보 냥이</div><div class="lv-pts">0~450P</div></div>
+    <div class="lv-item" id="lv1"><div class="lv-emoji">🐵</div><div class="lv-name">재간둥이</div><div class="lv-pts">~1200P</div></div>
+    <div class="lv-item" id="lv2"><div class="lv-emoji">🐶</div><div class="lv-name">수호대</div><div class="lv-pts">~2200P</div></div>
+    <div class="lv-item" id="lv3"><div class="lv-emoji">🐯</div><div class="lv-name">무적 호랑이</div><div class="lv-pts">3000P~</div></div>
+  </div>
+  <div class="lv-bar-wrap">
+    <div class="lv-bar-track"><div class="lv-bar-fill" id="lv-bar" style="width:0%;"></div></div>
+    <div class="lv-bar-label" id="lv-bar-label">0P</div>
+  </div>
+</div>
+
+<div class="content">
+  <div class="gift-header">
+    <div class="gift-icon-wrap">🎁</div>
+    <div class="gift-header-text">
+      <div class="gift-header-badge">🌟 대박선물 2탄</div>
+      <div class="gift-header-title">대박선물 2탄을<br>공개합니다!</div>
+      <div class="gift-header-sub">포인트를 모으면 특별한 선물이!</div>
+    </div>
+  </div>
+
+  <div class="puzzle-box">
+    <div class="puzzle-title">🧩 이번 달 퍼즐 도전 🧩</div>
+    <div class="puzzle-desc">
+      오늘의 미션을 수행하고 포인트를 모으면<br>
+      <em>퍼즐 조각</em>이 맞춰져요.<br>
+      퍼즐그림 완성한 사람<br>
+      선물 받을 준비 하세요~! 🎁<br>
+      <span style="font-size:11px;color:rgba(180,200,255,.5);">(매월 퍼즐그림이 달라짐)</span>
+    </div>
+    <a class="puzzle-btn" href="https://padlet.com/a01067752602/padlet-a1s7bft7ayd8chrj" target="_blank">🧩 퍼즐 패들렛 보러 가기 →</a>
+  </div>
+</div>
+
+<div class="nav-bar">
+  <button class="nav-btn" onclick="goPrev()">← 이전</button>
+  <button class="nav-btn next" onclick="goNext()">다음 →</button>
+</div>
+</div>
+<script>
+var pts=0;try{pts=parseInt(localStorage.getItem('tuntun_pts')||'0');}catch(e){}
+var curLv=pts<=450?0:pts<=1200?1:pts<=2200?2:3;
+(function(){for(var i=0;i<4;i++)document.getElementById('lv'+i).classList.toggle('active',i===curLv);var maxes=[450,1200,2200,99999];var prev=curLv===0?0:maxes[curLv-1];var next=maxes[curLv]===99999?prev+800:maxes[curLv];var pct=curLv===3?100:Math.min(100,Math.round((pts-prev)/(next-prev)*100));document.getElementById('lv-bar').style.width=pct+'%';document.getElementById('lv-bar-label').textContent=pts+'P';})();
+function goPrev(){document.querySelector('.scene').classList.add('page-out');setTimeout(function(){window.location.href='page4.html';},400);}
+function goNext(){document.querySelector('.scene').classList.add('page-out');setTimeout(function(){window.location.href='page6.html';},400);}
+var lt=0;document.addEventListener('touchend',function(e){var n=Date.now();if(n-lt<300)e.preventDefault();lt=n;},{passive:false});
+</script>
+</body>
+</html>
