@@ -87,14 +87,15 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
+// ★ school-C Firebase 설정 (healthon-project02)
 var _fbApp = firebase.initializeApp({
-  apiKey: "AIzaSyA8DcrxX0l_94zkBTs-TtDSVoY5slUNbNk",
+  apiKey: "AIzaSyDUdKZxJdrQopcwfM3qOUxEiwPySfCOtWE",
   authDomain: "healthon-project02.firebaseapp.com",
   projectId: "healthon-project02",
   storageBucket: "healthon-project02.firebasestorage.app",
-  messagingSenderId: "188732634434",
-  appId: "1:188732634434:web:bd0aab6f7e10f5b912c4db",
-  measurementId: "G-Y0XPXJTFXM"
+  messagingSenderId: "568298721593",
+  appId: "1:568298721593:web:3165fddaa8d2720cae18e8",
+  measurementId: "G-0341EECC37"
 });
 var _db = firebase.firestore();
 
@@ -106,7 +107,7 @@ function _getSid(){return localStorage.getItem('tuntun_student_id')||'guest_'+((
 
 function fbSave(field, value){
   var sid=_getSid();
-  if(!sid) return; // 학번 없으면 저장 안 함
+  if(!sid) return;
   var doc={};
   doc[field]=value;
   doc['name']=localStorage.getItem('tuntun_student_name')||'';
@@ -233,80 +234,222 @@ function fbLoad(sid, callback){
 </div>
 </div>
 <script>
-/* ── 레벨 ── */
-var pts=0;try{pts=parseInt(localStorage.getItem('tuntun_pts')||'0');}catch(e){}
-var curLv=pts<=450?0:pts<=1200?1:pts<=2200?2:3;
-function renderLevel(){
-  for(var i=0;i<4;i++) document.getElementById('lv'+i).classList.toggle('active',i===curLv);
-  var maxes=[450,1200,2200,3000];var prev=curLv===0?0:maxes[curLv-1];var next=maxes[curLv]===3000?prev+800:maxes[curLv];
-  var pct=curLv===3?100:Math.min(100,Math.round((pts-prev)/(next-prev)*100));
-  document.getElementById('lv-bar').style.width=pct+'%';
-  document.getElementById('lv-bar-label').textContent=pts+'P';
-  var pi=document.getElementById('pts-input');if(pi&&!pi.value)pi.value=pts||'';
+// ════════════════════════════════════════════════
+// ★ 학교 고정값 (school-B)
+// ════════════════════════════════════════════════
+var SCHOOL = 'C';
+
+// ════════════════════════════════════════════════
+// 레벨 시스템 (누적 포인트 기반, 초기화 없음)
+// ════════════════════════════════════════════════
+var pts = 0;
+try { pts = parseInt(localStorage.getItem('tuntun_pts') || '0'); } catch(e) {}
+var curLv = pts <= 450 ? 0 : pts <= 1200 ? 1 : pts <= 2200 ? 2 : 3;
+
+function renderLevel() {
+  for (var i = 0; i < 4; i++) {
+    document.getElementById('lv' + i).classList.toggle('active', i === curLv);
+  }
+  var maxes = [450, 1200, 2200, 3000];
+  var prev = curLv === 0 ? 0 : maxes[curLv - 1];
+  var next = maxes[curLv] === 3000 ? prev + 800 : maxes[curLv];
+  var pct = curLv === 3 ? 100 : Math.min(100, Math.round((pts - prev) / (next - prev) * 100));
+  document.getElementById('lv-bar').style.width = pct + '%';
+  document.getElementById('lv-bar-label').textContent = pts + 'P';
+  var pi = document.getElementById('pts-input');
+  if (pi && !pi.value) pi.value = pts || '';
 }
 renderLevel();
-function savePtsInput(){
-  var v=parseInt(document.getElementById('pts-input').value);
-  if(isNaN(v)||v<0){return;}
-  localStorage.setItem('tuntun_pts',v);fbSave('totalPts',v);
-  pts=v;curLv=pts<=450?0:pts<=1200?1:pts<=2200?2:3;
+
+function savePtsInput() {
+  var v = parseInt(document.getElementById('pts-input').value);
+  if (isNaN(v) || v < 0) { return; }
+  localStorage.setItem('tuntun_pts', v);
+  fbSave('totalPts', v);
+  pts = v;
+  curLv = pts <= 450 ? 0 : pts <= 1200 ? 1 : pts <= 2200 ? 2 : 3;
   renderLevel();
-  var btn=document.querySelector('.lv-pts-save-btn');
-  if(btn){btn.textContent='✅ 저장!';setTimeout(function(){btn.textContent='저장';},1500);}
+  var btn = document.querySelector('.lv-pts-save-btn');
+  if (btn) { btn.textContent = '✅ 저장!'; setTimeout(function() { btn.textContent = '저장'; }, 1500); }
 }
 
-/* ── 미션 ── */
-var MISSION_KEY='tuntun_missions_daily';
-var MONTHLY_KEY='tuntun_monthly_pts';
-var MONTHLY_MONTH='tuntun_monthly_month';
-var SHEETS_URL='https://script.google.com/macros/s/AKfycbxIMa_RHfLoHQyyPu-i5K6XNtbqhnUBlBDEhvegHpTi2d6LnyD8Vu9ZwSBKfQ_wsvBu/exec';
-var MISSION_PTS={m1:5,m2:5,m3:20,m4:5,m5:7};
-function getTodayStr(){var d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
-function getCurrentMonth(){var d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1);}
-function rolloverIfNeeded(){
-  try{
-    var raw=localStorage.getItem(MISSION_KEY);
-    if(!raw)return;
-    var data=JSON.parse(raw);
-    if(data.date&&data.date!==getTodayStr()){
-      var pp=parseInt(data.todayPts||'0');
-      if(pp>0){
-        var cm=getCurrentMonth(),sm=localStorage.getItem(MONTHLY_MONTH)||'',monthly=sm===cm?parseInt(localStorage.getItem(MONTHLY_KEY)||'0'):0;
-        monthly+=pp;
-        localStorage.setItem(MONTHLY_KEY,monthly);
-        localStorage.setItem(MONTHLY_MONTH,cm);
+// ════════════════════════════════════════════════
+// 미션 시스템
+// ════════════════════════════════════════════════
+var MISSION_KEY = 'tuntun_missions_daily';
+var SHEETS_URL  = 'https://script.google.com/macros/s/AKfycbxIMa_RHfLoHQyyPu-i5K6XNtbqhnUBlBDEhvegHpTi2d6LnyD8Vu9ZwSBKfQ_wsvBu/exec';
+var MISSION_PTS = { m1: 5, m2: 5, m3: 20, m4: 5, m5: 7 };
 
-        /* 하루 포인트 1행만 시트에 전송 */
-        var sid=localStorage.getItem('tuntun_student_id')||'미입력';
-        var sname=localStorage.getItem('tuntun_student_name')||'';
-        fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({type:'daily',number:sid,name:sname,date:data.date,pts:pp,school:'C'})
-        }).catch(function(){});
-      }
-      localStorage.removeItem(MISSION_KEY);
+function getTodayStr() {
+  var d = new Date();
+  // 날짜를 0패딩해서 비교 오류 방지
+  var mm = d.getMonth() + 1;
+  var dd = d.getDate();
+  return d.getFullYear() + '-' + (mm < 10 ? '0' + mm : mm) + '-' + (dd < 10 ? '0' + dd : dd);
+}
 
-      /* 28일이면 월별 합산 신호 전송 */
-      var now=new Date();
-      if(now.getDate()===28){
-        fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({type:'monthly_summary',month:now.getMonth()+1})
-        }).catch(function(){});
-      }
+// ── 앱 열 때: 날짜 바뀌었으면 오늘포인트·버튼 초기화 ─
+// ★ 핵심: 시트 데이터는 미션 완료 즉시 전송됐으므로 여기선 UI만 리셋
+// ★ 28일 자정 넘어 앱 열면 → Apps Script에 월별합산 신호 전송
+function rolloverIfNeeded() {
+  try {
+    var raw = localStorage.getItem(MISSION_KEY);
+    if (!raw) return;
+    var saved = JSON.parse(raw);
+    if (!saved.date || saved.date === getTodayStr()) return;
+
+    // 날짜가 달라짐 → 오늘포인트·버튼 초기화
+    localStorage.removeItem(MISSION_KEY);
+
+    // 28일 자정이 지나 앱을 열었을 때 → 월별 합산 탭 생성 요청
+    // (Apps Script가 앱 데이터(일) 탭에서 직접 읽어서 월별 탭 생성)
+    var now = new Date();
+    if (now.getDate() === 28) {
+      fetch(SHEETS_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'monthly_summary', month: now.getMonth() + 1, school: SCHOOL })
+      }).catch(function() {});
     }
-  }catch(e){}
+  } catch(e) {}
 }
 rolloverIfNeeded();
-function loadTodayMissions(){try{var raw=localStorage.getItem(MISSION_KEY);if(!raw)return{};var data=JSON.parse(raw);if(data.date!==getTodayStr())return{};return data.missions||{};}catch(e){return{};}}
-function saveTodayMissions(m,p){var d={date:getTodayStr(),missions:m,todayPts:p};try{localStorage.setItem(MISSION_KEY,JSON.stringify(d));}catch(e){}fbSave('todayMissions',d);}
-var missionDone=loadTodayMissions();
-var todayPts=0;
-(function restoreMissions(){Object.keys(missionDone).forEach(function(id){if(missionDone[id]){todayPts+=MISSION_PTS[id]||0;var el=document.getElementById(id);if(!el)return;el.classList.add('done');var btn=el.querySelector('.m-btn');if(btn){btn.textContent='완료 ✓';btn.classList.add('done');btn.disabled=true;}var cbtn=document.getElementById('c-'+id);if(cbtn)cbtn.disabled=false;}});document.getElementById('today-pts').textContent=todayPts;})();
-function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(function(){t.style.display='none';},2200);}
-function doMission(id,p){if(missionDone[id])return;missionDone[id]=true;todayPts+=p;saveTodayMissions(missionDone,todayPts);var el=document.getElementById(id);el.classList.add('done');var btn=el.querySelector('.m-btn');btn.textContent='완료 ✓';btn.classList.add('done');btn.disabled=true;var cbtn=document.getElementById('c-'+id);if(cbtn)cbtn.disabled=false;document.getElementById('today-pts').textContent=todayPts;showToast('⭐ +'+p+'P 획득! 대단해요!');try{var cur=parseInt(localStorage.getItem('tuntun_pts')||'0');var newPts=cur+p;localStorage.setItem('tuntun_pts',newPts);fbSave('totalPts',newPts);pts=newPts;curLv=pts<=450?0:pts<=1200?1:pts<=2200?2:3;renderLevel();}catch(e){}}
-function cancelMission(id,p){if(!missionDone[id])return;missionDone[id]=false;todayPts=Math.max(0,todayPts-p);saveTodayMissions(missionDone,todayPts);var el=document.getElementById(id);el.classList.remove('done');var btn=el.querySelector('.m-btn');btn.textContent='완료!';btn.classList.remove('done');btn.disabled=false;var cbtn=document.getElementById('c-'+id);if(cbtn)cbtn.disabled=true;document.getElementById('today-pts').textContent=todayPts;showToast('↩️ 미션 취소됐어요');try{var cur=parseInt(localStorage.getItem('tuntun_pts')||'0');localStorage.setItem('tuntun_pts',Math.max(0,cur-p));fbSave('totalPts',Math.max(0,cur-p));pts=Math.max(0,cur-p);curLv=pts<=450?0:pts<=1200?1:pts<=2200?2:3;renderLevel();}catch(e){}}
-function goPrev(){document.querySelector('.scene').classList.add('page-out');setTimeout(function(){window.location.href='page3.html';},400);}
-function goNext(){document.querySelector('.scene').classList.add('page-out');setTimeout(function(){window.location.href='page6.html';},400);}
-var lt=0;document.addEventListener('touchend',function(e){var n=Date.now();if(n-lt<300)e.preventDefault();lt=n;},{passive:false});
+
+// ── 오늘 미션 데이터 로드 ──────────────────────────
+function loadTodayMissions() {
+  try {
+    var raw = localStorage.getItem(MISSION_KEY);
+    if (!raw) return {};
+    var data = JSON.parse(raw);
+    if (data.date !== getTodayStr()) return {};  // 날짜 다르면 빈 객체
+    return data.missions || {};
+  } catch(e) { return {}; }
+}
+
+// ── 오늘 미션 데이터 저장 (localStorage + Firebase) ─
+function saveTodayMissions(m, p) {
+  var d = { date: getTodayStr(), missions: m, todayPts: p };
+  try { localStorage.setItem(MISSION_KEY, JSON.stringify(d)); } catch(e) {}
+  fbSave('todayMissions', d);
+}
+
+// ── 시트에 오늘 포인트 즉시 전송 ──────────────────
+// Apps Script의 saveDaily()가 날짜+학번 중복 시 포인트 덮어쓰기하므로
+// 미션 완료/취소 때마다 호출해도 항상 최신값이 반영됨
+function sendToSheet(todayStr, todayPtsVal) {
+  var sid   = localStorage.getItem('tuntun_student_id') || '미입력';
+  var sname = localStorage.getItem('tuntun_student_name') || '';
+  fetch(SHEETS_URL, {
+    method: 'POST', mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      type: 'daily',
+      number: sid,
+      name: sname,
+      date: todayStr,
+      pts: todayPtsVal,
+      school: SCHOOL
+    })
+  }).catch(function() {});
+}
+
+// ── 미션 상태 복원 (앱 재접속 시) ─────────────────
+var missionDone = loadTodayMissions();
+var todayPts = 0;
+(function restoreMissions() {
+  Object.keys(missionDone).forEach(function(id) {
+    if (!missionDone[id]) return;
+    todayPts += MISSION_PTS[id] || 0;
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.add('done');
+    var btn = el.querySelector('.m-btn');
+    if (btn) { btn.textContent = '완료 ✓'; btn.classList.add('done'); btn.disabled = true; }
+    var cbtn = document.getElementById('c-' + id);
+    if (cbtn) cbtn.disabled = false;
+  });
+  document.getElementById('today-pts').textContent = todayPts;
+})();
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(function() { t.style.display = 'none'; }, 2200);
+}
+
+// ── 미션 완료 ────────────────────────────────────────
+function doMission(id, p) {
+  if (missionDone[id]) return;
+  missionDone[id] = true;
+  todayPts += p;
+
+  // 로컬 저장
+  saveTodayMissions(missionDone, todayPts);
+
+  // UI 업데이트
+  var el = document.getElementById(id);
+  el.classList.add('done');
+  var btn = el.querySelector('.m-btn');
+  btn.textContent = '완료 ✓'; btn.classList.add('done'); btn.disabled = true;
+  var cbtn = document.getElementById('c-' + id);
+  if (cbtn) cbtn.disabled = false;
+  document.getElementById('today-pts').textContent = todayPts;
+  showToast('⭐ +' + p + 'P 획득! 대단해요!');
+
+  // 누적 총 포인트 업데이트 (레벨용, 초기화 없음)
+  try {
+    var cur = parseInt(localStorage.getItem('tuntun_pts') || '0');
+    var newPts = cur + p;
+    localStorage.setItem('tuntun_pts', newPts);
+    fbSave('totalPts', newPts);
+    pts = newPts;
+    curLv = pts <= 450 ? 0 : pts <= 1200 ? 1 : pts <= 2200 ? 2 : 3;
+    renderLevel();
+  } catch(e) {}
+
+  // ★ 시트에 즉시 전송 (오늘 누적 포인트로 덮어쓰기)
+  sendToSheet(getTodayStr(), todayPts);
+}
+
+// ── 미션 취소 ────────────────────────────────────────
+function cancelMission(id, p) {
+  if (!missionDone[id]) return;
+  missionDone[id] = false;
+  todayPts = Math.max(0, todayPts - p);
+
+  // 로컬 저장
+  saveTodayMissions(missionDone, todayPts);
+
+  // UI 업데이트
+  var el = document.getElementById(id);
+  el.classList.remove('done');
+  var btn = el.querySelector('.m-btn');
+  btn.textContent = '완료!'; btn.classList.remove('done'); btn.disabled = false;
+  var cbtn = document.getElementById('c-' + id);
+  if (cbtn) cbtn.disabled = true;
+  document.getElementById('today-pts').textContent = todayPts;
+  showToast('↩️ 미션 취소됐어요');
+
+  // 누적 총 포인트 차감
+  try {
+    var cur = parseInt(localStorage.getItem('tuntun_pts') || '0');
+    var newPts = Math.max(0, cur - p);
+    localStorage.setItem('tuntun_pts', newPts);
+    fbSave('totalPts', newPts);
+    pts = newPts;
+    curLv = pts <= 450 ? 0 : pts <= 1200 ? 1 : pts <= 2200 ? 2 : 3;
+    renderLevel();
+  } catch(e) {}
+
+  // ★ 시트에 즉시 전송 (취소 후 포인트로 덮어쓰기)
+  sendToSheet(getTodayStr(), todayPts);
+}
+
+function goPrev() { document.querySelector('.scene').classList.add('page-out'); setTimeout(function() { window.location.href = 'page3.html'; }, 400); }
+function goNext() { document.querySelector('.scene').classList.add('page-out'); setTimeout(function() { window.location.href = 'page6.html'; }, 400); }
+var lt = 0;
+document.addEventListener('touchend', function(e) { var n = Date.now(); if (n - lt < 300) e.preventDefault(); lt = n; }, { passive: false });
 </script>
 </body>
 </html>
