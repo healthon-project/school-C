@@ -103,14 +103,14 @@ var _db = firebase.firestore();
    학번(student_id)을 키로 Firestore에 데이터 저장/읽기
    컬렉션: students / document: {student_id}
 ──────────────────────────────────────────────────── */
-function _getSid(){return localStorage.getItem('tuntun_student_id')||'guest_'+((navigator.userAgent+screen.width).hashCode?'x':Math.abs(Array.from(navigator.userAgent).reduce(function(a,c){return a+c.charCodeAt(0);},0)%90000+10000));}
+function _getSid(){return localStorage.getItem('tuntun_student_id_C')||'guest_'+((navigator.userAgent+screen.width).hashCode?'x':Math.abs(Array.from(navigator.userAgent).reduce(function(a,c){return a+c.charCodeAt(0);},0)%90000+10000));}
 
 function fbSave(field, value){
   var sid=_getSid();
   if(!sid) return;
   var doc={};
   doc[field]=value;
-  doc['name']=localStorage.getItem('tuntun_student_name')||'';
+  doc['name']=localStorage.getItem('tuntun_student_name_C')||'';
   doc['updatedAt']=firebase.firestore.FieldValue.serverTimestamp();
   _db.collection('students').doc(sid).set(doc,{merge:true}).catch(function(e){console.warn('FB save err',e);});
 }
@@ -243,7 +243,7 @@ var SCHOOL = 'C';
 // 레벨 시스템 (누적 포인트 기반, 초기화 없음)
 // ════════════════════════════════════════════════
 var pts = 0;
-try { pts = parseInt(localStorage.getItem('tuntun_pts') || '0'); } catch(e) {}
+try { pts = parseInt(localStorage.getItem('tuntun_pts_C') || '0'); } catch(e) {}
 var curLv = pts <= 450 ? 0 : pts <= 1200 ? 1 : pts <= 2200 ? 2 : 3;
 
 function renderLevel() {
@@ -264,7 +264,7 @@ renderLevel();
 function savePtsInput() {
   var v = parseInt(document.getElementById('pts-input').value);
   if (isNaN(v) || v < 0) { return; }
-  localStorage.setItem('tuntun_pts', v);
+  localStorage.setItem('tuntun_pts_C', v);
   fbSave('totalPts', v);
   pts = v;
   curLv = pts <= 450 ? 0 : pts <= 1200 ? 1 : pts <= 2200 ? 2 : 3;
@@ -276,7 +276,7 @@ function savePtsInput() {
 // ════════════════════════════════════════════════
 // 미션 시스템
 // ════════════════════════════════════════════════
-var MISSION_KEY = 'tuntun_missions_daily';
+var MISSION_KEY = 'tuntun_missions_daily_C';
 var SHEETS_URL  = 'https://script.google.com/macros/s/AKfycbxRvWTdJxCWBC_IDeRz0QDLxUDkGcF0AOF900jNgJCh6k0vXyOAqwjheeYsjRvsc8jB/exec';
 var MISSION_PTS = { m1: 5, m2: 5, m3: 20, m4: 5, m5: 7 };
 
@@ -337,8 +337,8 @@ function saveTodayMissions(m, p) {
 // Apps Script의 saveDaily()가 날짜+학번 중복 시 포인트 덮어쓰기하므로
 // 미션 완료/취소 때마다 호출해도 항상 최신값이 반영됨
 function sendToSheet(todayStr, todayPtsVal) {
-  var sid   = localStorage.getItem('tuntun_student_id') || '미입력';
-  var sname = localStorage.getItem('tuntun_student_name') || '';
+  var sid   = localStorage.getItem('tuntun_student_id_C') || '미입력';
+  var sname = localStorage.getItem('tuntun_student_name_C') || '';
   fetch(SHEETS_URL, {
     method: 'POST', mode: 'no-cors',
     headers: { 'Content-Type': 'application/json' },
@@ -399,9 +399,9 @@ function doMission(id, p) {
 
   // 누적 총 포인트 업데이트 (레벨용, 초기화 없음)
   try {
-    var cur = parseInt(localStorage.getItem('tuntun_pts') || '0');
+    var cur = parseInt(localStorage.getItem('tuntun_pts_C') || '0');
     var newPts = cur + p;
-    localStorage.setItem('tuntun_pts', newPts);
+    localStorage.setItem('tuntun_pts_C', newPts);
     fbSave('totalPts', newPts);
     pts = newPts;
     curLv = pts <= 450 ? 0 : pts <= 1200 ? 1 : pts <= 2200 ? 2 : 3;
@@ -433,9 +433,9 @@ function cancelMission(id, p) {
 
   // 누적 총 포인트 차감
   try {
-    var cur = parseInt(localStorage.getItem('tuntun_pts') || '0');
+    var cur = parseInt(localStorage.getItem('tuntun_pts_C') || '0');
     var newPts = Math.max(0, cur - p);
-    localStorage.setItem('tuntun_pts', newPts);
+    localStorage.setItem('tuntun_pts_C', newPts);
     fbSave('totalPts', newPts);
     pts = newPts;
     curLv = pts <= 450 ? 0 : pts <= 1200 ? 1 : pts <= 2200 ? 2 : 3;
