@@ -109,11 +109,11 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
     <div class="reg-title">
       <span class="emoji">📋</span>
       <h2>탐험대원 등록</h2>
-      <p>학번과 이름을 입력하면<br>포인트가 기록에 저장돼요!</p>
+      <p>학년반번호와 이름을 입력해야<br>포인트가 기록에 저장돼요!</p>
     </div>
     <div class="reg-card">
       <div class="input-group">
-        <label class="input-label">🔢 학번 (4자리 숫자)</label>
+        <label class="input-label">🔢 학년반번호 (4자리)</label>
         <input id="inp-id" class="input-field" type="number" inputmode="numeric" maxlength="4" placeholder="예: 2315" oninput="limitLen(this,4)">
         <span id="err-id" class="error-msg">4자리 숫자로 입력해주세요</span>
       </div>
@@ -124,12 +124,8 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
       </div>
       <button class="reg-btn" onclick="saveAndGo()">✅ 등록하고 시작!</button>
     </div>
-    <div class="skip-wrap">
-      <button class="skip-btn" onclick="guestGo()">👤 손님으로 시작 (건너뛰기)</button>
-    </div>
-    <div class="already-wrap">
-      <span class="already-txt">이미 등록했나요? </span>
-      <span class="already-link" onclick="goDirectly()">바로 입장하기</span>
+    <div style="margin-top:16px;text-align:center;">
+      <span onclick="goPage()" style="font-size:11px;color:rgba(200,216,255,.35);cursor:pointer;text-decoration:underline;">교사/학부모 입장 →</span>
     </div>
   </div>
 
@@ -140,6 +136,16 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 var ID_KEY   = 'tuntun_student_id_C';
 var NAME_KEY = 'tuntun_student_name_C';
 
+// ── 페이지 로드 시: 미등록이면 바로 등록창 표시 ──
+(function(){
+  var savedId = localStorage.getItem(ID_KEY);
+  if (!savedId || savedId === 'guest') {
+    // 미등록 → 인트로 숨기고 등록창 바로 표시
+    document.getElementById('page-intro').style.display = 'none';
+    document.getElementById('page-register').style.display = 'flex';
+  }
+})();
+
 function limitLen(el, max) {
   if (el.value.length > max) el.value = el.value.slice(0, max);
 }
@@ -147,7 +153,7 @@ function limitLen(el, max) {
 function showRegister() {
   document.getElementById('page-intro').style.display = 'none';
   document.getElementById('page-register').style.display = 'flex';
-  // 이미 저장된 정보가 있으면 입력란에 자동 채워줌
+  // 이미 저장된 정보 자동 채움
   var savedId   = localStorage.getItem(ID_KEY);
   var savedName = localStorage.getItem(NAME_KEY);
   if (savedId && savedId !== 'guest')   document.getElementById('inp-id').value   = savedId;
@@ -159,7 +165,6 @@ function saveAndGo() {
   var name = document.getElementById('inp-name').value.trim();
   var ok   = true;
 
-  // 유효성 검사
   document.getElementById('inp-id').classList.remove('error');
   document.getElementById('inp-name').classList.remove('error');
   document.getElementById('err-id').classList.remove('show');
@@ -179,20 +184,6 @@ function saveAndGo() {
 
   localStorage.setItem(ID_KEY, id);
   localStorage.setItem(NAME_KEY, name);
-  goPage();
-}
-
-function guestGo() {
-  // 손님: 기존 등록 안 건드림, guest로 저장
-  if (!localStorage.getItem(ID_KEY)) {
-    localStorage.setItem(ID_KEY, 'guest');
-    localStorage.setItem(NAME_KEY, '손님');
-  }
-  goPage();
-}
-
-function goDirectly() {
-  // 이미 등록된 경우 바로 입장
   goPage();
 }
 
