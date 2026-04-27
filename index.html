@@ -38,9 +38,9 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 .cta-arrow{animation:arrowBounce 1s ease-in-out infinite;}
 
 /* ── 인적정보 입력 페이지 ── */
-#page-intro{display:flex;flex-direction:column;width:100%;}
-#page-register{display:none;flex-direction:column;width:100%;}
-.reg-title{margin-top:32px;text-align:center;animation:fadeUp .6s ease both;}
+#page-intro{display:flex;flex-direction:column;align-items:center;width:100%;}
+#page-register{display:none;flex-direction:column;align-items:center;width:100%;}
+.reg-title{margin-top:32px;text-align:center;animation:fadeUp .6s ease both;width:100%;}
 .reg-title .emoji{font-size:52px;display:block;margin-bottom:10px;}
 .reg-title h2{font-size:22px;color:#fff;margin-bottom:6px;}
 .reg-title p{font-size:13px;color:rgba(200,216,255,.7);line-height:1.6;}
@@ -55,10 +55,10 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 .error-msg.show{display:block;}
 .reg-btn{width:100%;padding:16px;background:var(--green);color:#fff;border:none;border-radius:16px;font-family:var(--jua);font-size:19px;cursor:pointer;box-shadow:0 6px 24px rgba(29,158,117,.35);transition:transform .15s;margin-top:4px;}
 .reg-btn:active{transform:scale(.97);}
-.skip-wrap{margin-top:14px;display:flex;justify-content:center;animation:fadeUp .6s ease .3s both;}
+.skip-wrap{margin-top:14px;display:flex;justify-content:center;width:100%;animation:fadeUp .6s ease .3s both;}
 .skip-btn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:rgba(200,216,255,.7);font-family:var(--jua);font-size:14px;padding:10px 24px;border-radius:100px;cursor:pointer;transition:background .2s;}
 .skip-btn:active{background:rgba(255,255,255,.12);}
-.already-wrap{margin-top:10px;text-align:center;animation:fadeUp .6s ease .4s both;}
+.already-wrap{margin-top:10px;text-align:center;width:100%;animation:fadeUp .6s ease .4s both;}
 .already-txt{font-size:12px;color:rgba(200,216,255,.5);}
 .already-link{font-size:12px;color:#7EECC8;cursor:pointer;text-decoration:underline;}
 
@@ -145,14 +145,13 @@ function limitLen(el, max) {
 }
 
 function showRegister() {
-  // 이미 등록된 경우 바로 입장
-  var saved = localStorage.getItem(ID_KEY);
-  if (saved && saved !== 'guest') {
-    goPage();
-    return;
-  }
   document.getElementById('page-intro').style.display = 'none';
   document.getElementById('page-register').style.display = 'flex';
+  // 이미 저장된 정보가 있으면 입력란에 자동 채워줌
+  var savedId   = localStorage.getItem(ID_KEY);
+  var savedName = localStorage.getItem(NAME_KEY);
+  if (savedId && savedId !== 'guest')   document.getElementById('inp-id').value   = savedId;
+  if (savedName && savedName !== '손님') document.getElementById('inp-name').value = savedName;
 }
 
 function saveAndGo() {
