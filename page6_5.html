@@ -170,24 +170,6 @@ function fbLoad(sid, callback){
     <div class="page-sub">매월 키와 몸무게를 기록해요</div>
   </div>
 
-  <!-- 학번·이름 입력 -->
-  <div class="student-card">
-    <div class="student-card-title">👤 내 정보를 먼저 입력해줘요 (한 번만!)</div>
-    <div class="student-row">
-      <div>
-        <span class="student-label">🔢 학번반번호 (4자리)</span>
-        <input class="student-input" id="student-id" type="number" inputmode="numeric" placeholder="예) 1205" maxlength="6">
-      </div>
-      <div>
-        <span class="student-label">✏️ 이름</span>
-        <input class="student-input" id="student-name" type="text" placeholder="예) 홍길동">
-      </div>
-    </div>
-    <button class="student-save-btn" onclick="saveStudentInfo()">✅ 저장하기</button>
-    <button id="student-edit-btn" style="display:none;margin-top:10px;width:100%;padding:8px;background:transparent;border:1px solid rgba(200,220,255,.2);border-radius:12px;font-family:var(--jua);font-size:12px;color:rgba(200,220,255,.45);cursor:pointer;" onclick="editStudentInfo()">✏️ 수정하기</button>
-    <div class="student-saved-badge" id="student-saved-badge">저장됨 ✓ <span id="student-saved-text"></span></div>
-  </div>
-
   <!-- BMI 입력 -->
   <div class="bmi-input-card">
     <div class="bmi-month-row" id="month-btns"></div>
@@ -259,33 +241,6 @@ var recs={};try{recs=JSON.parse(localStorage.getItem(CI_STORAGE)||'{}');}catch(e
   }
 })();
 
-function saveStudentInfo(){
-  var sid=document.getElementById('student-id').value.trim();
-  var sname=document.getElementById('student-name').value.trim();
-  if(!sid&&!sname){showToast('학번 또는 이름을 입력해 주세요!');return;}
-  if(sid){localStorage.setItem('tuntun_student_id_C',sid);}
-  if(sname){localStorage.setItem('tuntun_student_name_C',sname);fbSave('name',sname);}
-  /* 저장 후 잠금 */
-  document.getElementById('student-id').readOnly=true;
-  document.getElementById('student-name').readOnly=true;
-  document.getElementById('student-id').style.opacity='0.6';
-  document.getElementById('student-name').style.opacity='0.6';
-  document.querySelector('.student-save-btn').style.display='none';
-  document.getElementById('student-saved-badge').style.display='block';
-  document.getElementById('student-saved-text').textContent=sid+' '+sname;
-  document.getElementById('student-edit-btn').style.display='block';
-  showToast('✅ 정보가 저장됐어요!');
-}
-
-function editStudentInfo(){
-  document.getElementById('student-id').readOnly=false;
-  document.getElementById('student-name').readOnly=false;
-  document.getElementById('student-id').style.opacity='1';
-  document.getElementById('student-name').style.opacity='1';
-  document.querySelector('.student-save-btn').style.display='block';
-  document.getElementById('student-edit-btn').style.display='none';
-  document.getElementById('student-saved-badge').style.display='none';
-}
 
 (function renderMonthBtns(){
   var wrap=document.getElementById('month-btns');

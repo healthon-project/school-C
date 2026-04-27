@@ -36,6 +36,32 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 .cta-btn{width:100%;padding:17px;background:var(--green);color:#fff;border:none;border-radius:18px;font-family:var(--jua);font-size:21px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 6px 24px rgba(29,158,117,.35);transition:transform .15s,box-shadow .15s;}
 .cta-btn:active{transform:scale(.97);}
 .cta-arrow{animation:arrowBounce 1s ease-in-out infinite;}
+
+/* ── 인적정보 입력 페이지 ── */
+#page-intro{display:flex;flex-direction:column;width:100%;}
+#page-register{display:none;flex-direction:column;width:100%;}
+.reg-title{margin-top:32px;text-align:center;animation:fadeUp .6s ease both;}
+.reg-title .emoji{font-size:52px;display:block;margin-bottom:10px;}
+.reg-title h2{font-size:22px;color:#fff;margin-bottom:6px;}
+.reg-title p{font-size:13px;color:rgba(200,216,255,.7);line-height:1.6;}
+.reg-card{margin-top:22px;width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(127,119,221,.25);border-radius:22px;padding:22px 20px;display:flex;flex-direction:column;gap:14px;animation:fadeUp .6s ease .15s both;}
+.input-group{display:flex;flex-direction:column;gap:6px;}
+.input-label{font-size:13px;color:rgba(200,216,255,.8);padding-left:2px;}
+.input-field{background:rgba(255,255,255,.08);border:1.5px solid rgba(127,119,221,.3);border-radius:12px;padding:13px 16px;font-family:var(--jua);font-size:17px;color:#fff;outline:none;width:100%;transition:border-color .2s;}
+.input-field::placeholder{color:rgba(255,255,255,.3);}
+.input-field:focus{border-color:rgba(93,202,165,.6);}
+.input-field.error{border-color:rgba(255,80,80,.6);}
+.error-msg{font-size:12px;color:#ff8080;padding-left:2px;display:none;}
+.error-msg.show{display:block;}
+.reg-btn{width:100%;padding:16px;background:var(--green);color:#fff;border:none;border-radius:16px;font-family:var(--jua);font-size:19px;cursor:pointer;box-shadow:0 6px 24px rgba(29,158,117,.35);transition:transform .15s;margin-top:4px;}
+.reg-btn:active{transform:scale(.97);}
+.skip-wrap{margin-top:14px;display:flex;justify-content:center;animation:fadeUp .6s ease .3s both;}
+.skip-btn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:rgba(200,216,255,.7);font-family:var(--jua);font-size:14px;padding:10px 24px;border-radius:100px;cursor:pointer;transition:background .2s;}
+.skip-btn:active{background:rgba(255,255,255,.12);}
+.already-wrap{margin-top:10px;text-align:center;animation:fadeUp .6s ease .4s both;}
+.already-txt{font-size:12px;color:rgba(200,216,255,.5);}
+.already-link{font-size:12px;color:#7EECC8;cursor:pointer;text-decoration:underline;}
+
 @keyframes fadeDown{from{opacity:0;transform:translateY(-12px);}to{opacity:1;transform:translateY(0);}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
 @keyframes bounceIn{from{opacity:0;transform:scale(.5);}to{opacity:1;transform:scale(1);}}
@@ -48,36 +74,140 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 <div class="scene">
 <div class="stars"></div>
 <div class="content">
-  <div class="top-badge">🚀 2026 건강 탐험 시작!</div>
-  <div class="mascot-wrap">🚀</div>
-  <div class="title-block">
-    <p class="title-sub">튼튼하고 건강한 '나' 만들기 프로젝트</p>
-    <div class="title-brand">튼튼탐험대 출발!</div>
+
+  <!-- ── 인트로 페이지 ── -->
+  <div id="page-intro">
+    <div class="top-badge">🚀 2026 건강 탐험 시작!</div>
+    <div class="mascot-wrap">🚀</div>
+    <div class="title-block">
+      <p class="title-sub">튼튼하고 건강한 '나' 만들기 프로젝트</p>
+      <div class="title-brand">튼튼탐험대 출발!</div>
+    </div>
+    <div class="tagline-card">
+      <p>미션을 완료하고, 포인트를 모아서<br><strong>레벨을 올려봐요!</strong><br>매일 꾸준히 도전하면 몸도 마음도 튼튼해져요 💪</p>
+    </div>
+    <div class="level-pills">
+      <span class="pill pill-1">🐱 초보 냥이</span>
+      <span class="pill-arrow">→</span>
+      <span class="pill pill-2">🐵 재간둥이</span>
+      <span class="pill-arrow">→</span>
+      <span class="pill pill-3">🐶 수호대</span>
+      <span class="pill-arrow">→</span>
+      <span class="pill pill-4">🐯 무적 호랑이</span>
+    </div>
+    <div class="gift-banner">
+      <div class="gift-icon">🎁</div>
+      <div class="gift-text"><strong>레벨이 올라가면 특별 선물이 나갑니다~!</strong></div>
+    </div>
+    <div class="cta-wrap">
+      <button class="cta-btn" onclick="showRegister()">탐험 시작하기! <span class="cta-arrow">→</span></button>
+    </div>
   </div>
-  <div class="tagline-card">
-    <p>미션을 완료하고, 포인트를 모아서<br><strong>레벨을 올려봐요!</strong><br>매일 꾸준히 도전하면 몸도 마음도 튼튼해져요 💪</p>
+
+  <!-- ── 인적정보 입력 페이지 ── -->
+  <div id="page-register">
+    <div class="reg-title">
+      <span class="emoji">📋</span>
+      <h2>탐험대원 등록</h2>
+      <p>학번과 이름을 입력하면<br>포인트가 기록에 저장돼요!</p>
+    </div>
+    <div class="reg-card">
+      <div class="input-group">
+        <label class="input-label">🔢 학번 (4자리 숫자)</label>
+        <input id="inp-id" class="input-field" type="number" inputmode="numeric" maxlength="4" placeholder="예: 2315" oninput="limitLen(this,4)">
+        <span id="err-id" class="error-msg">4자리 숫자로 입력해주세요</span>
+      </div>
+      <div class="input-group">
+        <label class="input-label">✏️ 이름</label>
+        <input id="inp-name" class="input-field" type="text" placeholder="예: 홍길동" maxlength="10">
+        <span id="err-name" class="error-msg">이름을 입력해주세요</span>
+      </div>
+      <button class="reg-btn" onclick="saveAndGo()">✅ 등록하고 시작!</button>
+    </div>
+    <div class="skip-wrap">
+      <button class="skip-btn" onclick="guestGo()">👤 손님으로 시작 (건너뛰기)</button>
+    </div>
+    <div class="already-wrap">
+      <span class="already-txt">이미 등록했나요? </span>
+      <span class="already-link" onclick="goDirectly()">바로 입장하기</span>
+    </div>
   </div>
-  <div class="level-pills">
-    <span class="pill pill-1">🐱 초보 냥이</span>
-    <span class="pill-arrow">→</span>
-    <span class="pill pill-2">🐵 재간둥이</span>
-    <span class="pill-arrow">→</span>
-    <span class="pill pill-3">🐶 수호대</span>
-    <span class="pill-arrow">→</span>
-    <span class="pill pill-4">🐯 무적 호랑이</span>
-  </div>
-  <div class="gift-banner">
-    <div class="gift-icon">🎁</div>
-    <div class="gift-text"><strong>레벨이 올라가면 특별 선물이 나갑니다~!</strong></div>
-  </div>
-  <div class="cta-wrap">
-    <button class="cta-btn" onclick="go()">탐험 시작하기! <span class="cta-arrow">→</span></button>
-  </div>
+
 </div>
 </div>
 <script>
-function go(){document.querySelector('.scene').classList.add('page-out');setTimeout(function(){window.location.href='page3.html';},440);}
-var lt=0;document.addEventListener('touchend',function(e){var n=Date.now();if(n-lt<300)e.preventDefault();lt=n;},{passive:false});
+// ── school-C 전용 키 ──
+var ID_KEY   = 'tuntun_student_id_C';
+var NAME_KEY = 'tuntun_student_name_C';
+
+function limitLen(el, max) {
+  if (el.value.length > max) el.value = el.value.slice(0, max);
+}
+
+function showRegister() {
+  // 이미 등록된 경우 바로 입장
+  var saved = localStorage.getItem(ID_KEY);
+  if (saved && saved !== 'guest') {
+    goPage();
+    return;
+  }
+  document.getElementById('page-intro').style.display = 'none';
+  document.getElementById('page-register').style.display = 'flex';
+}
+
+function saveAndGo() {
+  var id   = document.getElementById('inp-id').value.trim();
+  var name = document.getElementById('inp-name').value.trim();
+  var ok   = true;
+
+  // 유효성 검사
+  document.getElementById('inp-id').classList.remove('error');
+  document.getElementById('inp-name').classList.remove('error');
+  document.getElementById('err-id').classList.remove('show');
+  document.getElementById('err-name').classList.remove('show');
+
+  if (!id || id.length !== 4 || isNaN(id)) {
+    document.getElementById('inp-id').classList.add('error');
+    document.getElementById('err-id').classList.add('show');
+    ok = false;
+  }
+  if (!name) {
+    document.getElementById('inp-name').classList.add('error');
+    document.getElementById('err-name').classList.add('show');
+    ok = false;
+  }
+  if (!ok) return;
+
+  localStorage.setItem(ID_KEY, id);
+  localStorage.setItem(NAME_KEY, name);
+  goPage();
+}
+
+function guestGo() {
+  // 손님: 기존 등록 안 건드림, guest로 저장
+  if (!localStorage.getItem(ID_KEY)) {
+    localStorage.setItem(ID_KEY, 'guest');
+    localStorage.setItem(NAME_KEY, '손님');
+  }
+  goPage();
+}
+
+function goDirectly() {
+  // 이미 등록된 경우 바로 입장
+  goPage();
+}
+
+function goPage() {
+  document.querySelector('.scene').classList.add('page-out');
+  setTimeout(function(){ window.location.href = 'page3.html'; }, 440);
+}
+
+var lt = 0;
+document.addEventListener('touchend', function(e){
+  var n = Date.now();
+  if (n - lt < 300) e.preventDefault();
+  lt = n;
+}, {passive: false});
 </script>
 </body>
 </html>
