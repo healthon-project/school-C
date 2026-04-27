@@ -103,11 +103,12 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
+// ★ school-B Firebase 설정 (healthon-project02)
 var _fbApp = firebase.initializeApp({
   apiKey: "AIzaSyDUdKZxJdrQopcwfM3qOUxEiwPySfCOtWE",
   authDomain: "healthon-project.firebaseapp.com",
-  projectId: "healthon-project",
-  storageBucket: "healthon-project.firebasestorage.app",
+  projectId: "healthon-project02",
+  storageBucket: "healthon-project02.firebasestorage.app",
   messagingSenderId: "568298721593",
   appId: "1:568298721593:web:3165fddaa8d2720cae18e8",
   measurementId: "G-0341EECC37"
@@ -235,7 +236,7 @@ var curLv=pts<=450?0:pts<=1200?1:pts<=2200?2:3;
 (function(){for(var i=0;i<4;i++)document.getElementById('lv'+i).classList.toggle('active',i===curLv);var maxes=[450,1200,2200,3000];var prev=curLv===0?0:maxes[curLv-1];var next=maxes[curLv]===3000?prev+800:maxes[curLv];var pct=curLv===3?100:Math.min(100,Math.round((pts-prev)/(next-prev)*100));document.getElementById('lv-bar').style.width=pct+'%';document.getElementById('lv-bar-label').textContent=pts+'P';var pi=document.getElementById('pts-input');if(pi)pi.value=pts||'';})();
 
 var CI_STORAGE='tuntun_body_records_v2';
-var SHEETS_URL='https://script.google.com/macros/s/AKfycbxIMa_RHfLoHQyyPu-i5K6XNtbqhnUBlBDEhvegHpTi2d6LnyD8Vu9ZwSBKfQ_wsvBu/exec';
+var SHEETS_URL='https://script.google.com/macros/s/AKfycbxtKKsox-8a7ep7jPywxvE8d_7-yWr5OPkf-lLZYSmVnCG-VoDS_8x4QOiu_mK_KtHE/exec';
 var ciMonth=new Date().getMonth()+1;if(ciMonth<6)ciMonth=6;if(ciMonth>12)ciMonth=12;
 var recs={};try{recs=JSON.parse(localStorage.getItem(CI_STORAGE)||'{}');}catch(e){}
 
@@ -328,7 +329,7 @@ function ciCalcBMI(){
   showToast(ciMonth+'월 기록 저장 완료! 🔒');
   renderHistory();
   /* 구글 시트 전송 */
-  fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'bmi',number:sid,name:sname,month:ciMonth,height:h,weight:w,bmi:Math.round(bmi*10)/10,status:st.text.replace(/ .*/,''),school:'B'})}).catch(function(){});
+  fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'bmi',number:sid,name:sname,month:ciMonth,height:h,weight:w,bmi:Math.round(bmi*10)/10,status:st.text.replace(/ .*/,'')})}).catch(function(){});
 }
 function renderHistory(){
   var keys=Object.keys(recs).map(Number).sort(function(a,b){return a-b;});

@@ -87,12 +87,12 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
-// ★ school-C Firebase 설정 (healthon-project02)
+// ★ school-B Firebase 설정 (healthon-projectb)
 var _fbApp = firebase.initializeApp({
   apiKey: "AIzaSyDUdKZxJdrQopcwfM3qOUxEiwPySfCOtWE",
-  authDomain: "healthon-project02.firebaseapp.com",
-  projectId: "healthon-project02",
-  storageBucket: "healthon-project02.firebasestorage.app",
+  authDomain: "healthon-project.firebaseapp.com",
+  projectId: "healthon-projectb",
+  storageBucket: "healthon-projectb.firebasestorage.app",
   messagingSenderId: "568298721593",
   appId: "1:568298721593:web:3165fddaa8d2720cae18e8",
   measurementId: "G-0341EECC37"
@@ -237,7 +237,7 @@ function fbLoad(sid, callback){
 // ════════════════════════════════════════════════
 // ★ 학교 고정값 (school-B)
 // ════════════════════════════════════════════════
-var SCHOOL = 'C';
+var SCHOOL = 'B';
 
 // ════════════════════════════════════════════════
 // 레벨 시스템 (누적 포인트 기반, 초기화 없음)
@@ -277,7 +277,8 @@ function savePtsInput() {
 // 미션 시스템
 // ════════════════════════════════════════════════
 var MISSION_KEY = 'tuntun_missions_daily_C';
-var SHEETS_URL  = 'https://script.google.com/macros/s/AKfycbxRvWTdJxCWBC_IDeRz0QDLxUDkGcF0AOF900jNgJCh6k0vXyOAqwjheeYsjRvsc8jB/exec';
+// ★ school-B 전용 Apps Script URL (새로 배포 후 여기에 교체)
+var SHEETS_URL  = 'https://script.google.com/macros/s/AKfycbxtKKsox-8a7ep7jPywxvE8d_7-yWr5OPkf-lLZYSmVnCG-VoDS_8x4QOiu_mK_KtHE/exec';
 var MISSION_PTS = { m1: 5, m2: 5, m3: 20, m4: 5, m5: 7 };
 
 function getTodayStr() {
@@ -288,9 +289,7 @@ function getTodayStr() {
   return d.getFullYear() + '-' + (mm < 10 ? '0' + mm : mm) + '-' + (dd < 10 ? '0' + dd : dd);
 }
 
-// ── 앱 열 때: 날짜 바뀌었으면 오늘포인트·버튼 초기화 ─
-// ★ 핵심: 시트 데이터는 미션 완료 즉시 전송됐으므로 여기선 UI만 리셋
-// ★ 28일 자정 넘어 앱 열면 → Apps Script에 월별합산 신호 전송
+// ── 자정 리셋: 날짜 바뀌면 어제 오늘포인트 → 누적포인트 합산 후 초기화 ──
 function rolloverIfNeeded() {
   try {
     var raw = localStorage.getItem(MISSION_KEY);
@@ -298,17 +297,25 @@ function rolloverIfNeeded() {
     var saved = JSON.parse(raw);
     if (!saved.date || saved.date === getTodayStr()) return;
 
-    // 날짜가 달라짐 → 오늘포인트·버튼 초기화
+    // ★ 어제 오늘포인트를 누적포인트에 합산
+    var yesterdayPts = saved.todayPts || 0;
+    if (yesterdayPts > 0) {
+      var cur = parseInt(localStorage.getItem('tuntun_pts_C') || '0');
+      var newTotal = cur + yesterdayPts;
+      localStorage.setItem('tuntun_pts_C', newTotal);
+      fbSave('totalPts', newTotal);
+    }
+
+    // ★ 오늘 미션·포인트 초기화
     localStorage.removeItem(MISSION_KEY);
 
     // 28일 자정이 지나 앱을 열었을 때 → 월별 합산 탭 생성 요청
-    // (Apps Script가 앱 데이터(일) 탭에서 직접 읽어서 월별 탭 생성)
     var now = new Date();
     if (now.getDate() === 28) {
       fetch(SHEETS_URL, {
         method: 'POST', mode: 'no-cors',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'monthly_summary', month: now.getMonth() + 1, school: SCHOOL })
+        body: JSON.stringify({ type: 'monthly_summary' })
       }).catch(function() {});
     }
   } catch(e) {}
@@ -343,12 +350,11 @@ function sendToSheet(todayStr, todayPtsVal) {
     method: 'POST', mode: 'no-cors',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      type: 'daily',
+      type:   'daily',
       number: sid,
-      name: sname,
-      date: todayStr,
-      pts: todayPtsVal,
-      school: SCHOOL
+      name:   sname,
+      date:   todayStr,
+      pts:    todayPtsVal
     })
   }).catch(function() {});
 }
