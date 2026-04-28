@@ -126,7 +126,7 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
         <label class="input-label">🔢 학년반번호 (4자리)</label>
         <input id="inp-id" class="input-field" type="text" inputmode="text" maxlength="5" placeholder="예: 2315" oninput="limitLen(this,5)">
         <span id="err-id" class="error-msg">올바른 형식으로 입력해주세요</span>
-        <span style="font-size:11px;color:rgba(200,216,255,.4);margin-top:4px;padding-left:2px;line-height:1.6;">교사·학부모의 경우 전화번호 끝 4자리 + 교사는 <strong style="color:rgba(200,216,255,.6);">t</strong>, 학부모는 <strong style="color:rgba(200,216,255,.6);">p</strong>를 붙여주세요.<br>예: <span style="color:rgba(200,216,255,.55);">1234t</span> (교사) &nbsp;·&nbsp; <span style="color:rgba(200,216,255,.55);">5678p</span> (학부모)</span>
+        <span style="font-size:11px;color:rgba(200,216,255,.4);margin-top:4px;padding-left:2px;line-height:1.6;">교사·학부모의 경우 전화번호 끝 4자리 + 교사는 <strong style="color:rgba(200,216,255,.6);font-family:Arial,sans-serif;">t</strong>, 학부모는 <strong style="color:rgba(200,216,255,.6);font-family:Arial,sans-serif;">p</strong>를 붙여주세요.<br>예: <span style="color:rgba(200,216,255,.55);font-family:Arial,sans-serif;">1234t</span> (교사) &nbsp;·&nbsp; <span style="color:rgba(200,216,255,.55);font-family:Arial,sans-serif;">5678p</span> (학부모)</span>
       </div>
       <div class="input-group">
         <label class="input-label">✏️ 이름</label>
@@ -144,7 +144,7 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 <div class="modal-overlay" id="modal-adult">
   <div class="modal-box">
     <div class="modal-title">👩‍🏫 교사 · 학부모 입장</div>
-    <div class="modal-sub">전화번호 끝 4자리 + 구분 문자를 입력해주세요.<br>교사: <strong style="color:#C8B4FF;">끝4자리 + t</strong> &nbsp;·&nbsp; 학부모: <strong style="color:#C8B4FF;">끝4자리 + p</strong><br><span style="color:rgba(200,216,255,.4);">예: 1234t &nbsp;/&nbsp; 5678p</span></div>
+    <div class="modal-sub">전화번호 끝 4자리 + 구분 문자를 입력해주세요.<br>교사: <strong style="color:#C8B4FF;font-family:Arial,sans-serif;">끝4자리 + t</strong> &nbsp;·&nbsp; 학부모: <strong style="color:#C8B4FF;font-family:Arial,sans-serif;">끝4자리 + p</strong><br><span style="color:rgba(200,216,255,.4);font-family:Arial,sans-serif;">예: 1234t &nbsp;/&nbsp; 5678p</span></div>
     <div class="input-group">
       <label class="input-label">🔢 식별번호</label>
       <input id="modal-inp-id" class="input-field" type="text" inputmode="text" maxlength="5" placeholder="예: 1234t 또는 5678p" oninput="limitLen(this,5)">
