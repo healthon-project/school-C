@@ -68,6 +68,16 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 @keyframes arrowBounce{0%,100%{transform:translateX(0);}50%{transform:translateX(5px);}}
 .page-out{animation:pageOut .45s ease forwards!important;}
 @keyframes pageOut{to{opacity:0;transform:scale(1.03);}}
+
+/* ── 교사/학부모 모달 ── */
+.modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(4,6,26,.85);display:none;align-items:center;justify-content:center;padding:24px;}
+.modal-overlay.open{display:flex;}
+.modal-box{width:100%;max-width:360px;background:#0E1535;border:1.5px solid rgba(127,119,221,.35);border-radius:22px;padding:28px 22px;display:flex;flex-direction:column;gap:14px;}
+.modal-title{font-size:18px;color:#fff;text-align:center;}
+.modal-sub{font-size:12px;color:rgba(200,216,255,.55);text-align:center;line-height:1.7;margin-top:-6px;}
+.modal-btn{width:100%;padding:14px;background:rgba(127,119,221,.25);border:1px solid rgba(127,119,221,.4);border-radius:14px;font-family:var(--jua);font-size:17px;color:#fff;cursor:pointer;transition:transform .15s;}
+.modal-btn:active{transform:scale(.97);}
+.modal-close{font-size:13px;color:rgba(200,216,255,.4);text-align:center;cursor:pointer;margin-top:2px;}
 </style>
 </head>
 <body>
@@ -126,9 +136,29 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
       <button class="reg-btn" onclick="saveAndGo()">✅ 등록하고 시작!</button>
     </div>
     <div style="margin-top:16px;text-align:center;">
-      <span onclick="goPage()" style="font-size:11px;color:rgba(200,216,255,.35);cursor:pointer;text-decoration:underline;">교사/학부모 입장 →</span>
+      <span onclick="openModal()" style="font-size:11px;color:rgba(200,216,255,.35);cursor:pointer;text-decoration:underline;">교사/학부모 입장 →</span>
     </div>
   </div>
+
+<!-- ── 교사/학부모 모달 ── -->
+<div class="modal-overlay" id="modal-adult">
+  <div class="modal-box">
+    <div class="modal-title">👩‍🏫 교사 · 학부모 입장</div>
+    <div class="modal-sub">전화번호 끝 4자리 + 구분 문자를 입력해주세요.<br>교사: <strong style="color:#C8B4FF;">끝4자리 + t</strong> &nbsp;·&nbsp; 학부모: <strong style="color:#C8B4FF;">끝4자리 + p</strong><br><span style="color:rgba(200,216,255,.4);">예: 1234t &nbsp;/&nbsp; 5678p</span></div>
+    <div class="input-group">
+      <label class="input-label">🔢 식별번호</label>
+      <input id="modal-inp-id" class="input-field" type="text" inputmode="text" maxlength="5" placeholder="예: 1234t 또는 5678p" oninput="limitLen(this,5)">
+      <span id="modal-err-id" class="error-msg">올바른 형식으로 입력해주세요 (예: 1234t)</span>
+    </div>
+    <div class="input-group">
+      <label class="input-label">✏️ 이름</label>
+      <input id="modal-inp-name" class="input-field" type="text" placeholder="예: 김선생 / 홍길동 어머니" maxlength="12">
+      <span id="modal-err-name" class="error-msg">이름을 입력해주세요</span>
+    </div>
+    <button class="modal-btn" onclick="saveAdultAndGo()">✅ 입장하기</button>
+    <div class="modal-close" onclick="closeModal()">닫기</div>
+  </div>
+</div>
 
 </div>
 </div>
@@ -191,6 +221,43 @@ function saveAndGo() {
   goPage();
 }
 
+
+function openModal() {
+  document.getElementById('modal-adult').classList.add('open');
+  // 이미 저장된 값 자동 채움
+  var sid = localStorage.getItem(ID_KEY);
+  var sname = localStorage.getItem(NAME_KEY);
+  if (sid && (sid.endsWith('t') || sid.endsWith('p'))) document.getElementById('modal-inp-id').value = sid;
+  if (sname) document.getElementById('modal-inp-name').value = sname;
+}
+function closeModal() {
+  document.getElementById('modal-adult').classList.remove('open');
+}
+function saveAdultAndGo() {
+  var id   = document.getElementById('modal-inp-id').value.trim().toLowerCase();
+  var name = document.getElementById('modal-inp-name').value.trim();
+  var ok   = true;
+  document.getElementById('modal-inp-id').classList.remove('error');
+  document.getElementById('modal-inp-name').classList.remove('error');
+  document.getElementById('modal-err-id').classList.remove('show');
+  document.getElementById('modal-err-name').classList.remove('show');
+  var isTeacher = /^\d{4}t$/.test(id);
+  var isParent  = /^\d{4}p$/.test(id);
+  if (!isTeacher && !isParent) {
+    document.getElementById('modal-inp-id').classList.add('error');
+    document.getElementById('modal-err-id').classList.add('show');
+    ok = false;
+  }
+  if (!name) {
+    document.getElementById('modal-inp-name').classList.add('error');
+    document.getElementById('modal-err-name').classList.add('show');
+    ok = false;
+  }
+  if (!ok) return;
+  localStorage.setItem(ID_KEY, id);
+  localStorage.setItem(NAME_KEY, name);
+  goPage();
+}
 function goPage() {
   document.querySelector('.scene').classList.add('page-out');
   setTimeout(function(){ window.location.href = 'page3.html'; }, 440);
