@@ -413,7 +413,7 @@ var LEVELS=[
   {e:'🐶',n:'지구수호대 멍멍이',max:2200},
   {e:'🐯',n:'무적의 호랑이',max:3000}
 ];
-var pts=0;try{pts=parseInt(localStorage.getItem('tuntun_pts_C')||'0');}catch(e){}
+var pts=0;try{pts=parseInt(localStorage.getItem('tuntun_pts_B')||'0');}catch(e){}
 var curLv=pts<=450?0:pts<=1200?1:pts<=2200?2:3;
 function renderLevel(){
   for(var i=0;i<4;i++) document.getElementById('lv'+i).classList.toggle('active',i===curLv);
@@ -566,8 +566,8 @@ function grantPoint(){
   var name=document.getElementById('grant-name').value||'미입력';
   var pt=parseInt(document.getElementById('grant-pt').value)||5;
 
-  var cur=parseInt(localStorage.getItem('tuntun_pts_C')||'0');
-  localStorage.setItem('tuntun_pts_C',cur+pt);
+  var cur=parseInt(localStorage.getItem('tuntun_pts_B')||'0');
+  localStorage.setItem('tuntun_pts_B',cur+pt);
 
   var now=new Date();
   var curMonth=now.getFullYear()+'-'+(now.getMonth()+1);
@@ -604,9 +604,10 @@ function saveCk(i,v){var saved={};try{saved=JSON.parse(localStorage.getItem('tun
 function changePw(){var v=document.getElementById('new-pw').value.trim();if(!v){document.getElementById('pw-msg').textContent='비밀번호를 입력해 주세요';return;}localStorage.setItem(ADMIN_PW_KEY,v);document.getElementById('pw-msg').textContent='✅ 변경 완료!';document.getElementById('new-pw').value='';}
 function resetAll(){
   if(!confirm('⚠️ 이 기기의 모든 데이터를 초기화할까요?\n(시트 데이터는 삭제되지 않습니다)'))return;
-  ['tuntun_pts_C','tuntun_missions_daily_C','tuntun_body_records_v2',
-   'tuntun_student_id_C','tuntun_student_name_C',
+  ['tuntun_pts_B','tuntun_missions_daily_B','tuntun_body_records_v2',
+   'tuntun_student_id_B','tuntun_student_name_B',
    'tuntun_grant_log','tuntun_memo','tuntun_checklist'].forEach(function(k){localStorage.removeItem(k);});
+  // 포인트 0으로 초기화 후 화면 즉시 반영
   pts = 0;
   curLv = 0;
   renderLevel();
