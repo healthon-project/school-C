@@ -114,8 +114,9 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
     <div class="reg-card">
       <div class="input-group">
         <label class="input-label">🔢 학년반번호 (4자리)</label>
-        <input id="inp-id" class="input-field" type="number" inputmode="numeric" maxlength="4" placeholder="예: 2315" oninput="limitLen(this,4)">
-        <span id="err-id" class="error-msg">4자리 숫자로 입력해주세요</span>
+        <input id="inp-id" class="input-field" type="text" inputmode="text" maxlength="5" placeholder="예: 2315" oninput="limitLen(this,5)">
+        <span id="err-id" class="error-msg">올바른 형식으로 입력해주세요</span>
+        <span style="font-size:11px;color:rgba(200,216,255,.4);margin-top:4px;padding-left:2px;line-height:1.6;">교사·학부모의 경우 전화번호 끝 4자리 + 교사는 <strong style="color:rgba(200,216,255,.6);">t</strong>, 학부모는 <strong style="color:rgba(200,216,255,.6);">p</strong>를 붙여주세요.<br>예: <span style="color:rgba(200,216,255,.55);">1234t</span> (교사) &nbsp;·&nbsp; <span style="color:rgba(200,216,255,.55);">5678p</span> (학부모)</span>
       </div>
       <div class="input-group">
         <label class="input-label">✏️ 이름</label>
@@ -170,7 +171,10 @@ function saveAndGo() {
   document.getElementById('err-id').classList.remove('show');
   document.getElementById('err-name').classList.remove('show');
 
-  if (!id || id.length !== 4 || isNaN(id)) {
+  var isStudent = /^\d{4}$/.test(id);
+  var isTeacher = /^\d{4}t$/.test(id);
+  var isParent  = /^\d{4}p$/.test(id);
+  if (!isStudent && !isTeacher && !isParent) {
     document.getElementById('inp-id').classList.add('error');
     document.getElementById('err-id').classList.add('show');
     ok = false;
