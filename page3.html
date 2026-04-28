@@ -606,7 +606,8 @@ function resetAll(){
   if(!confirm('⚠️ 이 기기의 모든 데이터를 초기화할까요?\n(시트 데이터는 삭제되지 않습니다)'))return;
   ['tuntun_pts_B','tuntun_missions_daily_B','tuntun_body_records_v2',
    'tuntun_student_id_B','tuntun_student_name_B',
-   'tuntun_grant_log','tuntun_memo','tuntun_checklist'].forEach(function(k){localStorage.removeItem(k);});
+   'tuntun_grant_log','tuntun_memo','tuntun_checklist',
+   'tuntun_monthly_pts','tuntun_monthly_month'].forEach(function(k){localStorage.removeItem(k);});
   // 포인트 0으로 초기화 후 화면 즉시 반영
   pts = 0;
   curLv = 0;
