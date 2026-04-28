@@ -167,14 +167,15 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 var ID_KEY   = 'tuntun_student_id_C';
 var NAME_KEY = 'tuntun_student_name_C';
 
-// ── 페이지 로드 시: 미등록이면 바로 등록창 표시 ──
+// ── 페이지 로드 시 ──
 (function(){
-  var savedId = localStorage.getItem(ID_KEY);
-  if (!savedId || savedId === 'guest') {
-    // 미등록 → 인트로 숨기고 등록창 바로 표시
-    document.getElementById('page-intro').style.display = 'none';
-    document.getElementById('page-register').style.display = 'flex';
+  var savedId   = localStorage.getItem(ID_KEY);
+  var savedName = localStorage.getItem(NAME_KEY);
+  if (savedId && savedId !== 'guest' && savedName && savedName !== '손님') {
+    // 등록된 사용자 → 바로 메인 페이지로
+    window.location.replace('page3.html');
   }
+  // 미등록 → 인트로 그대로 표시 (아무것도 안 함)
 })();
 
 function limitLen(el, max) {
