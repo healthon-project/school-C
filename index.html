@@ -37,8 +37,9 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 .cta-btn:active{transform:scale(.97);}
 .cta-arrow{animation:arrowBounce 1s ease-in-out infinite;}
 .enter-wrap{margin-top:12px;width:100%;animation:fadeUp .7s ease 1.1s both;}
-.enter-btn{width:100%;padding:15px;background:rgba(127,119,221,.15);color:#B8B3FF;border:1.5px solid rgba(127,119,221,.45);border-radius:18px;font-family:var(--jua);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .15s,background .2s;}
-.enter-btn:active{transform:scale(.97);background:rgba(127,119,221,.28);}
+.enter-btn{width:100%;padding:15px;background:linear-gradient(135deg,rgba(255,216,78,.18),rgba(255,180,30,.12));color:#FFD84E;border:1.5px solid rgba(255,216,78,.5);border-radius:18px;font-family:var(--jua);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .15s,background .2s;box-shadow:0 0 12px rgba(255,216,78,.2),0 0 24px rgba(255,216,78,.08);animation:enterGlow 2s ease-in-out infinite;}
+.enter-btn:active{transform:scale(.97);}
+@keyframes enterGlow{0%,100%{box-shadow:0 0 10px rgba(255,216,78,.2),0 0 22px rgba(255,216,78,.08);}50%{box-shadow:0 0 18px rgba(255,216,78,.45),0 0 36px rgba(255,216,78,.18);}}
 
 /* ── 인적정보 입력 페이지 ── */
 #page-intro{display:flex;flex-direction:column;align-items:center;width:100%;}
