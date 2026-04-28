@@ -230,7 +230,7 @@ function fbLoad(sid, callback){
 </div>
 </div>
 <script>
-var pts=0;try{pts=parseInt(localStorage.getItem('tuntun_pts')||'0');}catch(e){}
+var pts=0;try{pts=parseInt(localStorage.getItem('tuntun_pts_C')||'0');}catch(e){}
 var curLv=pts<=450?0:pts<=1200?1:pts<=2200?2:3;
 (function(){
   for(var i=0;i<4;i++)document.getElementById('lv'+i).classList.toggle('active',i===curLv);
@@ -246,7 +246,7 @@ var curLv=pts<=450?0:pts<=1200?1:pts<=2200?2:3;
 function savePtsInput(){
   var v=parseInt(document.getElementById('pts-input').value);
   if(isNaN(v)||v<0)return;
-  localStorage.setItem('tuntun_pts',v);fbSave('totalPts',v);
+  localStorage.setItem('tuntun_pts_C',v);fbSave('totalPts',v);
   pts=v;curLv=pts<=450?0:pts<=1200?1:pts<=2200?2:3;
   var maxes=[450,1200,2200,3000];
   var prev=curLv===0?0:maxes[curLv-1];

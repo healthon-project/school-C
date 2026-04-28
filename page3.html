@@ -413,7 +413,7 @@ var LEVELS=[
   {e:'🐶',n:'지구수호대 멍멍이',max:2200},
   {e:'🐯',n:'무적의 호랑이',max:3000}
 ];
-var pts=0;try{pts=parseInt(localStorage.getItem('tuntun_pts')||'0');}catch(e){}
+var pts=0;try{pts=parseInt(localStorage.getItem('tuntun_pts_C')||'0');}catch(e){}
 var curLv=pts<=450?0:pts<=1200?1:pts<=2200?2:3;
 function renderLevel(){
   for(var i=0;i<4;i++) document.getElementById('lv'+i).classList.toggle('active',i===curLv);
@@ -566,8 +566,8 @@ function grantPoint(){
   var name=document.getElementById('grant-name').value||'미입력';
   var pt=parseInt(document.getElementById('grant-pt').value)||5;
 
-  var cur=parseInt(localStorage.getItem('tuntun_pts')||'0');
-  localStorage.setItem('tuntun_pts',cur+pt);
+  var cur=parseInt(localStorage.getItem('tuntun_pts_C')||'0');
+  localStorage.setItem('tuntun_pts_C',cur+pt);
 
   var now=new Date();
   var curMonth=now.getFullYear()+'-'+(now.getMonth()+1);
@@ -607,6 +607,11 @@ function resetAll(){
   ['tuntun_pts_C','tuntun_missions_daily_C','tuntun_body_records_v2',
    'tuntun_student_id_C','tuntun_student_name_C',
    'tuntun_grant_log','tuntun_memo','tuntun_checklist'].forEach(function(k){localStorage.removeItem(k);});
+  pts = 0;
+  curLv = 0;
+  renderLevel();
+  var pi = document.getElementById('pts-input');
+  if(pi) pi.value = '';
   alert('✅ 초기화 완료!');
   closeDash();
 }
