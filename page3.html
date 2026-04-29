@@ -422,7 +422,10 @@ function renderLevel(){
   var pct=curLv===3?100:Math.min(100,Math.round((pts-prev)/(next-prev)*100));
   document.getElementById('lv-bar').style.width=pct+'%';
   document.getElementById('lv-bar-label').textContent=pts+'P';
-  var pi=document.getElementById('pts-input');if(pi&&!pi.value)pi.value=pts||'';
+  var curMonth=new Date().getFullYear()+'-'+(new Date().getMonth()+1);
+  var savedMonth=localStorage.getItem('tuntun_monthly_month')||'';
+  var monthlyPts=savedMonth===curMonth?parseInt(localStorage.getItem('tuntun_monthly_pts')||'0'):0;
+  var pi=document.getElementById('pts-input');if(pi)pi.value=monthlyPts||'';
 }
 renderLevel();
 function goPrev(){document.querySelector('.scene').classList.add('page-out');setTimeout(function(){window.location.href='index.html';},400);}
