@@ -110,14 +110,14 @@ var _db = firebase.firestore();
    학번(student_id)을 키로 Firestore에 데이터 저장/읽기
    컬렉션: students / document: {student_id}
 ──────────────────────────────────────────────────── */
-function _getSid(){return localStorage.getItem('tuntun_student_id')||'guest_'+((navigator.userAgent+screen.width).hashCode?'x':Math.abs(Array.from(navigator.userAgent).reduce(function(a,c){return a+c.charCodeAt(0);},0)%90000+10000));}
+function _getSid(){return localStorage.getItem('tuntun_student_id_C')||'guest_'+((navigator.userAgent+screen.width).hashCode?'x':Math.abs(Array.from(navigator.userAgent).reduce(function(a,c){return a+c.charCodeAt(0);},0)%90000+10000));}
 
 function fbSave(field, value){
   var sid=_getSid();
   if(!sid) return; // 학번 없으면 저장 안 함
   var doc={};
   doc[field]=value;
-  doc['name']=localStorage.getItem('tuntun_student_name')||'';
+  doc['name']=localStorage.getItem('tuntun_student_name_C')||'';
   doc['updatedAt']=firebase.firestore.FieldValue.serverTimestamp();
   _db.collection('students').doc(sid).set(doc,{merge:true}).catch(function(e){console.warn('FB save err',e);});
 }
