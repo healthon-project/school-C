@@ -191,14 +191,14 @@ var _db = firebase.firestore();
    학번(student_id)을 키로 Firestore에 데이터 저장/읽기
    컬렉션: students / document: {student_id}
 ──────────────────────────────────────────────────── */
-function _getSid(){return localStorage.getItem('tuntun_student_id')||'';}
+function _getSid(){return localStorage.getItem('tuntun_student_id_C')||'';}
 
 function fbSave(field, value){
   var sid=_getSid();
   if(!sid) return; // 학번 없으면 저장 안 함
   var doc={};
   doc[field]=value;
-  doc['name']=localStorage.getItem('tuntun_student_name')||'';
+  doc['name']=localStorage.getItem('tuntun_student_name_C')||'';
   doc['updatedAt']=firebase.firestore.FieldValue.serverTimestamp();
   _db.collection('students').doc(sid).set(doc,{merge:true}).catch(function(e){console.warn('FB save err',e);});
 }
@@ -429,6 +429,7 @@ function savePtsInput(){
   var v=parseInt(document.getElementById('pts-input').value);
   if(isNaN(v)||v<0){return;}
   localStorage.setItem('tuntun_pts_C',v);
+  fbSave('totalPts',v);
   pts=v;curLv=pts<=450?0:pts<=1200?1:pts<=2200?2:3;
   renderLevel();
   var btn=document.querySelector('.lv-pts-save-btn');
@@ -575,8 +576,10 @@ function grantPoint(){
   var name=document.getElementById('grant-name').value||'미입력';
   var pt=parseInt(document.getElementById('grant-pt').value)||5;
 
-  var cur=parseInt(localStorage.getItem('tuntun_pts_B')||'0');
-  localStorage.setItem('tuntun_pts_B',cur+pt);
+  var cur=parseInt(localStorage.getItem('tuntun_pts_C')||'0');
+  var newTotal=cur+pt;
+  localStorage.setItem('tuntun_pts_C',newTotal);
+  fbSave('totalPts',newTotal);
 
   var now=new Date();
   var curMonth=now.getFullYear()+'-'+(now.getMonth()+1);
