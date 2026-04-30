@@ -343,26 +343,20 @@ function saveTodayMissions(m, p) {
 // ── 시트에 오늘 포인트 즉시 전송 ──────────────────
 // Apps Script의 saveDaily()가 날짜+학번 중복 시 포인트 덮어쓰기하므로
 // 미션 완료/취소 때마다 호출해도 항상 최신값이 반영됨
-var _sendTimer = null;
 function sendToSheet(todayStr, todayPtsVal) {
-  // 3초 안에 추가 호출이 오면 취소하고 다시 대기 → 마지막 값만 전송
-  if (_sendTimer) clearTimeout(_sendTimer);
-  _sendTimer = setTimeout(function() {
-    var sid   = localStorage.getItem('tuntun_student_id_B') || '미입력';
-    var sname = localStorage.getItem('tuntun_student_name_B') || '';
-    fetch(SHEETS_URL, {
-      method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        type:   'daily',
-        number: sid,
-        name:   sname,
-        date:   todayStr,
-        pts:    todayPtsVal
-      })
-    }).catch(function() {});
-    _sendTimer = null;
-  }, 3000);
+  var sid   = localStorage.getItem('tuntun_student_id_B') || '미입력';
+  var sname = localStorage.getItem('tuntun_student_name_B') || '';
+  fetch(SHEETS_URL, {
+    method: 'POST', mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      type:   'daily',
+      number: sid,
+      name:   sname,
+      date:   todayStr,
+      pts:    todayPtsVal
+    })
+  }).catch(function() {});
 }
 
 // ── 미션 상태 복원 (앱 재접속 시) ─────────────────
