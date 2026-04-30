@@ -121,6 +121,20 @@ function fbLoad(sid, callback){
     callback(snap.exists?snap.data():{});
   }).catch(function(){callback({});});
 }
+
+/* 당일 누적 포인트를 Firestore에 저장 (자정 기준 날짜 체크) */
+function fbSaveTodayPts(todayTotalPts){
+  var sid=_getSid();
+  if(!sid||sid.indexOf('guest')===0) return;
+  var d=new Date();
+  var todayStr=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  _db.collection('students').doc(sid).set({
+    todayDate: todayStr,
+    todayPts: todayTotalPts,
+    name: localStorage.getItem('tuntun_student_name_C')||'',
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  },{merge:true}).catch(function(e){console.warn('FB todayPts err',e);});
+}
 </script>
 </head>
 <body>
@@ -409,6 +423,7 @@ function doMission(id, p) {
     var newPts = cur + p;
     localStorage.setItem('tuntun_pts_C', newPts);
     fbSave('totalPts', newPts);
+    fbSaveTodayPts(todayPts);
     pts = newPts;
     curLv = pts <= 450 ? 0 : pts <= 1200 ? 1 : pts <= 2200 ? 2 : 3;
     renderLevel();
@@ -443,6 +458,7 @@ function cancelMission(id, p) {
     var newPts = Math.max(0, cur - p);
     localStorage.setItem('tuntun_pts_C', newPts);
     fbSave('totalPts', newPts);
+    fbSaveTodayPts(todayPts);
     pts = newPts;
     curLv = pts <= 450 ? 0 : pts <= 1200 ? 1 : pts <= 2200 ? 2 : 3;
     renderLevel();

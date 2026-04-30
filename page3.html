@@ -157,6 +157,22 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 .dash-danger-btn{width:100%;padding:11px;background:rgba(226,75,74,.2);color:#FF8A88;border:1px solid rgba(226,75,74,.3);border-radius:12px;font-size:13px;font-family:var(--jua);cursor:pointer;margin-top:8px;}
 .dash-close-btn{width:100%;padding:12px;background:rgba(255,255,255,.07);color:rgba(200,220,255,.6);border:1px solid rgba(255,255,255,.12);border-radius:14px;font-size:14px;font-family:var(--jua);cursor:pointer;margin-top:16px;}
 
+/* ── 당일 참여 명단 테이블 ── */
+.today-list-wrap{background:rgba(255,255,255,.04);border:1px solid rgba(93,202,165,.2);border-radius:16px;padding:14px;margin-bottom:14px;}
+.today-list-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.today-list-title{font-size:13px;color:#7EECC8;font-family:var(--jua);display:flex;align-items:center;gap:6px;}
+.today-list-badge{font-size:11px;background:rgba(29,158,117,.25);color:#7EECC8;border:1px solid rgba(93,202,165,.3);border-radius:100px;padding:2px 9px;}
+.today-list-reset{font-size:11px;color:rgba(200,220,255,.35);font-family:var(--jua);}
+.today-table{width:100%;border-collapse:collapse;font-family:var(--jua);}
+.today-table th{font-size:10px;color:rgba(200,220,255,.45);text-align:center;padding:5px 4px;border-bottom:1px solid rgba(255,255,255,.08);}
+.today-table th:first-child{text-align:left;}
+.today-table td{font-size:12px;color:rgba(200,220,255,.85);text-align:center;padding:7px 4px;border-bottom:1px solid rgba(255,255,255,.04);}
+.today-table td:first-child{text-align:left;color:#fff;}
+.today-table tr:last-child td{border-bottom:none;}
+.today-table .pts-cell{color:#FFD86E;font-weight:700;}
+.today-table .rank-cell{color:rgba(200,220,255,.4);font-size:11px;}
+.today-empty{text-align:center;padding:18px 0;font-size:12px;color:rgba(200,220,255,.35);font-family:var(--jua);}
+
 /* 팝업 */
 .popup-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:600;align-items:center;justify-content:center;}
 .popup-wrap.open{display:flex;}
@@ -203,11 +219,35 @@ function fbSave(field, value){
   _db.collection('students').doc(sid).set(doc,{merge:true}).catch(function(e){console.warn('FB save err',e);});
 }
 
+/* 다른 페이지에서도 호출 가능하도록 window에 노출 */
+window.fbSaveTodayPts=fbSaveTodayPts;
+
 function fbLoad(sid, callback){
   if(!sid){callback({});return;}
   _db.collection('students').doc(sid).get().then(function(snap){
     callback(snap.exists?snap.data():{});
   }).catch(function(){callback({});});
+}
+
+/* 당일 누적 포인트를 Firestore에 저장 (자정 기준 초기화) */
+function fbSaveTodayPts(addPts){
+  var sid=_getSid();
+  if(!sid) return;
+  var today=new Date();
+  var todayStr=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
+  var ref=_db.collection('students').doc(sid);
+  ref.get().then(function(snap){
+    var d=snap.exists?snap.data():{};
+    var prevDate=d.todayDate||'';
+    var prevPts=(prevDate===todayStr)?(d.todayPts||0):0;
+    var newPts=prevPts+(addPts||0);
+    ref.set({
+      todayDate:todayStr,
+      todayPts:newPts,
+      name:localStorage.getItem('tuntun_student_name_C')||'',
+      updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+    },{merge:true}).catch(function(e){console.warn('FB todayPts err',e);});
+  }).catch(function(){});
 }
 </script>
 </head>
@@ -280,6 +320,17 @@ function fbLoad(sid, callback){
             <div class="kpi-icon">⚠️</div>
             <div class="kpi-num" id="kpi-inactive">0</div>
             <div class="kpi-label">7일 미참여</div>
+          </div>
+        </div>
+
+        <!-- 당일 참여 학생 명단 -->
+        <div class="today-list-wrap">
+          <div class="today-list-header">
+            <div class="today-list-title">📋 당일 참여 학생 명단 <span class="today-list-badge" id="today-list-count">0명</span></div>
+            <div class="today-list-reset" id="today-list-reset-time"></div>
+          </div>
+          <div id="today-list-body">
+            <div class="today-empty">아직 오늘 참여한 학생이 없어요</div>
           </div>
         </div>
 
@@ -458,6 +509,8 @@ function openDash(){
   renderChecklist();
   renderGrantLog();
   loadSheetData();
+  renderTodayList();
+  scheduleMidnightReset();
 }
 function closeDash(){document.getElementById('dash-panel').classList.remove('open');}
 
@@ -580,6 +633,7 @@ function grantPoint(){
   var newTotal=cur+pt;
   localStorage.setItem('tuntun_pts_C',newTotal);
   fbSave('totalPts',newTotal);
+  fbSaveTodayPts(pt);
 
   var now=new Date();
   var curMonth=now.getFullYear()+'-'+(now.getMonth()+1);
@@ -640,6 +694,116 @@ function resetAll(){
   alert('✅ 초기화 완료!');
   closeDash();
 }
+/* ══════════════════════════════════════════════
+   당일 참여 학생 명단 (Firebase 기반)
+   - 학년반번호 / 이름 / 당일 누적 포인트
+   - 자정에 자동 초기화, 매일 반복
+══════════════════════════════════════════════ */
+var _midnightTimer=null;
+
+/* 오늘 날짜 문자열 "YYYY-MM-DD" */
+function _todayStr(){
+  var d=new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+/* 자정까지 남은 밀리초 */
+function _msToMidnight(){
+  var now=new Date();
+  var mid=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1,0,0,0,0);
+  return mid-now;
+}
+
+/* 자정 카운트다운 표시 */
+function _updateResetTime(){
+  var ms=_msToMidnight();
+  var h=Math.floor(ms/3600000);
+  var m=Math.floor((ms%3600000)/60000);
+  var el=document.getElementById('today-list-reset-time');
+  if(el) el.textContent='자정 초기화까지 '+h+'시간 '+m+'분';
+}
+
+/* 자정 초기화 스케줄 */
+function scheduleMidnightReset(){
+  if(_midnightTimer) clearTimeout(_midnightTimer);
+  _updateResetTime();
+  /* 매분 카운트다운 갱신 */
+  setInterval(_updateResetTime, 60000);
+  /* 자정에 정확히 초기화 */
+  _midnightTimer=setTimeout(function(){
+    renderTodayList(); /* 새 날짜이므로 아무것도 없음 */
+    scheduleMidnightReset(); /* 다음날 자정 재예약 */
+  }, _msToMidnight()+500);
+}
+
+/* 당일 참여 명단 렌더링 */
+function renderTodayList(){
+  var today=_todayStr();
+  /* Firestore에서 당일 포인트 기록이 있는 모든 학생 가져오기 */
+  _db.collection('students')
+    .where('todayDate','==',today)
+    .orderBy('todayPts','desc')
+    .get()
+    .then(function(snapshot){
+      var list=[];
+      snapshot.forEach(function(doc){
+        var d=doc.data();
+        list.push({
+          num: doc.id,          /* 학년반번호 = student_id */
+          name: d.name||'이름없음',
+          pts: d.todayPts||0
+        });
+      });
+      _drawTodayList(list);
+    })
+    .catch(function(err){
+      console.warn('today list err',err);
+      /* Firestore 인덱스 없을 경우 대안: 전체 조회 후 클라이언트 필터 */
+      _db.collection('students').get().then(function(snap){
+        var list=[];
+        snap.forEach(function(doc){
+          var d=doc.data();
+          if(d.todayDate===today && (d.todayPts||0)>0){
+            list.push({num:doc.id,name:d.name||'이름없음',pts:d.todayPts||0});
+          }
+        });
+        list.sort(function(a,b){return b.pts-a.pts;});
+        _drawTodayList(list);
+      }).catch(function(){_drawTodayList([]);});
+    });
+}
+
+function _drawTodayList(list){
+  var countEl=document.getElementById('today-list-count');
+  var bodyEl=document.getElementById('today-list-body');
+  if(!countEl||!bodyEl) return;
+
+  countEl.textContent=list.length+'명';
+
+  if(!list.length){
+    bodyEl.innerHTML='<div class="today-empty">아직 오늘 참여한 학생이 없어요</div>';
+    return;
+  }
+
+  var rows=list.map(function(s,i){
+    return '<tr>'+
+      '<td>'+s.num+'</td>'+
+      '<td>'+s.name+'</td>'+
+      '<td class="pts-cell">'+s.pts+'P</td>'+
+    '</tr>';
+  }).join('');
+
+  bodyEl.innerHTML=
+    '<table class="today-table">'+
+      '<thead><tr>'+
+        '<th>학번(학년반번호)</th>'+
+        '<th>이름</th>'+
+        '<th>당일 포인트</th>'+
+      '</tr></thead>'+
+      '<tbody>'+rows+'</tbody>'+
+    '</table>';
+}
+
 var lt=0;document.addEventListener('touchend',function(e){var n=Date.now();if(n-lt<300)e.preventDefault();lt=n;},{passive:false});
 </script>
 </body>
