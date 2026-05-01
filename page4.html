@@ -345,7 +345,6 @@ function saveTodayMissions(m, p) {
 // 미션 완료/취소 때마다 호출해도 항상 최신값이 반영됨
 var _sendTimer = null;
 function sendToSheet(todayStr, todayPtsVal) {
-  // 1초 안에 추가 호출 오면 취소 후 대기 → 마지막 값만 전송
   if (_sendTimer) clearTimeout(_sendTimer);
   _sendTimer = setTimeout(function() {
     var sid   = localStorage.getItem('tuntun_student_id_C') || '미입력';
