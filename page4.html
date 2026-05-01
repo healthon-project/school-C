@@ -343,26 +343,43 @@ function saveTodayMissions(m, p) {
 // ── 시트에 오늘 포인트 즉시 전송 ──────────────────
 // Apps Script의 saveDaily()가 날짜+학번 중복 시 포인트 덮어쓰기하므로
 // 미션 완료/취소 때마다 호출해도 항상 최신값이 반영됨
-var _sendTimer = null;
 function sendToSheet(todayStr, todayPtsVal) {
-  if (_sendTimer) clearTimeout(_sendTimer);
-  _sendTimer = setTimeout(function() {
+  // 즉시 전송
+  var sid   = localStorage.getItem('tuntun_student_id_C') || '미입력';
+  var sname = localStorage.getItem('tuntun_student_name_C') || '';
+  fetch(SHEETS_URL, {
+    method: 'POST', mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      type:   'daily',
+      number: sid,
+      name:   sname,
+      date:   todayStr,
+      pts:    todayPtsVal
+    })
+  }).catch(function() {});
+}
+
+// 페이지 나갈 때 최종값 한 번 더 전송 (중복 제거 보장)
+document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState === 'hidden' && todayPts > 0) {
     var sid   = localStorage.getItem('tuntun_student_id_C') || '미입력';
     var sname = localStorage.getItem('tuntun_student_name_C') || '';
-    fetch(SHEETS_URL, {
-      method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        type:   'daily',
-        number: sid,
-        name:   sname,
-        date:   todayStr,
-        pts:    todayPtsVal
-      })
-    }).catch(function() {});
-    _sendTimer = null;
-  }, 1000);
-}
+    var body  = JSON.stringify({
+      type: 'daily', number: sid, name: sname,
+      date: getTodayStr(), pts: todayPts
+    });
+    // sendBeacon: 페이지 닫혀도 전송 보장
+    if (navigator.sendBeacon) {
+      var blob = new Blob([body], { type: 'application/json' });
+      navigator.sendBeacon(SHEETS_URL, blob);
+    } else {
+      fetch(SHEETS_URL, { method:'POST', mode:'no-cors',
+        headers:{'Content-Type':'application/json'}, body: body
+      }).catch(function(){});
+    }
+  }
+});
 
 // ── 미션 상태 복원 (앱 재접속 시) ─────────────────
 var missionDone = loadTodayMissions();
