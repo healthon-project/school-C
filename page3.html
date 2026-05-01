@@ -80,7 +80,6 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 .dash-title{font-family:var(--hand);font-size:19px;color:#fff;}
 .dash-reload-btn{padding:6px 12px;background:rgba(93,202,165,.15);border:1px solid rgba(93,202,165,.3);border-radius:100px;font-size:12px;color:#5DCAA5;cursor:pointer;font-family:var(--jua);}
 .dash-reload-btn:active{transform:scale(.95);}
-.dash-loading{text-align:center;padding:20px;font-size:13px;color:rgba(200,220,255,.5);font-family:var(--jua);}
 
 /* 검색 */
 .dash-search{width:100%;padding:10px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;font-size:14px;color:#fff;outline:none;font-family:var(--jua);margin-bottom:12px;}
@@ -286,7 +285,6 @@ function fbSaveTodayPts(addPts){
     <!-- 헤더 -->
     <div class="dash-header">
       <div class="dash-title">🛸 교사 대시보드</div>
-      <button class="dash-reload-btn" onclick="loadSheetData()">🔄 새로고침</button>
     </div>
 
     <!-- 탭 -->
@@ -298,8 +296,7 @@ function fbSaveTodayPts(addPts){
 
     <!-- 탭1: 현황 (시트 데이터) -->
     <div class="dash-tab-panel active" id="tab-overview">
-      <div class="dash-loading" id="dash-loading">🔄 시트에서 데이터 불러오는 중...</div>
-      <div id="dash-data-wrap" style="display:none;">
+      <div id="dash-data-wrap">
 
         <!-- 검색 -->
         <input class="dash-search" id="dash-search" placeholder="🔍 학번 또는 이름 검색..." oninput="filterStudents()">
@@ -508,7 +505,6 @@ function openDash(){
   loadMemo();
   renderChecklist();
   renderGrantLog();
-  loadSheetData();
   renderTodayList();
   scheduleMidnightReset();
 }
@@ -521,26 +517,6 @@ function switchTab(id,el){
   if(el)el.classList.add('active');
 }
 
-/* ── 시트 데이터 불러오기 ── */
-function loadSheetData(){
-  document.getElementById('dash-loading').style.display='block';
-  document.getElementById('dash-data-wrap').style.display='none';
-  fetch(SHEETS_URL+'?action=dashboard')
-    .then(function(r){return r.json();})
-    .then(function(data){
-      if(data.status!=='ok') throw new Error(data.msg||'오류');
-      allStudents=data.students||[];
-      renderKPI(data);
-      renderLevelDist(data.levelDist, allStudents.length);
-      renderStudentGrid(allStudents);
-      if(data.updatedAt) document.getElementById('dash-updated').textContent='업데이트: '+data.updatedAt;
-      document.getElementById('dash-loading').style.display='none';
-      document.getElementById('dash-data-wrap').style.display='block';
-    })
-    .catch(function(err){
-      document.getElementById('dash-loading').textContent='❌ 불러오기 실패. 시트 배포를 확인해 주세요.';
-    });
-}
 
 /* ── KPI ── */
 function renderKPI(data){
