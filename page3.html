@@ -82,11 +82,8 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 .dash-reload-btn:active{transform:scale(.95);}
 
 /* 검색 */
-.dash-search{width:100%;padding:10px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;font-size:14px;color:#fff;outline:none;font-family:var(--jua);margin-bottom:12px;}
-.dash-search::placeholder{color:rgba(200,220,255,.3);}
 
 /* KPI 카드 */
-.kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
 .kpi-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:12px 8px;text-align:center;cursor:pointer;transition:.15s;}
 .kpi-card:active{transform:scale(.97);}
 .kpi-icon{font-size:22px;margin-bottom:4px;}
@@ -97,9 +94,6 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 .kpi-card.red{border-color:rgba(226,75,74,.25);background:rgba(226,75,74,.08);}
 
 /* 레벨 분포 */
-.level-dist-wrap{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px;margin-bottom:14px;}
-.level-dist-title{font-size:12px;color:rgba(200,220,255,.55);margin-bottom:10px;font-family:var(--jua);}
-.level-dist-bars{display:flex;flex-direction:column;gap:7px;}
 .lv-row{display:flex;align-items:center;gap:8px;cursor:pointer;}
 .lv-row:active .lv-bar-fill{opacity:.7;}
 .lv-row-label{font-size:11px;color:rgba(200,220,255,.7);width:60px;flex-shrink:0;display:flex;align-items:center;gap:4px;}
@@ -108,13 +102,11 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 .lv-row-count{font-size:11px;color:#FFD86E;width:38px;text-align:right;flex-shrink:0;}
 
 /* 퀵 필터 */
-.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
 .filter-btn{padding:6px 12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:100px;font-size:11px;color:rgba(200,220,255,.7);cursor:pointer;font-family:var(--jua);transition:.15s;}
 .filter-btn.active{background:rgba(29,158,117,.25);border-color:rgba(93,202,165,.4);color:#fff;}
 .filter-btn:active{transform:scale(.95);}
 
 /* 학생 그리드 */
-.student-grid{display:flex;flex-direction:column;gap:6px;}
 .student-card-item{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:10px;}
 .student-status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
 .dot-green{background:#1D9E75;box-shadow:0 0 6px rgba(29,158,117,.6);}
@@ -289,82 +281,12 @@ function fbSaveTodayPts(addPts){
 
     <!-- 탭 -->
     <div class="dash-tabs">
-      <button class="dash-tab active" onclick="switchTab('tab-overview',this)">📊 현황</button>
-      <button class="dash-tab" onclick="switchTab('tab-grant',this)">🎁 지급</button>
+      <button class="dash-tab active" onclick="switchTab('tab-grant',this)">🎁 지급</button>
       <button class="dash-tab" onclick="switchTab('tab-settings',this)">⚙️ 설정</button>
     </div>
 
-    <!-- 탭1: 현황 (시트 데이터) -->
-    <div class="dash-tab-panel active" id="tab-overview">
-      <div id="dash-data-wrap">
-
-        <!-- 검색 -->
-        <input class="dash-search" id="dash-search" placeholder="🔍 학번 또는 이름 검색..." oninput="filterStudents()">
-
-        <!-- KPI -->
-        <div class="kpi-grid">
-          <div class="kpi-card green" onclick="showPopup('today')">
-            <div class="kpi-icon">✅</div>
-            <div class="kpi-num" id="kpi-today">0</div>
-            <div class="kpi-label">오늘 참여</div>
-          </div>
-          <div class="kpi-card amber">
-            <div class="kpi-icon">👥</div>
-            <div class="kpi-num" id="kpi-total">0</div>
-            <div class="kpi-label">전체 학생</div>
-          </div>
-          <div class="kpi-card red" onclick="showPopup('inactive')">
-            <div class="kpi-icon">⚠️</div>
-            <div class="kpi-num" id="kpi-inactive">0</div>
-            <div class="kpi-label">7일 미참여</div>
-          </div>
-        </div>
-
-        <!-- 당일 참여 학생 명단 -->
-        <div class="today-list-wrap">
-          <div class="today-list-header">
-            <div class="today-list-title">📋 당일 참여 학생 명단 <span class="today-list-badge" id="today-list-count">0명</span></div>
-            <div class="today-list-reset" id="today-list-reset-time"></div>
-          </div>
-          <div id="today-list-body">
-            <div class="today-empty">아직 오늘 참여한 학생이 없어요</div>
-          </div>
-        </div>
-
-        <!-- 레벨 분포 -->
-        <div class="level-dist-wrap">
-          <div class="level-dist-title">🏆 레벨 분포 (클릭 시 명단)</div>
-          <div class="level-dist-bars">
-            <div class="lv-row" onclick="showPopup('level',1)">
-              <div class="lv-row-label">🐱 1단계</div>
-              <div class="lv-bar-bg"><div class="lv-bar-fill" id="lv-bar-1" style="width:0%;background:#5DCAA5;"></div></div>
-              <div class="lv-row-count" id="lv-cnt-1">0명</div>
-            </div>
-            <div class="lv-row" onclick="showPopup('level',2)">
-              <div class="lv-row-label">🐵 2단계</div>
-              <div class="lv-bar-bg"><div class="lv-bar-fill" id="lv-bar-2" style="width:0%;background:#378ADD;"></div></div>
-              <div class="lv-row-count" id="lv-cnt-2">0명</div>
-            </div>
-            <div class="lv-row" onclick="showPopup('level',3)">
-              <div class="lv-row-label">🐶 3단계</div>
-              <div class="lv-bar-bg"><div class="lv-bar-fill" id="lv-bar-3" style="width:0%;background:#EF9F27;"></div></div>
-              <div class="lv-row-count" id="lv-cnt-3">0명</div>
-            </div>
-            <div class="lv-row" onclick="showPopup('level',4)">
-              <div class="lv-row-label">🐯 4단계</div>
-              <div class="lv-bar-bg"><div class="lv-bar-fill" id="lv-bar-4" style="width:0%;background:#D85A30;"></div></div>
-              <div class="lv-row-count" id="lv-cnt-4">0명</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 업데이트 시간 -->
-        <div style="font-size:10px;color:rgba(200,220,255,.3);text-align:right;margin-top:8px;font-family:var(--jua);" id="dash-updated"></div>
-      </div>
-    </div>
-
     <!-- 탭2: 포인트 지급 -->
-    <div class="dash-tab-panel" id="tab-grant">
+    <div class="dash-tab-panel active" id="tab-grant">
       <div class="dash-sec-title" style="margin-top:0;">🎁 포인트 수동 지급</div>
       <div class="dash-grant-row">
         <input class="dash-input" id="grant-name" placeholder="이름" style="flex:2;">
