@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <title>튼튼탐험대 — 오늘의 미션</title>
-<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Gothic:wght@400;700&display=swap" rel="stylesheet">
 <style>
 @font-face{font-family:'KH';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/KyoboHand.woff') format('woff');}
 :root{--jua:'Jua',sans-serif;--hand:'KH',sans-serif;--green:#1D9E75;--green2:#5DCAA5;--amber:#EF9F27;}
@@ -45,15 +45,22 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 .total-pts-label{font-size:13px;color:rgba(255,255,255,.7);flex:1;}
 .total-pts-num{font-size:28px;font-weight:700;color:#FFD86E;}
 .total-pts-p{font-size:14px;color:rgba(255,216,110,.7);margin-top:4px;}
-/* ── 패들렛 인증 카드 ── */
-.padlet-card{margin-top:10px;background:rgba(29,158,117,.1);border:1.5px solid rgba(93,202,165,.25);border-radius:16px;padding:12px 14px;animation:fadeUp .5s ease .15s both;}
+/* ── 패들렛 인증 카드 (필수 강조) ── */
+.padlet-card{margin-top:10px;background:rgba(239,159,39,.08);border:2px solid rgba(239,159,39,.55);border-radius:16px;padding:0;animation:fadeUp .5s ease .15s both;overflow:hidden;box-shadow:0 0 18px rgba(239,159,39,.18);}
+.padlet-required-bar{background:linear-gradient(90deg,#EF9F27,#FFD86E);padding:5px 14px;display:flex;align-items:center;gap:6px;}
+.padlet-required-icon{font-size:14px;}
+.padlet-inner{padding:12px 14px 14px;}
 .padlet-notice{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
 .padlet-badge{font-size:28px;}
 .padlet-notice-text{}
-.padlet-notice-title{font-size:15px;color:#fff;font-weight:700;}
-.padlet-notice-sub{font-size:11px;color:rgba(93,202,165,.8);margin-top:2px;line-height:1.5;}
-.padlet-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:11px;background:rgba(29,158,117,.25);border:1px solid rgba(93,202,165,.35);border-radius:12px;color:#7EECC8;font-size:14px;font-family:var(--jua);text-decoration:none;cursor:pointer;transition:transform .15s;}
+.padlet-notice-title{font-size:15px;color:#fff;font-weight:400;display:flex;align-items:center;gap:6px;}
+.padlet-notice-sub{font-size:12px;color:rgba(255,255,255,.75);margin-top:3px;line-height:1.6;font-weight:400;font-family:'Nanum Gothic',sans-serif;}
+.padlet-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;background:linear-gradient(135deg,rgba(239,159,39,.35),rgba(255,216,110,.2));border:1.5px solid rgba(255,216,110,.5);border-radius:12px;color:#FFD86E;font-size:14px;font-family:var(--jua);text-decoration:none;cursor:pointer;transition:transform .15s,box-shadow .15s;}
 .padlet-btn:active{transform:scale(.97);}
+/* ── 미션리스트 잠금 안내 ── */
+.mission-gate{background:rgba(239,159,39,.1);border:1px dashed rgba(239,159,39,.4);border-radius:12px;padding:8px 12px;display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+.mission-gate-icon{font-size:18px;}
+.mission-gate-text{font-size:12px;color:rgba(255,255,255,.75);line-height:1.5;font-weight:400;font-family:'Nanum Gothic',sans-serif;}
 /* ── 미션 리스트 ── */
 .mission-list{margin-top:12px;display:flex;flex-direction:column;gap:8px;animation:fadeUp .5s ease .2s both;}
 .mission-item{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px;transition:background .2s;}
@@ -159,17 +166,27 @@ function fbLoad(sid, callback){
   </div>
 
   <div class="padlet-card">
-    <div class="padlet-notice">
-      <div class="padlet-badge">🏃</div>
-      <div class="padlet-notice-text">
-        <div class="padlet-notice-title">운동 미션 인증</div>
-        <div class="padlet-notice-sub">매일 운동 후 패들렛에 인증해요.<br>인증샷 올린 사람만 포인트를 모을 수 있어요!</div>
-      </div>
+    <div class="padlet-required-bar">
+      <span class="padlet-required-icon">🔒</span>
+      <span class="padlet-required-text" style="font-size:12px;font-weight:700;color:#04061A;letter-spacing:.5px;">필수 인증 — 아래 미션 포인트의 조건!</span>
     </div>
-    <a class="padlet-btn" href="https://padlet.com/a01067752602/padlet-jim4xmb1wnw909y3" target="_blank">📌 운동 인증하러 가기 →</a>
+    <div class="padlet-inner">
+      <div class="padlet-notice">
+        <div class="padlet-badge">🏃</div>
+        <div class="padlet-notice-text">
+          <div class="padlet-notice-title">운동 미션 인증 <span style="font-size:11px;background:rgba(239,159,39,.25);color:#FFD86E;border-radius:6px;padding:1px 7px;vertical-align:middle;">MUST</span></div>
+          <div class="padlet-notice-sub">패들렛에 인증샷을 올려야 아래 건강 미션 포인트도 함께 인정돼요!</div>
+        </div>
+      </div>
+      <a class="padlet-btn" href="https://padlet.com/a01067752602/padlet-jim4xmb1wnw909y3" target="_blank">📌 운동 인증하러 가기 →</a>
+    </div>
   </div>
 
   <div class="mission-list">
+    <div class="mission-gate">
+      <span class="mission-gate-icon">⚠️</span>
+      <span class="mission-gate-text"><span style="color:#FF6B6B;">위 패들렛에 운동 인증샷을 올려야</span> 아래 미션 포인트가 인정돼요</span>
+    </div>
     <div class="mission-item" id="m3">
       <div class="mi-icon">🚶</div>
       <div class="mi-text"><div class="mi-title">30분 이상의 운동</div></div>
@@ -225,7 +242,7 @@ function fbLoad(sid, callback){
         </div>
       </div>
     </div>
-  </div>
+  </div><!-- /mission-list -->
 </div>
 
 <div class="nav-bar">
