@@ -167,7 +167,7 @@ function fbLoad(sid, callback){
   <div class="page-header">
     <div class="header-badge">⚖️ 건강 기록</div>
     <div class="page-title">오늘의 체크인 📊</div>
-    <div class="page-sub">매월 키와 몸무게를 기록해요</div>
+    <div class="page-sub">매일이 아니고 한달에 한번</div>
   </div>
 
   <!-- BMI 입력 -->
@@ -184,6 +184,26 @@ function fbLoad(sid, callback){
       </div>
     </div>
     <button class="bmi-calc-btn" onclick="ciCalcBMI()">📊 BMI 계산하고 저장하기</button>
+
+    <!-- BMI 설명 박스 -->
+    <div style="margin-top:12px;background:rgba(55,138,221,.06);border:1px solid rgba(55,138,221,.2);border-radius:14px;padding:14px 14px;font-family:'Nanum Gothic',sans-serif;">
+      <div style="font-size:12px;font-weight:700;color:#9DCFFF;margin-bottom:8px;">📌 BMI란?</div>
+      <div style="font-size:11px;color:rgba(200,220,255,.75);line-height:1.7;">
+        <strong style="color:rgba(200,220,255,.9);">뜻</strong>: 체질량지수(Body Mass Index)로, 키와 몸무게를 이용해 비만 정도를 나타내는 지표예요.<br>
+        <strong style="color:rgba(200,220,255,.9);">계산법</strong>: 몸무게(kg) ÷ 키(m)²<br>
+        <span style="color:rgba(200,220,255,.45);font-size:10px;">예) 키 145cm, 몸무게 40kg → 40 ÷ (1.45 × 1.45) = 19.0</span>
+      </div>
+      <div style="margin-top:10px;font-size:11px;color:rgba(200,220,255,.75);line-height:2;">
+        <div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#378ADD;flex-shrink:0;"></span><span><strong style="color:rgba(200,220,255,.9);">저체중</strong>: BMI 18.5 미만</span></div>
+        <div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#1D9E75;flex-shrink:0;"></span><span><strong style="color:rgba(200,220,255,.9);">정상</strong>: BMI 18.5 ~ 22.9</span></div>
+        <div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#EF9F27;flex-shrink:0;"></span><span><strong style="color:rgba(200,220,255,.9);">과체중</strong>: BMI 23 ~ 24.9</span></div>
+        <div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#D85A30;flex-shrink:0;"></span><span><strong style="color:rgba(200,220,255,.9);">비만 1단계 (경도)</strong>: BMI 25 ~ 29.9</span></div>
+        <div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#C0392B;flex-shrink:0;"></span><span><strong style="color:rgba(200,220,255,.9);">비만 2단계 (중등도)</strong>: BMI 30 ~ 34.9</span></div>
+        <div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#8B0000;flex-shrink:0;"></span><span><strong style="color:rgba(200,220,255,.9);">비만 3단계 (고도)</strong>: BMI 35 이상</span></div>
+      </div>
+      <div style="margin-top:8px;font-size:10px;color:rgba(200,220,255,.35);text-align:right;">※ 대한비만학회 기준</div>
+    </div>
+
     <div class="bmi-result" id="bmi-result">
       <div class="bmi-result-num" id="bmi-val">--</div>
       <div class="bmi-result-status" id="bmi-status"></div>
