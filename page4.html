@@ -48,6 +48,7 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 /* ── 패들렛 인증 카드 (필수 강조) ── */
 .padlet-card{margin-top:10px;background:rgba(239,159,39,.08);border:2px solid rgba(239,159,39,.55);border-radius:16px;padding:0;animation:fadeUp .5s ease .15s both;overflow:hidden;box-shadow:0 0 18px rgba(239,159,39,.18);}
 .padlet-required-bar{background:linear-gradient(90deg,#EF9F27,#FFD86E);padding:5px 14px;display:flex;align-items:center;gap:6px;}
+.padlet-required-bar-text{font-size:12px;font-weight:700;color:#04061A;letter-spacing:.5px;}
 .padlet-required-icon{font-size:14px;}
 .padlet-inner{padding:12px 14px 14px;}
 .padlet-notice{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
@@ -57,6 +58,18 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 .padlet-notice-sub{font-size:12px;color:rgba(255,255,255,.75);margin-top:3px;line-height:1.6;font-weight:400;font-family:'Nanum Gothic',sans-serif;}
 .padlet-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;background:linear-gradient(135deg,rgba(239,159,39,.35),rgba(255,216,110,.2));border:1.5px solid rgba(255,216,110,.5);border-radius:12px;color:#FFD86E;font-size:14px;font-family:var(--jua);text-decoration:none;cursor:pointer;transition:transform .15s,box-shadow .15s;}
 .padlet-btn:active{transform:scale(.97);}
+.padlet-btn:hover{box-shadow:0 0 12px rgba(255,216,110,.25);}
+/* ── 업로드 추가 스타일 ── */
+.upload-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;background:linear-gradient(135deg,rgba(239,159,39,.35),rgba(255,216,110,.2));border:1.5px solid rgba(255,216,110,.5);border-radius:12px;color:#FFD86E;font-size:14px;font-family:var(--jua);cursor:pointer;transition:transform .15s,box-shadow .15s;}
+.upload-btn:active{transform:scale(.97);}
+.upload-btn:disabled{opacity:.45;pointer-events:none;}
+.upload-progress-wrap{margin-top:10px;display:none;}
+.upload-progress-bar{height:7px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;}
+.upload-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#EF9F27,#FFD86E);border-radius:4px;transition:width .2s;}
+.upload-progress-text{font-size:11px;color:rgba(255,255,255,.6);text-align:center;margin-top:5px;font-family:'Nanum Gothic',sans-serif;}
+.upload-done-wrap{margin-top:10px;display:none;background:rgba(29,158,117,.18);border:1px solid rgba(93,202,165,.35);border-radius:12px;padding:10px 14px;text-align:center;}
+.upload-done-text{font-size:13px;color:#5DCAA5;}
+.upload-done-time{font-size:11px;color:rgba(93,202,165,.55);margin-top:2px;font-family:'Nanum Gothic',sans-serif;}
 /* ── 미션리스트 잠금 안내 ── */
 .mission-gate{background:rgba(239,159,39,.1);border:1px dashed rgba(239,159,39,.4);border-radius:12px;padding:8px 12px;display:flex;align-items:center;gap:8px;margin-bottom:4px;}
 .mission-gate-icon{font-size:18px;}
@@ -93,16 +106,17 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 <!-- ✅ Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
 <script>
-// ★ school-B Firebase 설정 (healthon-projectb)
+// ★ school-C Firebase 설정 (healthon-project02)
 var _fbApp = firebase.initializeApp({
-  apiKey: "AIzaSyDUdKZxJdrQopcwfM3qOUxEiwPySfCOtWE",
-  authDomain: "healthon-project.firebaseapp.com",
-  projectId: "healthon-projectb",
-  storageBucket: "healthon-projectb.firebasestorage.app",
-  messagingSenderId: "568298721593",
-  appId: "1:568298721593:web:3165fddaa8d2720cae18e8",
-  measurementId: "G-0341EECC37"
+  apiKey: "AIzaSyA8DcrxX0l_94zkBTs-TtDSVoY5slUNbNk",
+  authDomain: "healthon-project02.firebaseapp.com",
+  projectId: "healthon-project02",
+  storageBucket: "healthon-project02.firebasestorage.app",
+  messagingSenderId: "188732634434",
+  appId: "1:188732634434:web:bd0aab6f7e10f5b912c4db",
+  measurementId: "G-Y0XPXJTFXM"
 });
 var _db = firebase.firestore();
 
@@ -175,16 +189,32 @@ function fbLoad(sid, callback){
         <div class="padlet-badge">🏃</div>
         <div class="padlet-notice-text">
           <div class="padlet-notice-title">운동 미션 인증 <span style="font-size:11px;background:rgba(239,159,39,.25);color:#FFD86E;border-radius:6px;padding:1px 7px;vertical-align:middle;">MUST</span></div>
+          <div class="padlet-notice-sub">운동 사진을 찍어서 업로드하세요!</div>
         </div>
       </div>
-      <a class="padlet-btn" href="https://padlet.com/a01067752602/padlet-jim4xmb1wnw909y3" target="_blank">📌 운동 인증하러 가기 →</a>
+      <!-- 숨겨진 파일 입력 -->
+      <input type="file" id="photo-input" accept="image/*" capture="environment" style="display:none;" onchange="handlePhotoSelected(this)">
+      <!-- 업로드 버튼 / 완료 상태 -->
+      <div id="upload-btn-area">
+        <button class="upload-btn" onclick="document.getElementById('photo-input').click()">📷 운동 사진 업로드하기 →</button>
+      </div>
+      <!-- 진행바 -->
+      <div class="upload-progress-wrap" id="upload-progress-wrap">
+        <div class="upload-progress-bar"><div class="upload-progress-fill" id="upload-progress-fill"></div></div>
+        <div class="upload-progress-text" id="upload-progress-text">업로드 중...</div>
+      </div>
+      <!-- 완료 배지 -->
+      <div class="upload-done-wrap" id="upload-done-wrap">
+        <div class="upload-done-text">✅ 오늘 인증 완료!</div>
+        <div class="upload-done-time" id="upload-done-time"></div>
+      </div>
     </div>
   </div>
 
   <div class="mission-list">
     <div class="mission-gate">
       <span class="mission-gate-icon">⚠️</span>
-      <span class="mission-gate-text"><span style="color:#FF6B6B;">위 패들렛에 운동 인증샷을 올려야</span> 아래 미션 포인트가 인정돼요</span>
+      <span class="mission-gate-text"><span style="color:#FF6B6B;">위 운동 인증샷을 업로드해야</span> 아래 미션 포인트가 인정돼요</span>
     </div>
     <div class="mission-item" id="m3">
       <div class="mi-icon">🚶</div>
@@ -251,9 +281,9 @@ function fbLoad(sid, callback){
 </div>
 <script>
 // ════════════════════════════════════════════════
-// ★ 학교 고정값 (school-B)
+// ★ 학교 고정값 (school-C)
 // ════════════════════════════════════════════════
-var SCHOOL = 'B';
+var SCHOOL = 'C';
 
 // ════════════════════════════════════════════════
 // 레벨 시스템 (누적 포인트 기반, 초기화 없음)
@@ -293,8 +323,8 @@ function savePtsInput() {
 // 미션 시스템
 // ════════════════════════════════════════════════
 var MISSION_KEY = 'tuntun_missions_daily_C';
-// ★ school-B 전용 Apps Script URL (새로 배포 후 여기에 교체)
-var SHEETS_URL  = 'https://script.google.com/macros/s/AKfycbxtKKsox-8a7ep7jPywxvE8d_7-yWr5OPkf-lLZYSmVnCG-VoDS_8x4QOiu_mK_KtHE/exec';
+// ★ school-C 전용 Apps Script URL (새로 배포 후 여기에 교체)
+var SHEETS_URL  = 'https://script.google.com/macros/s/AKfycbyMI-cbIiPDjkQpaRfopOhxx2ILy0wLeo7oKQ2b4F_JkCdowD8D1XbwNjVX5lfdHuhUsQ/exec';
 var MISSION_PTS = { m1: 5, m2: 5, m3: 20, m4: 5, m5: 7 };
 
 function getTodayStr() {
@@ -492,7 +522,100 @@ function cancelMission(id, p) {
 
 function goPrev() { document.querySelector('.scene').classList.add('page-out'); setTimeout(function() { window.location.href = 'page3.html'; }, 400); }
 function goNext() { document.querySelector('.scene').classList.add('page-out'); setTimeout(function() { window.location.href = 'page6.html'; }, 400); }
-var lt = 0;
+// ════════════════════════════════════════════════
+// ★ Firebase Storage 운동 인증 업로드
+// ════════════════════════════════════════════════
+var _storage = firebase.storage();
+var UPLOAD_KEY = 'tuntun_upload_done_C'; // 오늘 업로드 완료 여부
+
+// 앱 시작 시 오늘 업로드 여부 복원
+(function restoreUpload() {
+  try {
+    var raw = localStorage.getItem(UPLOAD_KEY);
+    if (!raw) return;
+    var saved = JSON.parse(raw);
+    if (saved.date !== getTodayStr()) return; // 날짜 다르면 초기화
+    showUploadDone(saved.time);
+  } catch(e) {}
+})();
+
+function resizeImage(file, maxWidth, callback) {
+  var img = new Image();
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    img.onload = function() {
+      var w = img.width, h = img.height;
+      if (w <= maxWidth) { callback(file); return; } // 이미 작으면 그대로
+      var ratio = maxWidth / w;
+      var canvas = document.createElement('canvas');
+      canvas.width = maxWidth;
+      canvas.height = Math.round(h * ratio);
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(function(blob) { callback(blob); }, 'image/jpeg', 0.85);
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function handlePhotoSelected(input) {
+  var file = input.files[0];
+  if (!file) return;
+
+  var sid   = localStorage.getItem('tuntun_student_id_C') || 'guest';
+  var sname = localStorage.getItem('tuntun_student_name_C') || '';
+  var today = getTodayStr();
+  var now   = new Date();
+  var hhmm  = (now.getHours()<10?'0':'')+now.getHours()+(now.getMinutes()<10?'0':'')+now.getMinutes();
+  var fileName = sid + '_' + sname + '_' + today + '_' + hhmm + '.jpg';
+
+  // UI: 진행바 표시
+  document.getElementById('upload-btn-area').querySelector('button').disabled = true;
+  document.getElementById('upload-progress-wrap').style.display = 'block';
+  document.getElementById('upload-progress-text').textContent = '이미지 준비 중...';
+
+  // ★ 리사이징 후 업로드
+  resizeImage(file, 800, function(resizedBlob) {
+    var storageRef = _storage.ref('exercise/' + today + '/' + fileName);
+    var uploadTask = storageRef.put(resizedBlob, { contentType: 'image/jpeg' });
+    uploadTask.on('state_changed',
+    function(snapshot) {
+      var pct = Math.round(snapshot.bytesTransferred / snapshot.totalBytes * 100);
+      document.getElementById('upload-progress-fill').style.width = pct + '%';
+      document.getElementById('upload-progress-text').textContent = '업로드 중... ' + pct + '%';
+    },
+    function(error) {
+      console.warn('upload error', error);
+      document.getElementById('upload-progress-text').textContent = '❌ 업로드 실패. 다시 시도해주세요.';
+      document.getElementById('upload-btn-area').querySelector('button').disabled = false;
+    },
+    function() {
+      // 완료
+      document.getElementById('upload-progress-wrap').style.display = 'none';
+      var timeStr = now.getHours() + ':' + (now.getMinutes()<10?'0':'')+now.getMinutes();
+      showUploadDone(timeStr);
+
+      // 로컬에 완료 기록
+      localStorage.setItem(UPLOAD_KEY, JSON.stringify({ date: today, time: timeStr }));
+
+      // Firestore에 인증 기록
+      fbSave('uploadDone', { date: today, time: timeStr, file: fileName });
+      showToast('📸 인증 완료! 선생님이 확인할게요 😊');
+    }
+  );
+
+  // input 초기화 (같은 파일 재선택 가능하게)
+  input.value = '';
+  }); // resizeImage 콜백 끝
+}
+
+function showUploadDone(timeStr) {
+  document.getElementById('upload-btn-area').querySelector('button').disabled = true;
+  document.getElementById('upload-done-wrap').style.display = 'block';
+  document.getElementById('upload-done-time').textContent = '오늘 ' + timeStr + ' 에 업로드했어요';
+}
+
 document.addEventListener('touchend', function(e) { var n = Date.now(); if (n - lt < 300) e.preventDefault(); lt = n; }, { passive: false });
 </script>
 </body>
