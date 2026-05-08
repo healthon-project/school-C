@@ -80,7 +80,7 @@ html,body{font-family:var(--jua);background:#04061A;color:#fff;overflow-x:hidden
 .mission-item.done{background:rgba(29,158,117,.12);border-color:rgba(93,202,165,.25);}
 .mi-icon{font-size:26px;flex-shrink:0;}
 .mi-text{flex:1;}
-.mi-title{font-size:14px;color:#fff;line-height:1.2;}
+.mi-title{font-family:var(--hand);font-size:17px;color:#fff;line-height:1.2;}
 .mi-sub{font-size:10px;color:rgba(200,220,255,.5);margin-top:2px;}
 .mi-right{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;}
 .mi-pt{font-size:12px;font-weight:700;color:#FFD86E;background:rgba(255,216,110,.12);border:1px solid rgba(255,216,110,.25);border-radius:100px;padding:2px 8px;}
@@ -170,7 +170,6 @@ function fbLoad(sid, callback){
 
 <div class="content">
   <div class="page-header">
-    <div class="header-badge">Step 2</div>
     <div class="page-title">오늘의 미션 🚀</div>
   </div>
 
@@ -181,17 +180,11 @@ function fbLoad(sid, callback){
 
   <div class="padlet-card">
     <div class="padlet-required-bar">
-      <span class="padlet-required-icon">🔒</span>
-      <span class="padlet-required-text" style="font-size:12px;font-weight:700;color:#04061A;letter-spacing:.5px;">필수 인증 — 아래 미션 포인트의 조건!</span>
+      <span class="padlet-required-icon">🏃</span>
+      <span style="font-size:15px;font-weight:700;color:#04061A;letter-spacing:.3px;">운동 미션 인증</span>
+      <span style="font-size:12px;font-weight:700;color:#04061A;background:rgba(0,0,0,.15);border-radius:6px;padding:2px 8px;margin-left:4px;">MUST</span>
     </div>
     <div class="padlet-inner">
-      <div class="padlet-notice">
-        <div class="padlet-badge">🏃</div>
-        <div class="padlet-notice-text">
-          <div class="padlet-notice-title">운동 미션 인증 <span style="font-size:11px;background:rgba(239,159,39,.25);color:#FFD86E;border-radius:6px;padding:1px 7px;vertical-align:middle;">MUST</span></div>
-          <div class="padlet-notice-sub">운동 사진을 찍어서 업로드하세요!</div>
-        </div>
-      </div>
       <!-- 숨겨진 파일 입력 -->
       <input type="file" id="photo-input" accept="image/*" capture="environment" style="display:none;" onchange="handlePhotoSelected(this)">
       <!-- 업로드 버튼 / 완료 상태 -->

@@ -185,8 +185,8 @@ function fbLoad(sid, callback){
           <div class="earn-card-sub">건강 지식을 퀴즈로 확인해요.</div>
         </div>
       </div>
-      <!-- 퀴즈 링크 입력칸 -->
-      <div class="quiz-link-section">
+      <!-- 퀴즈 링크 입력칸 (교사 전용) -->
+      <div class="quiz-link-section" id="quiz-link-teacher" style="display:none;">
         <div class="quiz-link-row">
           <span class="quiz-link-label">저학년</span>
           <input class="quiz-link-input" id="inp-low" placeholder="링크를 붙여넣고 저장" onkeydown="if(event.key==='Enter')saveQuizLink('low')">
@@ -197,8 +197,10 @@ function fbLoad(sid, callback){
           <input class="quiz-link-input" id="inp-high" placeholder="링크를 붙여넣고 저장" onkeydown="if(event.key==='Enter')saveQuizLink('high')">
           <button class="quiz-link-save" onclick="saveQuizLink('high')">저장</button>
         </div>
-        <!-- 저장된 링크 버튼들 -->
-        <div id="quiz-btn-wrap" style="display:flex;flex-direction:column;gap:6px;margin-top:2px;"></div>
+      </div>
+      <!-- 저장된 링크 버튼들 -->
+      <div class="quiz-link-section" style="padding-top:0;">
+        <div id="quiz-btn-wrap" style="display:flex;flex-direction:column;gap:6px;"></div>
       </div>
     </div>
 
@@ -273,11 +275,18 @@ function renderQuizBtns(){
   var lHigh=localStorage.getItem('quiz_link_high')||'https://wordwall.net/resource/110982835';
   var wrap=document.getElementById('quiz-btn-wrap');
   var html='';
-  if(lLow) html+='<a href="'+lLow+'" target="_blank" class="ext-btn" style="background:rgba(255,200,60,.1);border:1.5px solid rgba(255,200,60,.3);color:#FFD060;">🌟 저학년 퀴즈 (카드 5쌍) →</a>';
-  if(lHigh) html+='<a href="'+lHigh+'" target="_blank" class="ext-btn" style="background:rgba(100,160,255,.1);border:1.5px solid rgba(100,160,255,.3);color:#92C8FF;">⭐ 고학년 퀴즈 (카드 10쌍) →</a>';
+  if(lLow) html+='<a href="'+lLow+'" target="_blank" class="ext-btn" style="background:rgba(255,200,60,.1);border:1.5px solid rgba(255,200,60,.3);color:#FFD060;">🌟 저학년 퀴즈 →</a>';
+  if(lHigh) html+='<a href="'+lHigh+'" target="_blank" class="ext-btn" style="background:rgba(100,160,255,.1);border:1.5px solid rgba(100,160,255,.3);color:#92C8FF;">⭐ 고학년 퀴즈 →</a>';
   wrap.innerHTML=html;
-  if(lLow) document.getElementById('inp-low').value=lLow;
-  if(lHigh) document.getElementById('inp-high').value=lHigh;
+  // 교사인 경우 링크 입력칸 표시
+  var sid=localStorage.getItem('tuntun_student_id_C')||'';
+  if(/\d{4}t$/.test(sid)){
+    document.getElementById('quiz-link-teacher').style.display='flex';
+    document.getElementById('quiz-link-teacher').style.flexDirection='column';
+    document.getElementById('quiz-link-teacher').style.gap='8px';
+    if(lLow) document.getElementById('inp-low').value=lLow;
+    if(lHigh) document.getElementById('inp-high').value=lHigh;
+  }
 }
 renderQuizBtns();
 
